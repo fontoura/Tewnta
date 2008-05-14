@@ -1,0 +1,78 @@
+package br.ufrgs.f180.math;
+
+public class Vector extends Cartesian{
+
+	public Vector(double x, double y) {
+		super(x, y);
+	}
+	
+	public Vector divide(double value){
+		return new Vector(x / value, y / value);
+	}
+	
+	public Vector sum(Vector vector){
+		return new Vector(vector.getX() + x, vector.getY() + y);
+	}
+
+	public double getSinDirection(){
+		return y / hipotenuse();
+	}
+
+	public double getCosDirection(){
+		return x / hipotenuse();
+	}
+
+	public double getIntensity(){
+		return hipotenuse();
+	}
+
+	private double hipotenuse(){
+		return Math.sqrt((x*x) + (y*y));
+	}
+
+	public Vector multiply(Vector vector) {
+		return new Vector(this.getX() * vector.getX(), this.getY() * vector.getY());
+	}
+
+	public Vector multiply(double value) {
+		return new Vector(this.getX() * value, this.getY() * value);
+	}
+	
+	/**
+	 * Calculates the normal vector considering that this vector is tangent to the circle
+	 * @param center
+	 * @return
+	 */
+	public Vector(Cartesian point1, Cartesian point2){
+		super(point2.getX() - point1.getX(), point2.getY() - point1.getY());
+	}
+	
+	public double module(){
+		return hipotenuse();
+	}
+	
+	public static double cos(Vector v1, Vector v2){
+		double scalarProduct = v1.getX() * v2.getX() + v1.getY() * v2.getY(); 
+		double cos = scalarProduct / (v1.module() * v2.module());
+		return cos != Double.NaN ? cos : 0;
+	}
+
+	public static double sin(double cos){
+		double sin = Math.sqrt(1 - cos * cos);
+		return sin;
+	}
+	
+	public static double collisionAngle(Vector collision, Vector v1) {
+		double sum = Math.PI / 2;
+		if(collision.getX() > 0 && collision.getY() > 0){
+			//sum *= -1;
+		}
+		if(collision.getX() < 0 && collision.getY() > 0){
+			//sum *= -1;
+		}
+		
+		double angle = Math.acos(Vector.cos(collision, v1));
+		return angle + sum;
+	}
+	
+}
