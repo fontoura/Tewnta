@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import br.ufrgs.f180.elements.Ball;
 import br.ufrgs.f180.elements.GameField;
+import br.ufrgs.f180.server.Server;
 
 import com.cloudgarden.resource.SWTResourceManager;
 
@@ -43,6 +44,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 
 	private GameField gameField;
 	private Menu menu1;
+	private Button ToggleServer;
 	private Canvas FootballField;
 	private Label labelPlayers;
 	private List listPlayers;
@@ -58,6 +60,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private MenuItem openFileMenuItem;
 	private Menu fileMenu;
 	private MenuItem fileMenuItem;
+	private Server server;
 
 	{
 		//Register as a resource user - SWTResourceManager will
@@ -68,6 +71,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	public MainWindow(Composite parent, int style) {
 		super(parent, style);
 		initGUI();
+		server = new Server();
 	}
 	
 	/**
@@ -79,6 +83,21 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			this.setBackground(SWTResourceManager.getColor(192, 192, 192));
 			FormLayout thisLayout = new FormLayout();
 			this.setLayout(thisLayout);
+			{
+				ToggleServer = new Button(this, SWT.TOGGLE | SWT.CENTER);
+				ToggleServer.setText("Start Server");
+				FormData ToggleServerLData = new FormData();
+				ToggleServerLData.width = 82;
+				ToggleServerLData.height = 23;
+				ToggleServerLData.left =  new FormAttachment(0, 1000, 616);
+				ToggleServerLData.top =  new FormAttachment(0, 1000, 237);
+				ToggleServer.setLayoutData(ToggleServerLData);
+				ToggleServer.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent evt) {
+						ToggleServerWidgetSelected(evt);
+					}
+				});
+			}
 			{
 				FootballField = new Canvas(this, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
 				FormData FootballFieldLData = new FormData();
@@ -104,7 +123,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			}
 			{
 				labelPlayers = new Label(this, SWT.NONE);
-				labelPlayers.setText("Jogadores Conectados:");
+				labelPlayers.setText("Connected Players:");
 				FormData labelPlayersLData = new FormData();
 				labelPlayersLData.width = 114;
 				labelPlayersLData.height = 13;
@@ -123,12 +142,12 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			}
 			{
 				buttonStart = new Button(this, SWT.PUSH | SWT.CENTER);
-				buttonStart.setText("Iniciar");
+				buttonStart.setText("Start Game");
 				FormData buttonStartLData = new FormData();
-				buttonStartLData.width = 41;
+				buttonStartLData.width = 82;
 				buttonStartLData.height = 23;
-				buttonStartLData.left =  new FormAttachment(0, 1000, 617);
-				buttonStartLData.top =  new FormAttachment(0, 1000, 237);
+				buttonStartLData.left =  new FormAttachment(0, 1000, 616);
+				buttonStartLData.top =  new FormAttachment(0, 1000, 289);
 				buttonStart.setLayoutData(buttonStartLData);
 				buttonStart.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent evt) {
@@ -215,7 +234,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			shell.setSize(shellBounds.width, shellBounds.height);
 		}
 		shell.open();
-	
+
 		display.timerExec(0, new Runnable(){
 			@Override
 			public void run() {
@@ -245,8 +264,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private void buttonStartWidgetSelected(SelectionEvent evt) {
 		System.out.println("buttonStart.widgetSelected, event="+evt);
 		//Initiate the game Field
-		gameField = new GameField(FootballField, 593, 349);
-		gameField.addElement(new Ball(gameField.getWidth() / 2, gameField.getHeight() / 2));
+		gameField = new GameField(FootballField, 600, 400);
+		gameField.addElement(new Ball(300, 200));
 	}
 	
 	public void gameLoop(){
@@ -258,4 +277,31 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	public void repaintLoop(){
 		if(FootballField != null) FootballField.redraw();
 	}
+	
+	private void ToggleServerWidgetSelected(SelectionEvent evt) {
+		System.out.println("ToggleServer.widgetSelected, event="+evt);
+		if(ToggleServer.getSelection()){
+			try {
+				if(!server.isStarted()){
+					server.startServer();
+				}
+				ToggleServer.setText("Stop Server");
+			} catch (Exception e) {
+				e.printStackTrace();
+				ToggleServer.setSelection(false);
+			}
+		}
+		else{
+			try {
+				if(server.isStarted()){
+					server.stopServer();
+				}
+				ToggleServer.setText("Start Server");
+			} catch (Exception e) {
+				e.printStackTrace();
+				ToggleServer.setSelection(true);
+			}
+		}
+	}
+
 }
