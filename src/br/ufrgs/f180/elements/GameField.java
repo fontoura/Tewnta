@@ -7,13 +7,18 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Canvas;
 
+import br.ufrgs.f180.math.Vector;
+
 import com.cloudgarden.resource.SWTResourceManager;
 
 public class GameField implements VisualElement {
+	private static final double GRAVITY_ACCELERATION = 10;
 	private double scale_x;
 	private double scale_y;
 	private double width;
 	private double height;
+	private double friction_coefficient;
+	
 
 	private ArrayList<MovingElement> elements = new ArrayList<MovingElement>(); 
 	
@@ -22,6 +27,7 @@ public class GameField implements VisualElement {
 		this.height = height;
 		this.scale_x = ((double) ((FormData) canvas.getLayoutData()).width) / width;
 		this.scale_y = ((double) ((FormData) canvas.getLayoutData()).height) / height;
+		this.friction_coefficient = 10;
 	}
 
 	/**
@@ -37,7 +43,7 @@ public class GameField implements VisualElement {
 	@Override
 	public void draw(GC gc) {
 		Color old = gc.getForeground();
-		Color c = SWTResourceManager.getColor(10, 180, 0);
+		Color c = SWTResourceManager.getColor(10, 100, 0);
 		gc.setForeground(c);
 		gc.drawRectangle(realx(0), realy(0), realx(width - 1), realy(height - 1));
 		gc.drawLine(realx(width / 2), realy(0), realx(width / 2), realy(height - 1));
@@ -107,5 +113,16 @@ public class GameField implements VisualElement {
 
 	public int relativeRealx(int x){
 		return x;	
+	}
+
+	public Vector getFriction(MovingElement e) {
+		Vector v = new Vector(0, 0);
+		if(e.getVelocity().module() > 0){
+			double cos = -e.getVelocity().getCosDirection();
+			double sin = -e.getVelocity().getSinDirection();
+			double module = Math.abs(e.getMass() * GRAVITY_ACCELERATION * friction_coefficient); 
+			v = new Vector(module * cos, module * sin);
+		}
+		return v;
 	}
 }

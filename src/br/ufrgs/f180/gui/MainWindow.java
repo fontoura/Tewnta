@@ -5,8 +5,6 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -25,8 +23,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import br.ufrgs.f180.elements.Ball;
 import br.ufrgs.f180.elements.GameField;
-import br.ufrgs.f180.elements.Robot;
-import br.ufrgs.f180.math.Vector;
 
 import com.cloudgarden.resource.SWTResourceManager;
 
@@ -84,7 +80,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			FormLayout thisLayout = new FormLayout();
 			this.setLayout(thisLayout);
 			{
-				FootballField = new Canvas(this, SWT.NONE);
+				FootballField = new Canvas(this, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
 				FormData FootballFieldLData = new FormData();
 				FootballFieldLData.width = 593;
 				FootballFieldLData.height = 349;
@@ -94,27 +90,15 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FootballField.setBackground(SWTResourceManager.getColor(0, 0, 0));
 				FootballField.setForeground(SWTResourceManager.getColor(0, 255, 128));
 				FootballField.addPaintListener(new PaintListener() {
-					//Double buffered
 					public void paintControl(PaintEvent evt) {
-						// Create the image to fill the canvas
-				        Image image = new Image(evt.display, ((Canvas)evt.getSource()).getBounds());
-
-				        // Set up the offscreen gc
-				        GC gcImage = new GC(image);
 
 				        // Draw the background
-				        gcImage.setForeground(evt.gc.getForeground());
-				        gcImage.setBackground(evt.gc.getBackground());
-				        gcImage.fillRectangle(image.getBounds());
+						evt.gc.setForeground(evt.gc.getForeground());
+						evt.gc.setBackground(evt.gc.getBackground());
+						evt.gc.fillRectangle(((Canvas)evt.getSource()).getClientArea());
 
-				        if(gameField != null) gameField.draw(gcImage);
+				        if(gameField != null) gameField.draw(evt.gc);
 
-				        // Draw the offscreen buffer to the screen
-				        evt.gc.drawImage(image, 0, 0);
-
-				        // Clean up
-				        image.dispose();
-				        gcImage.dispose();
 					}
 				});
 			}
@@ -262,40 +246,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		System.out.println("buttonStart.widgetSelected, event="+evt);
 		//Initiate the game Field
 		gameField = new GameField(FootballField, 593, 349);
-		gameField.addElement(new Robot(200, 100));
-		gameField.addElement(new Robot(200, 200));
-		gameField.addElement(new Robot(200, 300));
-		gameField.addElement(new Ball(280, 100));
-		gameField.addElement(new Ball(140, 71));
-		gameField.addElement(new Ball(160, 72));
-		gameField.addElement(new Ball(180, 73));
-		gameField.addElement(new Ball(210, 74));
-		gameField.addElement(new Ball(230, 75));
-		gameField.addElement(new Ball(250, 76));
-		gameField.addElement(new Ball(300, 77));
-		gameField.addElement(new Ball(320, 78));
-		gameField.addElement(new Ball(340, 79));
-		gameField.addElement(new Ball(360, 71));
-		gameField.addElement(new Ball(380, 71));
-		gameField.addElement(new Ball(410, 71));
-		gameField.addElement(new Ball(430, 71));
-		gameField.addElement(new Ball(450, 71));
-		gameField.addElement(new Ball(100, 171));
-		gameField.addElement(new Ball(120, 172));
-		gameField.addElement(new Ball(140, 173));
-		gameField.addElement(new Ball(160, 174));
-		gameField.addElement(new Ball(180, 175));
-		gameField.addElement(new Ball(210, 176));
-		gameField.addElement(new Ball(230, 177));
-		gameField.addElement(new Ball(250, 178));
-		gameField.addElement(new Ball(300, 178));
-		gameField.addElement(new Ball(320, 171));
-		gameField.addElement(new Ball(340, 171));
-		gameField.addElement(new Ball(360, 171));
-		gameField.addElement(new Ball(380, 171));
-		gameField.addElement(new Ball(410, 171));
-		gameField.addElement(new Ball(430, 171));
-		gameField.addElement(new Ball(450, 171));
+		gameField.addElement(new Ball(gameField.getWidth() / 2, gameField.getHeight() / 2));
 	}
 	
 	public void gameLoop(){

@@ -15,16 +15,9 @@ public class Robot extends MovingElement {
 	public Robot(double x, double y){
 		this.setMass(5);
 		this.setForce(new Vector(0, 0));
-		this.setVelocity(new Vector(0, 0));
+		this.setVelocity(new Vector(600, 10));
 		this.setPosition(new Cartesian(x, y));
 		
-/*		double angle = 2 * Math.PI / NUM_MOTORS; 
-		for(double i = 0; i < NUM_MOTORS; i++){
-			double ypos = (Math.sin(angle * i) * RADIUS) + y; 
-			double xpos = (Math.cos(angle * i) * RADIUS) + x;
-			motors.add(new Motor(xpos,ypos));
-		}	
-*/
 	}
 	
 	@Override

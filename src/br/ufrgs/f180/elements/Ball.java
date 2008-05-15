@@ -3,10 +3,10 @@ package br.ufrgs.f180.elements;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
-import com.cloudgarden.resource.SWTResourceManager;
-
 import br.ufrgs.f180.math.Cartesian;
 import br.ufrgs.f180.math.Vector;
+
+import com.cloudgarden.resource.SWTResourceManager;
 
 public class Ball extends MovingElement {
 	public static final double RADIUS = 5;
@@ -14,7 +14,7 @@ public class Ball extends MovingElement {
 	public Ball(double x, double y){
 		this.setMass(1);
 		this.setForce(new Vector(0, 0));
-		this.setVelocity(new Vector(-100, 0));
+		this.setVelocity(new Vector(0, 0));
 		this.setPosition(new Cartesian(x, y));
 	}
 

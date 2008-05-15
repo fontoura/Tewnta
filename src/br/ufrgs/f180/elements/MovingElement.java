@@ -30,7 +30,8 @@ public abstract class MovingElement implements VisualElement {
 
 	public Vector getAcceleration() {
 		// a = F / m
-		return force.divide(mass);
+		Vector v = getField().getFriction(this);
+		return v.divide(mass);
 	}
 
 	public void setForce(Vector force) {
@@ -175,4 +176,8 @@ public abstract class MovingElement implements VisualElement {
 	public abstract void draw(GC gc);
 
 	public abstract double getRadius();
+
+	public Vector getForce() {
+		return force;
+	}
 }
