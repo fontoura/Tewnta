@@ -30,7 +30,7 @@ public abstract class MovingElement implements VisualElement {
 
 	public Vector getAcceleration() {
 		// a = F / m
-		Vector v = getField().getFriction(this);
+		Vector v = getField().getFriction(this).sum(force);
 		return v.divide(mass);
 	}
 

@@ -3,10 +3,10 @@ package br.ufrgs.f180.elements;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
-import com.cloudgarden.resource.SWTResourceManager;
-
 import br.ufrgs.f180.math.Cartesian;
 import br.ufrgs.f180.math.Vector;
+
+import com.cloudgarden.resource.SWTResourceManager;
 
 public abstract class Motor extends MovingElement {
 

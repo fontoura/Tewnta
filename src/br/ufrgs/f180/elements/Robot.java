@@ -8,16 +8,25 @@ import br.ufrgs.f180.math.Vector;
 
 import com.cloudgarden.resource.SWTResourceManager;
 
+/**
+ * 
+ * @author Gabriel Detoni
+ *
+ */
 public class Robot extends MovingElement {
 	
 	public static final double RADIUS = 20;
-	
-	public Robot(double x, double y){
+
+	public Robot(Cartesian position){
 		this.setMass(5);
 		this.setForce(new Vector(0, 0));
-		this.setVelocity(new Vector(600, 10));
-		this.setPosition(new Cartesian(x, y));
+		this.setVelocity(new Vector(0, 0));
+		this.setPosition(position);
 		
+	}
+	
+	public Robot(double x, double y){
+		this(new Cartesian(x, y));
 	}
 	
 	@Override

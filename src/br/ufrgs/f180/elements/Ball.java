@@ -25,8 +25,8 @@ public class Ball extends MovingElement {
 		gc.setForeground(c);
 		gc.drawOval(realx(position.getX() - RADIUS), realy(position.getY() - RADIUS) , realx(RADIUS * 2), realy(RADIUS * 2) );
 		gc.setForeground(old);
-		int y1 = realy(position.getY());
-		int y2 = getField().relativeRealy(realy(position.getY() + velocity.getY()));
+		//int y1 = realy(position.getY());
+		//int y2 = getField().relativeRealy(realy(position.getY() + velocity.getY()));
 		//gc.drawLine(realx(position.getX()), y1, realx(position.getX() + velocity.getX()), y2);
 	}
 

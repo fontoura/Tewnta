@@ -1,6 +1,10 @@
 package br.ufrgs.f180.elements;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -11,6 +15,11 @@ import br.ufrgs.f180.math.Vector;
 
 import com.cloudgarden.resource.SWTResourceManager;
 
+/**
+ * 
+ * @author Gabriel Detoni
+ *
+ */
 public class GameField implements VisualElement {
 	private static final double GRAVITY_ACCELERATION = 10;
 	private double scale_x;
@@ -20,7 +29,7 @@ public class GameField implements VisualElement {
 	private double friction_coefficient;
 	
 
-	private ArrayList<MovingElement> elements = new ArrayList<MovingElement>(); 
+	private Map<String, MovingElement> elements = new HashMap<String, MovingElement>(); 
 	
 	public GameField(Canvas canvas, double width, double height){
 		this.width = width;
@@ -35,11 +44,15 @@ public class GameField implements VisualElement {
 	 * will be painted together with it.
 	 * @param e
 	 */
-	public void addElement(MovingElement e){
+	public void addElement(String id, MovingElement e){
 		e.setField(this);
-		elements.add(e);
+		elements.put(id, e);
 	}
-	
+
+	public MovingElement getElement(String id){
+		return elements.get(id);
+	}
+
 	@Override
 	public void draw(GC gc) {
 		Color old = gc.getForeground();
@@ -47,8 +60,8 @@ public class GameField implements VisualElement {
 		gc.setForeground(c);
 		gc.drawRectangle(realx(0), realy(0), realx(width - 1), realy(height - 1));
 		gc.drawLine(realx(width / 2), realy(0), realx(width / 2), realy(height - 1));
-		for (MovingElement e : elements) {
-			e.draw(gc);
+		for (Entry<String, MovingElement> e : elements.entrySet()) {
+			e.getValue().draw(gc);
 		}
 		gc.setForeground(old);
 	}
@@ -80,13 +93,16 @@ public class GameField implements VisualElement {
 	}
 
 	public void updateElementsState(double timeElapsed){
-		ArrayList<MovingElement> collisors = new ArrayList<MovingElement>(elements);
-		for (MovingElement e : elements) {
-			e.calculatePosition(timeElapsed);
-			e.calculateCollisionWithField();
+		Set<Entry<String, MovingElement>> collisors = new HashSet<Entry<String,MovingElement>>();
+		collisors.addAll(elements.entrySet());
+		
+		for (Entry<String, MovingElement> e : elements.entrySet()) {
+			MovingElement element = e.getValue();
+			element.calculatePosition(timeElapsed);
+			element.calculateCollisionWithField();
 			collisors.remove(e);
-			for (MovingElement e2 : collisors) {
-				e.calculateCollision(e2);
+			for (Entry<String, MovingElement> e2 : collisors) {
+				element.calculateCollision(e2.getValue());
 			}
 		}
 	}
