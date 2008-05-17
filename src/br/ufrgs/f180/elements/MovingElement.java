@@ -71,14 +71,7 @@ public abstract class MovingElement implements VisualElement {
 
 	public void calculateCollision(MovingElement element) {
 
-		double x1 = this.getPosition().getX();
-		double y1 = this.getPosition().getY();
-		double x2 = element.getPosition().getX();
-		double y2 = element.getPosition().getY();
-		double distance = this.getRadius() + element.getRadius();
-		Vector vdistance = new Vector(x2 - x1, y2 - y1);
-
-		if (vdistance.module() < distance) {
+		if (this.collide(element)) {
 			// Collision detected.. distributing the velocity
 
 			// X
@@ -179,5 +172,16 @@ public abstract class MovingElement implements VisualElement {
 
 	public Vector getForce() {
 		return force;
+	}
+
+	public boolean collide(MovingElement element) {
+		double x1 = this.getPosition().getX();
+		double y1 = this.getPosition().getY();
+		double x2 = element.getPosition().getX();
+		double y2 = element.getPosition().getY();
+		double distance = this.getRadius() + element.getRadius();
+		Vector vdistance = new Vector(x2 - x1, y2 - y1);
+
+		return vdistance.module() < distance;
 	}
 }

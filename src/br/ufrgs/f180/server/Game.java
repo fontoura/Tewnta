@@ -1,11 +1,9 @@
 package br.ufrgs.f180.server;
 
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.widgets.Canvas;
-
 import br.ufrgs.f180.elements.Ball;
 import br.ufrgs.f180.elements.GameField;
 import br.ufrgs.f180.elements.Robot;
+import br.ufrgs.f180.gui.MainWindow;
 import br.ufrgs.f180.math.Vector;
 
 /**
@@ -20,9 +18,13 @@ public class Game {
 
 	private static Game instance = null;
 	
-	private GameField field;
 	private final double WIDTH = 600;
 	private final double HEIGHT = 400;
+	
+	/**
+	 * This is the visual container of this game.
+	 */
+	private MainWindow mainWindow;
 	
 	protected Game(){};
 
@@ -33,53 +35,34 @@ public class Game {
 		return instance;
 	}
 
-	public void setUpField(Canvas canvas){
-		field = new GameField(canvas, WIDTH, HEIGHT);
-		field.addElement("BALL", new Ball(WIDTH / 2, HEIGHT / 2));
+	public void setUp(MainWindow window) throws Exception{
+		this.mainWindow = window;
+		mainWindow.setField(new GameField(window.getFootballFieldCanvas(), WIDTH, HEIGHT));
+		mainWindow.getField().addElement("BALL", new Ball(WIDTH / 2, HEIGHT / 2));
 	}
 	
 	public void addPlayer(String id, double x, double y) throws Exception{
-		if(field != null){
-			Robot r = new Robot(x, y);
-			field.addElement(id, r);
-		}
-		else {
-			throw new Exception("Cannot add element. Configure the field first");
-		}
+		mainWindow.addRobot(id, x, y);
 	}
 
 	public void setPlayerForce(String id, double x, double y) throws Exception{
-		if(field != null){
-			Robot r = (Robot) field.getElement(id);
+		if(mainWindow.getField() != null){
+			Robot r = (Robot) mainWindow.getField().getElement(id);
 			r.setForce(new Vector(x, y));
 		}
 		else {
-			throw new Exception("Cannot get element. Configure the field first");
+			throw new Exception("Cannot get element. Configure the mainWindow.getField() first");
 		}
 	}
 	
-	public GameField getField() {
-		return field;
-	}
-
 	/**
 	 * This is the method that updates the game state due a given time in milliseconds.
 	 * Usually invoked in the main loop.
 	 * @param d time in ms
 	 */
 	public void updateState(double d) {
-		if(field != null){
-			field.updateElementsState(d);
+		if(mainWindow.getField() != null){
+			mainWindow.getField().updateElementsState(d);
 		}
-	}
-
-	/**
-	 * Draws this Game into a Graphics controller. This methor is to be invoked everytime you want to update 
-	 * the field state in the screen. Usually inside the main loop of the program.
-	 * @param gc
-	 */
-	public void draw(GC gc) {
-		if(field != null) field.draw(gc);
-		
 	}
 }

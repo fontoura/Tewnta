@@ -43,10 +43,23 @@ public class GameField implements VisualElement {
 	 * Makes an element to be part of the Game field. All elements that are part of a game field 
 	 * will be painted together with it.
 	 * @param e
+	 * @throws Exception 
 	 */
-	public void addElement(String id, MovingElement e){
-		e.setField(this);
-		elements.put(id, e);
+	public void addElement(String id, MovingElement e) throws Exception{
+		if(!overlap(id, e)){
+			e.setField(this);
+			elements.put(id, e);
+		}
+		else {
+			throw new Exception("Elements overlap each other. Try another position.");
+		}
+	}
+
+	private boolean overlap(String id, MovingElement e) {
+		for (Entry<String, MovingElement> iterable : elements.entrySet()) {
+			if(!iterable.getKey().equals(id) && e.collide(iterable.getValue())) return true;
+		}
+		return false;
 	}
 
 	public MovingElement getElement(String id){

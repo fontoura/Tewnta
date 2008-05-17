@@ -1,5 +1,7 @@
 package br.ufrgs.f180.gui;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -20,7 +22,11 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
+import br.ufrgs.f180.elements.GameField;
+import br.ufrgs.f180.elements.MovingElement;
+import br.ufrgs.f180.elements.Robot;
 import br.ufrgs.f180.server.Game;
 import br.ufrgs.f180.server.Server;
 
@@ -42,6 +48,9 @@ import com.cloudgarden.resource.SWTResourceManager;
 public class MainWindow extends org.eclipse.swt.widgets.Composite {
 
 	private Menu menu1;
+	private Label label1;
+	private Label DetailsLabel;
+	private Text PlayerDetails;
 	private Button ToggleServer;
 	private Canvas FootballField;
 	private Label labelPlayers;
@@ -57,7 +66,11 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private MenuItem openFileMenuItem;
 	private Menu fileMenu;
 	private MenuItem fileMenuItem;
+	
+	private boolean invalidPlayers = false;
+	private ArrayList<String> playerNames;
 	private Server server;
+	private GameField field;
 
 	{
 		//Register as a resource user - SWTResourceManager will
@@ -69,6 +82,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		super(parent, style);
 		initGUI();
 		server = new Server();
+		playerNames = new ArrayList<String>();
 	}
 	
 	/**
@@ -76,17 +90,36 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	*/
 	private void initGUI() {
 		try {
-			this.setSize(750, 430);
+			this.setSize(969, 436);
 			this.setBackground(SWTResourceManager.getColor(192, 192, 192));
 			FormLayout thisLayout = new FormLayout();
 			this.setLayout(thisLayout);
+			{
+				DetailsLabel = new Label(this, SWT.NONE);
+				FormData DetailsLabelLData = new FormData();
+				DetailsLabelLData.width = 114;
+				DetailsLabelLData.height = 13;
+				DetailsLabelLData.left =  new FormAttachment(0, 1000, 843);
+				DetailsLabelLData.top =  new FormAttachment(0, 1000, 16);
+				DetailsLabel.setLayoutData(DetailsLabelLData);
+				DetailsLabel.setText("Player Details:");
+			}
+			{
+				FormData PlayerDetailsLData = new FormData();
+				PlayerDetailsLData.width = 108;
+				PlayerDetailsLData.height = 194;
+				PlayerDetailsLData.left =  new FormAttachment(0, 1000, 843);
+				PlayerDetailsLData.top =  new FormAttachment(0, 1000, 32);
+				PlayerDetails = new Text(this, SWT.MULTI | SWT.WRAP);
+				PlayerDetails.setLayoutData(PlayerDetailsLData);
+			}
 			{
 				ToggleServer = new Button(this, SWT.TOGGLE | SWT.CENTER);
 				ToggleServer.setText("Start Server");
 				FormData ToggleServerLData = new FormData();
 				ToggleServerLData.width = 82;
 				ToggleServerLData.height = 23;
-				ToggleServerLData.left =  new FormAttachment(0, 1000, 623);
+				ToggleServerLData.left =  new FormAttachment(0, 1000, 723);
 				ToggleServerLData.top =  new FormAttachment(0, 1000, 238);
 				ToggleServer.setLayoutData(ToggleServerLData);
 				ToggleServer.addSelectionListener(new SelectionAdapter() {
@@ -97,15 +130,15 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			}
 			{
 				FootballField = new Canvas(this, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
-				FormData FootballFieldLData = new FormData(600, 400);
-				FootballFieldLData.width = 600;
+				FormData FootballFieldLData = new FormData(700, 400);
+				FootballFieldLData.width = 700;
 				FootballFieldLData.height = 400;
 				FootballFieldLData.left =  new FormAttachment(0, 1000, 11);
 				FootballFieldLData.top =  new FormAttachment(0, 1000, 16);
 				FootballField.setLayoutData(FootballFieldLData);
 				FootballField.setBackground(SWTResourceManager.getColor(0, 0, 0));
 				FootballField.setForeground(SWTResourceManager.getColor(0, 255, 128));
-				FootballField.setSize(600, 400);
+				FootballField.setSize(700, 400);
 				FootballField.addPaintListener(new PaintListener() {
 					public void paintControl(PaintEvent evt) {
 
@@ -114,7 +147,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 						evt.gc.setBackground(evt.gc.getBackground());
 						evt.gc.fillRectangle(((Canvas)evt.getSource()).getClientArea());
 
-				        Game.getInstance().draw(evt.gc);
+						if(getField() != null) getField().draw(evt.gc);
 
 					}
 				});
@@ -125,7 +158,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData labelPlayersLData = new FormData();
 				labelPlayersLData.width = 114;
 				labelPlayersLData.height = 13;
-				labelPlayersLData.left =  new FormAttachment(0, 1000, 624);
+				labelPlayersLData.left =  new FormAttachment(0, 1000, 723);
 				labelPlayersLData.top =  new FormAttachment(0, 1000, 16);
 				labelPlayers.setLayoutData(labelPlayersLData);
 			}
@@ -134,9 +167,24 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData listPlayersLData = new FormData();
 				listPlayersLData.width = 111;
 				listPlayersLData.height = 194;
-				listPlayersLData.left =  new FormAttachment(0, 1000, 624);
+				listPlayersLData.left =  new FormAttachment(0, 1000, 723);
 				listPlayersLData.top =  new FormAttachment(0, 1000, 32);
 				listPlayers.setLayoutData(listPlayersLData);
+				listPlayers.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent evt) {
+						listPlayersWidgetSelected(evt);
+					}
+				});
+			}
+			{
+				label1 = new Label(this, SWT.NONE);
+				FormData label1LData = new FormData();
+				label1LData.width = 114;
+				label1LData.height = 13;
+				label1LData.left =  new FormAttachment(0, 1000, 139);
+				label1LData.top =  new FormAttachment(0, 1000, 388);
+				label1.setLayoutData(label1LData);
+				label1.setText("Connected Players:");
 			}
 			{
 				menu1 = new Menu(getShell(), SWT.BAR);
@@ -147,28 +195,12 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 					{
 						fileMenu = new Menu(fileMenuItem);
 						{
-							openFileMenuItem = new MenuItem(fileMenu, SWT.CASCADE);
-							openFileMenuItem.setText("Open");
-						}
-						{
-							newFileMenuItem = new MenuItem(fileMenu, SWT.CASCADE);
-							newFileMenuItem.setText("New");
-						}
-						{
-							saveFileMenuItem = new MenuItem(fileMenu, SWT.CASCADE);
-							saveFileMenuItem.setText("Save");
-						}
-						{
-							closeFileMenuItem = new MenuItem(fileMenu, SWT.CASCADE);
-							closeFileMenuItem.setText("Close");
-						}
-						{
 							exitMenuItem = new MenuItem(fileMenu, SWT.CASCADE);
 							exitMenuItem.setText("Exit");
 							exitMenuItem.addSelectionListener(new SelectionAdapter() {
 								public void widgetSelected(SelectionEvent evt) {
 									System.out.println("exitMenuItem.widgetSelected, event="+evt);
-									System.exit(0);
+									MainWindow.this.getShell().dispose();
 								}
 							});
 						}
@@ -195,7 +227,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			this.layout();
 
 			//Set up the game
-			Game.getInstance().setUpField(FootballField);			
+			Game.getInstance().setUp(this);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -204,8 +236,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	/**
 	* Auto-generated main method to display this 
 	* org.eclipse.swt.widgets.Composite inside a new Shell.
+	 * @throws Exception 
 	*/
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		final Display display = Display.getDefault();
 		final Shell shell = new Shell(display);
 		final MainWindow inst = new MainWindow(shell, SWT.NULL);
@@ -245,19 +278,31 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
+		if(inst.server != null && inst.server.isStarted()){
+			inst.server.stopServer();
+		}
+		System.exit(0);
 	}
 
-	private void buttonStartWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonStart.widgetSelected, event="+evt);
-		//Initiate the game Field
-	}
-	
 	public void gameLoop(double interval){
 		Game.getInstance().updateState(interval);
 	}
 
 	public void repaintLoop(){
+		if(invalidPlayers) updatePlayers();
+		
+		updateSelectedPlayer();
+
 		if(FootballField != null) FootballField.redraw();
+	}
+	
+	private void updatePlayers(){
+		listPlayers.removeAll();		
+		for (String id : playerNames) {
+			listPlayers.add(id);	
+		}
+		updateSelectedPlayer();		
+		invalidPlayers = false;
 	}
 	
 	private void ToggleServerWidgetSelected(SelectionEvent evt) {
@@ -284,6 +329,62 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				ToggleServer.setSelection(true);
 			}
 		}
+	}
+
+	public Canvas getFootballFieldCanvas() {
+		return FootballField;
+	}
+
+	public GameField getField() {
+		return field;
+	}
+
+	public void setField(GameField field) {
+		this.field = field;
+	}
+
+	public void addRobot(String id, double x, double y) throws Exception {
+		if(getField() != null){
+			Robot r = new Robot(x, y);
+			getField().addElement(id, r);
+			if(playerNames.indexOf(id) < 0){
+				playerNames.add(id);
+			}
+			invalidPlayers = true;
+		}
+		else {
+			throw new Exception("Cannot add element. Configure the field first");
+		}
+	}
+
+	private void updateSelectedPlayer(){
+		if(listPlayers.getSelection().length == 1){
+			String selectedId = listPlayers.getSelection()[0];
+			MovingElement e = field.getElement(selectedId);
+			StringBuffer details = new StringBuffer();
+			details.append("Velocity:\n");
+			details.append("  x:");
+			details.append(String.format("%.2f", e.getVelocity().getX()));
+			details.append("\n");
+			details.append("  y:");
+			details.append(String.format("%.2f", e.getVelocity().getY()));
+			details.append("\n");
+			details.append("Force:\n");
+			details.append("  x:");
+			details.append(String.format("%.2f", e.getForce().getX()));
+			details.append("\n");
+			details.append("  y:");
+			details.append(String.format("%.2f", e.getForce().getY()));
+			PlayerDetails.setText(details.toString());
+		}
+		else{
+			PlayerDetails.setText("");
+		}
+	}
+	
+	private void listPlayersWidgetSelected(SelectionEvent evt) {
+		System.out.println("listPlayers.widgetSelected, event="+evt);
+		updateSelectedPlayer();
 	}
 
 }
