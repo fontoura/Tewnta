@@ -14,7 +14,7 @@ public class Ball extends MovingElement {
 	public Ball(double x, double y){
 		this.setMass(1);
 		this.setForce(new Vector(0, 0));
-		this.setVelocity(new Vector(0, 0));
+		this.setVelocity(new Vector(800, 800));
 		this.setPosition(new Cartesian(x, y));
 	}
 

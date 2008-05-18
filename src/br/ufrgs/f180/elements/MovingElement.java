@@ -1,7 +1,10 @@
 package br.ufrgs.f180.elements;
 
+import java.util.List;
+
 import org.eclipse.swt.graphics.GC;
 
+import br.ufrgs.f180.elements.Wall.CollisionSide;
 import br.ufrgs.f180.math.Cartesian;
 import br.ufrgs.f180.math.Vector;
 
@@ -134,18 +137,38 @@ public abstract class MovingElement implements VisualElement {
 	/**
 	 * Field collisions simply invert the velocity vector in the axis the
 	 * collision occurred
+	 * @param walls2 
 	 * 
 	 * @param field
 	 */
-	public void calculateCollisionWithField() {
-
-		if (field.getLeftBound() > position.getX() - getRadius()
-				|| field.getRightBound() < position.getX() + getRadius()) {
-			velocity.setX(-velocity.getX());
-		}
-		if (field.getTopBound() > position.getY() - getRadius()
-				|| field.getDownBound() < position.getY() + getRadius()) {
-			velocity.setY(-velocity.getY());
+	public void calculateCollisionWithWalls(List<Wall> walls) {
+		for (Wall wall : walls) {
+			//Vertical
+			if(wall.getLeft() == wall.getRight() && position.getY() >= wall.getTop() && position.getY() <= wall.getDown()){
+				if(CollisionSide.NORMAL.equals(wall.getCollisionSide())){
+					if (position.getX() - getRadius() <= wall.getLeft()) {
+						velocity.setX(-velocity.getX());
+					}
+				}
+				else{
+					if (position.getX() + getRadius() >= wall.getRight()) {
+						velocity.setX(-velocity.getX());
+					}
+				}
+			}
+			//horizontal
+			if(wall.getTop() == wall.getDown() && position.getX() >= wall.getLeft() && position.getX() <= wall.getRight()){
+				if(CollisionSide.NORMAL.equals(wall.getCollisionSide())){
+					if (position.getY() - getRadius() <= wall.getTop()) {
+						velocity.setY(-velocity.getY());
+					}
+				}
+				else{
+					if (position.getY() + getRadius() >= wall.getDown()) {
+						velocity.setY(-velocity.getY());
+					}
+				}
+			}	
 		}
 	}
 

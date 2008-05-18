@@ -1,7 +1,9 @@
 package br.ufrgs.f180.elements;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -11,6 +13,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Canvas;
 
+import br.ufrgs.f180.elements.Wall.CollisionSide;
 import br.ufrgs.f180.math.Vector;
 
 import com.cloudgarden.resource.SWTResourceManager;
@@ -22,13 +25,15 @@ import com.cloudgarden.resource.SWTResourceManager;
  */
 public class GameField implements VisualElement {
 	private static final double GRAVITY_ACCELERATION = 10;
+	private static final int GOAL_DEPTH = 20;
+	private static final int GOAL_SIZE = 100;
+	private final double friction_coefficient;
 	private double scale_x;
 	private double scale_y;
 	private double width;
 	private double height;
-	private double friction_coefficient;
 	
-
+	private List<Wall> walls = new ArrayList<Wall>();
 	private Map<String, MovingElement> elements = new HashMap<String, MovingElement>(); 
 	
 	public GameField(Canvas canvas, double width, double height){
@@ -37,6 +42,33 @@ public class GameField implements VisualElement {
 		this.scale_x = ((double) ((FormData) canvas.getLayoutData()).width) / width;
 		this.scale_y = ((double) ((FormData) canvas.getLayoutData()).height) / height;
 		this.friction_coefficient = 10;
+		createWalls();
+	}
+
+	private void createWalls() {
+		try {
+			// -
+			addWall(new Wall(getLeftBound(), getTopBound(), getRightBound(), getTopBound(), CollisionSide.NORMAL));
+			addWall(new Wall(getLeftBound(), getDownBound(), getRightBound(), getDownBound(), CollisionSide.REVERSE));
+			// |
+			addWall(new Wall(getLeftBound(), getTopBound(), getLeftBound(), getGoalTop(), CollisionSide.NORMAL));
+			addWall(new Wall(getLeftBound(), getGoalDown(), getLeftBound(), getDownBound(), CollisionSide.NORMAL));
+			// [
+			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalTop(), getLeftBound() - GOAL_DEPTH, getGoalDown(), CollisionSide.NORMAL));
+			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalTop(), getLeftBound(), getGoalTop(), CollisionSide.NORMAL));
+			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalDown(), getLeftBound(), getGoalDown(), CollisionSide.REVERSE));
+			
+			// |
+			addWall(new Wall(getRightBound(), getTopBound(), getRightBound(), getGoalTop(), CollisionSide.REVERSE));
+			addWall(new Wall(getRightBound(), getGoalDown(), getRightBound(), getDownBound(), CollisionSide.REVERSE));
+			// ]
+			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalTop(), getRightBound() + GOAL_DEPTH, getGoalDown(), CollisionSide.REVERSE));
+			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalTop(), getRightBound(), getGoalTop(), CollisionSide.NORMAL));
+			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalDown(), getRightBound(), getGoalDown(), CollisionSide.REVERSE));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -55,6 +87,17 @@ public class GameField implements VisualElement {
 		}
 	}
 
+	/**
+	 * Makes a wall to be part of the Game field. All elements that are part of a game field 
+	 * will be painted together with it.
+	 * @param e
+	 * @throws Exception 
+	 */
+	public void addWall(Wall e) throws Exception{
+		e.setField(this);
+		walls.add(e);
+	}
+	
 	private boolean overlap(String id, MovingElement e) {
 		for (Entry<String, MovingElement> iterable : elements.entrySet()) {
 			if(!iterable.getKey().equals(id) && e.collide(iterable.getValue())) return true;
@@ -69,14 +112,24 @@ public class GameField implements VisualElement {
 	@Override
 	public void draw(GC gc) {
 		Color old = gc.getForeground();
-		Color c = SWTResourceManager.getColor(10, 100, 0);
+		Color c = SWTResourceManager.getColor(10, 160, 0);
 		gc.setForeground(c);
-		gc.drawRectangle(realx(0), realy(0), realx(width - 1), realy(height - 1));
-		gc.drawLine(realx(width / 2), realy(0), realx(width / 2), realy(height - 1));
+		gc.drawLine(realx(width  / 2), realy(0), realx(width / 2), realy(height));
+		for (Wall wall : walls) {
+			wall.draw(gc);
+		}
 		for (Entry<String, MovingElement> e : elements.entrySet()) {
 			e.getValue().draw(gc);
 		}
 		gc.setForeground(old);
+	}
+
+	public double getGoalDown() {
+		return (height + GOAL_SIZE) / 2;
+	}
+
+	public double getGoalTop() {
+		return (height - GOAL_SIZE) / 2;
 	}
 
 	public double getScale_x() {
@@ -87,12 +140,12 @@ public class GameField implements VisualElement {
 		return scale_y;
 	}
 
-	public double getWidth() {
-		return width;
+	public double getFieldWidth() {
+		return getRightBound() - getLeftBound();
 	}
 
-	public double getHeight() {
-		return height;
+	public double getFieldHeight() {
+		return getDownBound() - getTopBound();
 	}
 
 	@Override
@@ -112,7 +165,7 @@ public class GameField implements VisualElement {
 		for (Entry<String, MovingElement> e : elements.entrySet()) {
 			MovingElement element = e.getValue();
 			element.calculatePosition(timeElapsed);
-			element.calculateCollisionWithField();
+			element.calculateCollisionWithWalls(walls);
 			collisors.remove(e);
 			for (Entry<String, MovingElement> e2 : collisors) {
 				element.calculateCollision(e2.getValue());
@@ -121,15 +174,15 @@ public class GameField implements VisualElement {
 	}
 
 	public double getLeftBound() {
-		return 1;
+		return GOAL_DEPTH;
 	}
 
 	public double getRightBound() {
-		return width - 1;
+		return width - 1 - GOAL_DEPTH;
 	}
 
 	public double getTopBound() {
-		return 1;
+		return 0;
 	}
 
 	public double getDownBound() {
@@ -141,7 +194,7 @@ public class GameField implements VisualElement {
 	}
 
 	public int relativeRealx(int x){
-		return x;	
+		return realx(getLeftBound() + x);	
 	}
 
 	public Vector getFriction(MovingElement e) {
