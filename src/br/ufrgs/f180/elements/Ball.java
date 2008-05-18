@@ -11,11 +11,15 @@ import com.cloudgarden.resource.SWTResourceManager;
 public class Ball extends MovingElement {
 	public static final double RADIUS = 5;
 	
-	public Ball(double x, double y){
+	public Ball(Cartesian position){
 		this.setMass(1);
 		this.setForce(new Vector(0, 0));
-		this.setVelocity(new Vector(800, 800));
-		this.setPosition(new Cartesian(x, y));
+		this.setVelocity(new Vector(-890, -880));
+		this.setPosition(position);
+	}
+
+	public Ball(double x, double y){
+		this(new Cartesian(x, y));
 	}
 
 	@Override

@@ -19,13 +19,18 @@ public class PlayerImpl implements Player {
 	}
 
 	@Override
-	public void login(String id, Double x, Double y) throws Exception {
-		Game.getInstance().addPlayer(id, x, y);
+	public void setPlayer(String teamId, String id, Double x, Double y) throws Exception {
+		Game.getInstance().addPlayer(teamId, id, x, y);
 	}
 
 	@Override
 	public void setPlayerForce(String id, Double x, Double y) throws Exception {
 		Game.getInstance().setPlayerForce(id, x, y);
+	}
+
+	@Override
+	public String login(String teamName) throws Exception {
+		return Game.getInstance().login(teamName);
 	}
 
 }

@@ -27,6 +27,7 @@ public class GameField implements VisualElement {
 	private static final double GRAVITY_ACCELERATION = 10;
 	private static final int GOAL_DEPTH = 20;
 	private static final int GOAL_SIZE = 100;
+	public static final String BALL_ELEMENT = "BALL";
 	private final double friction_coefficient;
 	private double scale_x;
 	private double scale_y;

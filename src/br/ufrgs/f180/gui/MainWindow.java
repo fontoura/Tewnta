@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Text;
 import br.ufrgs.f180.elements.GameField;
 import br.ufrgs.f180.elements.MovingElement;
 import br.ufrgs.f180.elements.Robot;
+import br.ufrgs.f180.elements.Robot.Team;
 import br.ufrgs.f180.server.Game;
 import br.ufrgs.f180.server.Server;
 
@@ -111,6 +112,11 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				buttonStartGameLData.top =  new FormAttachment(0, 1000, 94);
 				buttonStartGame.setLayoutData(buttonStartGameLData);
 				buttonStartGame.setText("Play");
+				buttonStartGame.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent evt) {
+						buttonStartGameWidgetSelected(evt);
+					}
+				});
 			}
 			{
 				labelScoreTeamB = new Label(this, SWT.NONE);
@@ -155,7 +161,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData labelTeamBLData = new FormData();
 				labelTeamBLData.width = 114;
 				labelTeamBLData.height = 13;
-				labelTeamBLData.left =  new FormAttachment(0, 1000, 843);
+				labelTeamBLData.left =  new FormAttachment(0, 1000, 841);
 				labelTeamBLData.top =  new FormAttachment(0, 1000, 16);
 				labelTeamB.setLayoutData(labelTeamBLData);
 				labelTeamB.setText("Team B");
@@ -179,7 +185,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				labelElapsedTimeCountLData.width = 114;
 				labelElapsedTimeCountLData.height = 22;
 				labelElapsedTimeCountLData.left =  new FormAttachment(0, 1000, 843);
-				labelElapsedTimeCountLData.top =  new FormAttachment(0, 1000, 66);
+				labelElapsedTimeCountLData.top =  new FormAttachment(0, 1000, 65);
 				labelElapsedTimeCount = new Label(this, SWT.NONE);
 				labelElapsedTimeCount.setLayoutData(labelElapsedTimeCountLData);
 				labelElapsedTimeCount.setFont(SWTResourceManager.getFont("Tahoma", 12, 0, false, false));
@@ -394,10 +400,39 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		if(invalidPlayers) updatePlayers();
 		
 		updateSelectedPlayer();
+		updateElapsedTime();
+		updateScores();
+		updateButtons();
 
 		if(FootballField != null) FootballField.redraw();
 	}
 	
+	/**
+	 * Update the buttons text that changes according to the game
+	 */
+	private void updateButtons() {
+		if(Game.getInstance().getGameRunning()){
+			buttonStartGame.setText("Pause");
+		}
+		else{
+			buttonStartGame.setText("Play");
+		}
+	}
+	
+	private void updateScores() {
+		String nameA = Game.getInstance().getNameTeamA();
+		labelTeamA.setText(nameA != null ? nameA : "Team A");
+		String nameB = Game.getInstance().getNameTeamB();
+		labelTeamB.setText(nameB != null ? nameB : "Team B");
+		labelScoreTeamA.setText(String.valueOf(Game.getInstance().getScoreTeamA()));
+		labelScoreTeamB.setText(String.valueOf(Game.getInstance().getScoreTeamB()));
+	}
+
+	private void updateElapsedTime() {
+		long time = Game.getInstance().getElapsedTime();
+		labelElapsedTimeCount.setText(String.format("%tM:%tS:%tL", time, time, time));
+	}
+
 	private void updatePlayers(){
 		listPlayers.removeAll();		
 		for (String id : playerNames) {
@@ -445,9 +480,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		this.field = field;
 	}
 
-	public void addRobot(String id, double x, double y) throws Exception {
+	public void addRobot(String id, double x, double y, Team team) throws Exception {
 		if(getField() != null){
-			Robot r = new Robot(x, y);
+			Robot r = new Robot(x, y, team);
 			getField().addElement(id, r);
 			if(playerNames.indexOf(id) < 0){
 				playerNames.add(id);
@@ -462,8 +497,11 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private void updateSelectedPlayer(){
 		if(listPlayers.getSelection().length == 1){
 			String selectedId = listPlayers.getSelection()[0];
-			MovingElement e = field.getElement(selectedId);
+			Robot e = (Robot) field.getElement(selectedId);
 			StringBuffer details = new StringBuffer();
+			details.append("Team: ");
+			details.append(Game.getInstance().getTeamName(e.getTeam()));
+			details.append("\n");
 			details.append("Velocity:\n");
 			details.append("  x:");
 			details.append(String.format("%.2f", e.getVelocity().getX()));
@@ -487,6 +525,16 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private void listPlayersWidgetSelected(SelectionEvent evt) {
 		System.out.println("listPlayers.widgetSelected, event="+evt);
 		updateSelectedPlayer();
+	}
+	
+	private void buttonStartGameWidgetSelected(SelectionEvent evt) {
+		System.out.println("buttonStartGame.widgetSelected, event="+evt);
+		if(Game.getInstance().getGameRunning()){
+			Game.getInstance().setGameRunning(false);
+		}
+		else{
+			Game.getInstance().setGameRunning(true);
+		}
 	}
 
 }
