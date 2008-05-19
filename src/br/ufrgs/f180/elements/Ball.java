@@ -14,7 +14,7 @@ public class Ball extends MovingElement {
 	public Ball(Cartesian position){
 		this.setMass(1);
 		this.setForce(new Vector(0, 0));
-		this.setVelocity(new Vector(-890, -880));
+		this.setVelocity(new Vector(0, 0));
 		this.setPosition(position);
 	}
 
