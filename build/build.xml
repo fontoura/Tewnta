@@ -1,0 +1,28 @@
+<project name="tewnta" default="jar" basedir="../">
+
+	<path id="classpath">
+		<fileset dir="${basedir}/lib">
+			<include name="**/*" />
+		</fileset>
+	</path>
+
+	<target name="compile">
+		<delete dir="${basedir}/dist" failonerror="false"/>
+		<mkdir dir="${basedir}/dist" />
+		<javac srcdir="${basedir}/src" destdir="${basedir}/dist" classpathref="classpath">
+			<include name="**/*.java" />
+		</javac>
+	</target>
+	
+	<target name="jar" depends="compile">
+		<mkdir dir="${basedir}/artifacts"/>
+		<jar destfile="${basedir}/artifacts/simulator.jar" manifest="${basedir}/MANIFEST.MF">
+			<fileset dir="${basedir}/dist">
+				<include name="**/*.*" />
+			</fileset>
+		</jar>
+		<copy file="${basedir}/Readme.txt" todir="${basedir}/artifacts" />
+		<delete dir="${basedir}/dist" />
+	</target>
+
+</project>
