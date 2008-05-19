@@ -22,6 +22,7 @@
 			</fileset>
 		</jar>
 		<copy file="${basedir}/Readme.txt" todir="${basedir}/artifacts" />
+		<copy file="${basedir}/simulator.cmd" todir="${basedir}/artifacts" />
 		<delete dir="${basedir}/dist" />
 	</target>
 
