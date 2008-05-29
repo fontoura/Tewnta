@@ -6,6 +6,7 @@ import br.ufrgs.f180.elements.Robot;
 import br.ufrgs.f180.elements.Robot.Team;
 import br.ufrgs.f180.gui.MainWindow;
 import br.ufrgs.f180.math.Vector;
+import br.ufrgs.f180.resources.GameProperties;
 
 /**
  * 
@@ -21,9 +22,6 @@ public class Game {
 	 */
 	public static final int GAME_LOOP_INTERVAL = 5;
 
-	private final double WIDTH = 600;
-	private final double HEIGHT = 400;
-	
 	/**
 	 * This is the visual container of this game.
 	 */
@@ -67,12 +65,12 @@ public class Game {
 	
 	public void setUp(MainWindow window) throws Exception{
 		this.mainWindow = window;
-		mainWindow.setField(new GameField(window.getFootballFieldCanvas(), WIDTH, HEIGHT));
+		mainWindow.setField(new GameField(window.getFootballFieldCanvas(), GameProperties.getDoubleValue("field.width") * 100d, GameProperties.getDoubleValue("field.height") * 100d));
 		setUpBall();
 	}
 	
 	public void addPlayer(String teamId, String id, double x, double y) throws Exception{
-		mainWindow.addRobot(id, x, y, getTeam(teamId));
+		mainWindow.addRobot(id, x, y, getTeam(teamId), GameProperties.getDoubleValue("robot.mass"), GameProperties.getDoubleValue("robot.radius") * 100d);
 	}
 	
 
@@ -124,7 +122,7 @@ public class Game {
 	 */
 	private void setUpBall() {
 		try {
-			mainWindow.getField().addElement(GameField.BALL_ELEMENT, new Ball(WIDTH / 2, HEIGHT / 2));
+			mainWindow.getField().addElement(GameField.BALL_ELEMENT, new Ball(GameProperties.getDoubleValue("field.width") * 100d / 2d, GameProperties.getDoubleValue("field.height") * 100d / 2d, GameProperties.getDoubleValue("ball.mass"), GameProperties.getDoubleValue("ball.radius") * 100d));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
