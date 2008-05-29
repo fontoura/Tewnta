@@ -9,7 +9,7 @@ import br.ufrgs.f180.math.Vector;
 import com.cloudgarden.resource.SWTResourceManager;
 
 public class Ball extends MovingElement {
-	public static final double RADIUS = 5;
+	public double radius;
 	
 	public Ball(Cartesian position){
 		this.setMass(1);
@@ -18,8 +18,10 @@ public class Ball extends MovingElement {
 		this.setPosition(position);
 	}
 
-	public Ball(double x, double y){
+	public Ball(double x, double y, double mass, double radius){
 		this(new Cartesian(x, y));
+		this.setMass(mass);
+		this.setRadius(radius);
 	}
 
 	@Override
@@ -27,7 +29,7 @@ public class Ball extends MovingElement {
 		Color old = gc.getForeground();
 		Color c = SWTResourceManager.getColor(255, 200, 0);
 		gc.setForeground(c);
-		gc.drawOval(realx(position.getX() - RADIUS), realy(position.getY() - RADIUS) , realx(RADIUS * 2), realy(RADIUS * 2) );
+		gc.drawOval(realx(position.getX() - radius), realy(position.getY() - radius) , realx(radius * 2), realy(radius * 2) );
 		gc.setForeground(old);
 		//int y1 = realy(position.getY());
 		//int y2 = getField().relativeRealy(realy(position.getY() + velocity.getY()));
@@ -46,7 +48,11 @@ public class Ball extends MovingElement {
 
 	@Override
 	public double getRadius() {
-		return RADIUS;
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
 	}
 	
 }

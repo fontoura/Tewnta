@@ -15,7 +15,7 @@ import com.cloudgarden.resource.SWTResourceManager;
  */
 public class Robot extends MovingElement {
 	
-	public static final double RADIUS = 20;
+	private double radius;
 
 	public enum Team{
 		A("A"),
@@ -51,8 +51,11 @@ public class Robot extends MovingElement {
 		
 	}
 	
-	public Robot(double x, double y, Team team){
+	public Robot(double x, double y, Team team, double mass, double radius){
 		this(new Cartesian(x, y), team);
+		this.setMass(mass);
+		this.setRadius(radius);
+		
 	}
 	
 	@Override
@@ -60,7 +63,7 @@ public class Robot extends MovingElement {
 		Color old = gc.getForeground();
 		Color c = Team.A.equals(team) ? SWTResourceManager.getColor(50, 50, 200) : SWTResourceManager.getColor(200, 50, 50);
 		gc.setForeground(c);
-		gc.drawOval(realx(position.getX() - RADIUS), realy(position.getY() - RADIUS), realx(RADIUS * 2), realy(RADIUS * 2));
+		gc.drawOval(realx(position.getX() - radius), realy(position.getY() - radius), realx(radius * 2), realy(radius * 2));
 		gc.setForeground(old);
 	}
 
@@ -76,7 +79,7 @@ public class Robot extends MovingElement {
 
 	@Override
 	public double getRadius() {
-		return RADIUS;
+		return radius;
 	}
 
 	public Team getTeam() {
@@ -85,5 +88,9 @@ public class Robot extends MovingElement {
 
 	public void setTeam(Team team) {
 		this.team = team;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
 	}
 }

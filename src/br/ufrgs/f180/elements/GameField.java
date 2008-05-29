@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Canvas;
 
 import br.ufrgs.f180.elements.Wall.CollisionSide;
 import br.ufrgs.f180.math.Vector;
+import br.ufrgs.f180.resources.GameProperties;
 
 import com.cloudgarden.resource.SWTResourceManager;
 
@@ -25,8 +26,8 @@ import com.cloudgarden.resource.SWTResourceManager;
  */
 public class GameField implements VisualElement {
 	private static final double GRAVITY_ACCELERATION = 10;
-	private static final int GOAL_DEPTH = 20;
-	private static final int GOAL_SIZE = 100;
+	private static final int GOAL_DEPTH = (int)(GameProperties.getDoubleValue("goal.depth") * 100);
+	private static final int GOAL_SIZE = (int)(GameProperties.getDoubleValue("goal.size") * 100);
 	public static final String BALL_ELEMENT = "BALL";
 	private final double friction_coefficient;
 	private double scale_x;

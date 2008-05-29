@@ -86,8 +86,10 @@ public abstract class MovingElement implements VisualElement {
 			this.setVelocity(fv1[0]);
 			element.setVelocity(fv1[1]);
 
+			//FIXME: This is a workaround to prevent objects of being glued to each other 
+			calculatePosition(0.005);
+			element.calculatePosition(0.005);		
 		}
-
 	}
 
 	private Vector[] calculateFinalVelocity(double m1, double m2, Vector v1,
@@ -148,11 +150,17 @@ public abstract class MovingElement implements VisualElement {
 				if(CollisionSide.NORMAL.equals(wall.getCollisionSide())){
 					if (position.getX() - getRadius() <= wall.getLeft()) {
 						velocity.setX(-velocity.getX());
+
+						//FIXME: This is a workaround to prevent objects of being glued to each other 
+						calculatePosition(0.01);
 					}
 				}
 				else{
 					if (position.getX() + getRadius() >= wall.getRight()) {
 						velocity.setX(-velocity.getX());
+
+						//FIXME: This is a workaround to prevent objects of being glued to each other 
+						calculatePosition(0.01);
 					}
 				}
 			}
@@ -161,14 +169,37 @@ public abstract class MovingElement implements VisualElement {
 				if(CollisionSide.NORMAL.equals(wall.getCollisionSide())){
 					if (position.getY() - getRadius() <= wall.getTop()) {
 						velocity.setY(-velocity.getY());
+
+						//FIXME: This is a workaround to prevent objects of being glued to each other 
+						calculatePosition(0.01);
 					}
 				}
 				else{
 					if (position.getY() + getRadius() >= wall.getDown()) {
 						velocity.setY(-velocity.getY());
+
+						//FIXME: This is a workaround to prevent objects of being glued to each other 
+						calculatePosition(0.01);
 					}
 				}
-			}	
+			}
+			//corners
+			Cartesian c1 = new Cartesian(wall.getLeft(), wall.getTop());
+			Cartesian c2 = new Cartesian(wall.getRight(), wall.getDown());
+			Vector vc1 = new Vector(this.position.getX() - c1.getX(), this.position.getY() - c1.getY());
+			Vector vc2 = new Vector(this.position.getX() - c2.getX(), this.position.getY() - c2.getY());
+			if(vc1.module() <= this.getRadius()){
+				velocity = calculateFinalVelocity(this.mass, Double.MAX_VALUE, this.getVelocity(), new Vector(0, 0), this.position, c1)[0];
+
+				//FIXME: This is a workaround to prevent objects of being glued to each other 
+				calculatePosition(0.01);
+			}
+			else if(vc2.module() <= this.getRadius()){
+				velocity = calculateFinalVelocity(this.mass, Double.MAX_VALUE, this.getVelocity(), new Vector(0, 0), this.position, c2)[0];
+
+				//FIXME: This is a workaround to prevent objects of being glued to each other 
+				calculatePosition(0.01);
+			}
 		}
 	}
 
