@@ -26,4 +26,7 @@
 		<delete dir="${basedir}/dist" />
 	</target>
 
+	<target name="javadoc">
+		<javadoc destdir="${basedir}/javadoc" sourcepath="${basedir}/src"/>
+	</target>
 </project>

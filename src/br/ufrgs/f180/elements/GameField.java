@@ -58,15 +58,15 @@ public class GameField implements VisualElement {
 			// [
 			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalTop(), getLeftBound() - GOAL_DEPTH, getGoalDown(), CollisionSide.NORMAL));
 			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalTop(), getLeftBound(), getGoalTop(), CollisionSide.NORMAL));
-			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalDown(), getLeftBound(), getGoalDown(), CollisionSide.REVERSE));
+			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalDown(), getLeftBound(), getGoalDown(), CollisionSide.NORMAL));
 			
 			// |
 			addWall(new Wall(getRightBound(), getTopBound(), getRightBound(), getGoalTop(), CollisionSide.REVERSE));
 			addWall(new Wall(getRightBound(), getGoalDown(), getRightBound(), getDownBound(), CollisionSide.REVERSE));
 			// ]
 			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalTop(), getRightBound() + GOAL_DEPTH, getGoalDown(), CollisionSide.REVERSE));
-			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalTop(), getRightBound(), getGoalTop(), CollisionSide.NORMAL));
-			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalDown(), getRightBound(), getGoalDown(), CollisionSide.REVERSE));
+			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalTop(), getRightBound(), getGoalTop(), CollisionSide.REVERSE));
+			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalDown(), getRightBound(), getGoalDown(), CollisionSide.NORMAL));
 			
 		} catch (Exception e) {
 			e.printStackTrace();

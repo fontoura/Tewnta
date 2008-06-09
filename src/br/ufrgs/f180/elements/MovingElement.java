@@ -7,6 +7,7 @@ import org.eclipse.swt.graphics.GC;
 import br.ufrgs.f180.elements.Wall.CollisionSide;
 import br.ufrgs.f180.math.Cartesian;
 import br.ufrgs.f180.math.Vector;
+import br.ufrgs.f180.server.Game;
 
 public abstract class MovingElement implements VisualElement {
 	protected GameField field;
@@ -87,8 +88,8 @@ public abstract class MovingElement implements VisualElement {
 			element.setVelocity(fv1[1]);
 
 			//FIXME: This is a workaround to prevent objects of being glued to each other 
-			calculatePosition(0.005);
-			element.calculatePosition(0.005);		
+			calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
+			element.calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);		
 		}
 	}
 
@@ -152,7 +153,7 @@ public abstract class MovingElement implements VisualElement {
 						velocity.setX(-velocity.getX());
 
 						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						calculatePosition(0.01);
+						calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
 					}
 				}
 				else{
@@ -160,7 +161,7 @@ public abstract class MovingElement implements VisualElement {
 						velocity.setX(-velocity.getX());
 
 						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						calculatePosition(0.01);
+						calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
 					}
 				}
 			}
@@ -171,7 +172,7 @@ public abstract class MovingElement implements VisualElement {
 						velocity.setY(-velocity.getY());
 
 						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						calculatePosition(0.01);
+						calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
 					}
 				}
 				else{
@@ -179,7 +180,7 @@ public abstract class MovingElement implements VisualElement {
 						velocity.setY(-velocity.getY());
 
 						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						calculatePosition(0.01);
+						calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
 					}
 				}
 			}
@@ -192,13 +193,13 @@ public abstract class MovingElement implements VisualElement {
 				velocity = calculateFinalVelocity(this.mass, Double.MAX_VALUE, this.getVelocity(), new Vector(0, 0), this.position, c1)[0];
 
 				//FIXME: This is a workaround to prevent objects of being glued to each other 
-				calculatePosition(0.01);
+				calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
 			}
 			else if(vc2.module() <= this.getRadius()){
 				velocity = calculateFinalVelocity(this.mass, Double.MAX_VALUE, this.getVelocity(), new Vector(0, 0), this.position, c2)[0];
 
 				//FIXME: This is a workaround to prevent objects of being glued to each other 
-				calculatePosition(0.01);
+				calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
 			}
 		}
 	}
