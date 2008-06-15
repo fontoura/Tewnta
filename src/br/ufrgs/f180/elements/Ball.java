@@ -3,6 +3,7 @@ package br.ufrgs.f180.elements;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
+
 import br.ufrgs.f180.math.Cartesian;
 import br.ufrgs.f180.math.Vector;
 
@@ -27,10 +28,10 @@ public class Ball extends MovingElement {
 	@Override
 	public void draw(GC gc) {
 		Color old = gc.getForeground();
-		Color c = SWTResourceManager.getColor(255, 200, 0);
-		gc.setForeground(c);
-		gc.drawOval(realx(position.getX() - radius), realy(position.getY() - radius) , realx(radius * 2), realy(radius * 2) );
-		gc.setForeground(old);
+		Color c = SWTResourceManager.getColor(255, 128, 0);
+		gc.setBackground(c);
+		gc.fillOval(realx(position.getX() - radius), realy(position.getY() - radius) , realx(radius * 2), realy(radius * 2) );
+		gc.setBackground(old);
 		//int y1 = realy(position.getY());
 		//int y2 = getField().relativeRealy(realy(position.getY() + velocity.getY()));
 		//gc.drawLine(realx(position.getX()), y1, realx(position.getX() + velocity.getX()), y2);
