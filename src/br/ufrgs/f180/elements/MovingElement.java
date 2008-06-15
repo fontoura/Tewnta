@@ -7,7 +7,7 @@ import org.eclipse.swt.graphics.GC;
 import br.ufrgs.f180.elements.Wall.CollisionSide;
 import br.ufrgs.f180.math.Cartesian;
 import br.ufrgs.f180.math.Vector;
-import br.ufrgs.f180.server.Game;
+import java.lang.Math;
 
 public abstract class MovingElement implements VisualElement {
 	protected GameField field;
@@ -88,8 +88,26 @@ public abstract class MovingElement implements VisualElement {
 			element.setVelocity(fv1[1]);
 
 			//FIXME: This is a workaround to prevent objects of being glued to each other 
-			calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
-			element.calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);		
+			//calculatePosition(0.005);
+			//element.calculatePosition(0.005);
+			
+			// calcula a distância entre o centros dos 2 elementos
+			double dist = Math.sqrt((element.position.getX() - this.position.getX())*(element.position.getX() - this.position.getX()) + (element.position.getY() - this.position.getY())*(element.position.getY() - this.position.getY()));
+			// caso a distância seja menor do que a soma dos raios
+			if (dist  < this.getRadius() + element.getRadius())
+			{
+				double x,y;
+				// calcula o vetor do elemento em questão até o elemento que este irá colidir
+				x = element.position.getX() - this.position.getX();
+				y = element.position.getY() - this.position.getY();
+				// normaliza o vetor
+				x /= dist; 
+				y /= dist;
+				// Coloca o elemento rente ao elemento em questão
+				x *= (this.getRadius() + element.getRadius());
+				y *= (this.getRadius() + element.getRadius());
+				element.setPosition(new Cartesian((int)(this.getPosition().getX() + x),(int)(this.getPosition().getY() + y)));
+			}
 		}
 	}
 
@@ -106,7 +124,7 @@ public abstract class MovingElement implements VisualElement {
 
 		double m21, dvx2, a, x21, y21, vx21, vy21, fy21, sign;
 
-		m21 = m2 / m1;
+		m21 = m2 / m1; 
 		x21 = x2 - x1;
 		y21 = y2 - y1;
 		vx21 = vx2 - vx1;
@@ -149,38 +167,67 @@ public abstract class MovingElement implements VisualElement {
 			//Vertical
 			if(wall.getLeft() == wall.getRight() && position.getY() >= wall.getTop() && position.getY() <= wall.getDown()){
 				if(CollisionSide.NORMAL.equals(wall.getCollisionSide())){
+					// caso o robô tenha atravessado ou esteja encostado
 					if (position.getX() - getRadius() <= wall.getLeft()) {
-						velocity.setX(-velocity.getX());
+						// inverte a velocidade caso ela seja negativa
+						if (velocity.getX() < 0)
+						{
+							velocity.setX(-velocity.getX());
+						}
+						// coloca o robô rente à parede
+						position.setX(wall.getLeft() + getRadius());
 
 						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
+						//calculatePosition(0.01);
 					}
 				}
 				else{
+					// caso o robô tenha atravessado ou esteja encostado
 					if (position.getX() + getRadius() >= wall.getRight()) {
-						velocity.setX(-velocity.getX());
+						// inverte a velocidade caso ela seja negativa
+						if (velocity.getX() > 0)
+						{
+							velocity.setX(-velocity.getX());
+						}
+						// coloca o robô rente à parede
+						position.setX(wall.getRight() - getRadius());
 
 						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
+						//calculatePosition(0.01);
 					}
 				}
 			}
 			//horizontal
 			if(wall.getTop() == wall.getDown() && position.getX() >= wall.getLeft() && position.getX() <= wall.getRight()){
 				if(CollisionSide.NORMAL.equals(wall.getCollisionSide())){
-					if (position.getY() - getRadius() <= wall.getTop()) {
-						velocity.setY(-velocity.getY());
+					// caso o robô tenha atravessado ou esteja encostado
+					if (position.getY() - getRadius() <= wall.getTop())
+					{
+						// inverte a velocidade caso ela seja negativa
+						if (velocity.getY() < 0)
+						{
+							velocity.setY(-velocity.getY());
+						}
+						// coloca o robô rente à parede
+						position.setY(wall.getTop() + getRadius());
 
 						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
+						//calculatePosition(0.01);
 					}
 				}
 				else{
+					// caso o robô tenha atravessado ou esteja encostado
 					if (position.getY() + getRadius() >= wall.getDown()) {
-						velocity.setY(-velocity.getY());
+						// inverte a velocidade caso ela seja negativa
+						if (velocity.getY() > 0)
+						{
+								velocity.setY(-velocity.getY());
+						}
+						// coloca o robô rente à parede
+						position.setY(wall.getDown() - getRadius());
 
 						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
+						//calculatePosition(0.01);
 					}
 				}
 			}
@@ -193,13 +240,13 @@ public abstract class MovingElement implements VisualElement {
 				velocity = calculateFinalVelocity(this.mass, Double.MAX_VALUE, this.getVelocity(), new Vector(0, 0), this.position, c1)[0];
 
 				//FIXME: This is a workaround to prevent objects of being glued to each other 
-				calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
+				calculatePosition(0.01);
 			}
 			else if(vc2.module() <= this.getRadius()){
 				velocity = calculateFinalVelocity(this.mass, Double.MAX_VALUE, this.getVelocity(), new Vector(0, 0), this.position, c2)[0];
 
 				//FIXME: This is a workaround to prevent objects of being glued to each other 
-				calculatePosition(Game.GAME_LOOP_INTERVAL / 1000);
+				calculatePosition(0.01);
 			}
 		}
 	}
