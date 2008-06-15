@@ -6,8 +6,8 @@
 |                                                                                               |
 |                                         Release 0.1                                           |
 |                                                                                               |
-|                       Copyright Gabriel Girardello Detoni, Brazil 2008.                       |
-|                                         Release 0.1                                           |
+|                       Author Gabriel Girardello Detoni, Brazil 2008.                       |
+|                             
 |   This project is hosted and distributed under Google Code terms and conditions.              |
 |   All feedback is welcome as well as new members. If you want to be a part of it check the    |
 | project home at http://code.google.com/p/tewnta .                                             |
