@@ -1,6 +1,7 @@
 package br.ufrgs.f180.math;
 
-public class Vector extends Cartesian{
+
+public class Vector extends Cartesian implements Cloneable{
 
 	public Vector(double x, double y) {
 		super(x, y);
@@ -74,5 +75,16 @@ public class Vector extends Cartesian{
 		double angle = Math.acos(Vector.cos(collision, v1));
 		return angle + sum;
 	}
+
+	public Vector rotate(double angle){
+
+		Matrix rot = new Matrix(Math.cos(angle), -Math.sin(angle), Math.sin(angle), Math.cos(angle));
+		
+		return rot.multiply(this);
+		
+	}
 	
+	public Vector clone(){
+		return new Vector(this.getX(), this.getY());
+	}
 }

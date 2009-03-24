@@ -15,6 +15,7 @@ import com.cloudgarden.resource.SWTResourceManager;
  */
 public class Robot extends MovingElement {
 	
+	private static final double SPOT_SIZE = 2.5;
 	private double radius;
 	private Vector frente;
 	private String id;
@@ -45,6 +46,9 @@ public class Robot extends MovingElement {
 	private Team team;
 	
 	public Robot(Cartesian position, Team team){
+		this.setAngle(0);
+		this.setRotationForce(0);
+		this.setRotationVelocity(0);
 		this.setMass(5);
 		this.setForce(new Vector(0, 0));
 		this.setVelocity(new Vector(0, 0));
@@ -67,51 +71,53 @@ public class Robot extends MovingElement {
 	@Override
 	public void draw(GC gc) {
 		Color old = gc.getBackground();
-		Color fundo = SWTResourceManager.getColor(0, 0, 0);
-		gc.setBackground(fundo);
+		Color backgroundColor = SWTResourceManager.getColor(0, 0, 0);
+		gc.setBackground(backgroundColor);
 		gc.fillOval(realx(position.getX() - radius), realy(position.getY() - radius), realx(radius * 2), realy(radius * 2));
-		Color centro = Team.A.equals(team) ? SWTResourceManager.getColor(0, 0, 200) : SWTResourceManager.getColor(200, 200, 0);
-		gc.setBackground(centro);
-		
-		double tamMarca = 2.5;
+		Color centerColor = Team.A.equals(team) ? SWTResourceManager.getColor(0, 0, 200) : SWTResourceManager.getColor(200, 200, 0);
 
-		gc.fillOval(realx(position.getX() - tamMarca ), realy(position.getY() - tamMarca), realx(tamMarca * 2), realy(tamMarca * 2));
+
+		drawSpot(gc, new Vector(0, 0), centerColor);
 		
 		if (Team.A.equals(team))
 		{
-			Color frente = SWTResourceManager.getColor(255, 0, 128);
-			gc.setBackground(frente);
-			gc.fillOval(realx(position.getX() + 5.5 - tamMarca), realy(position.getY() - tamMarca), realx(tamMarca * 2), realy(tamMarca * 2));
-			Color ciano = SWTResourceManager.getColor(128, 255, 255);
-			Color verdinho = SWTResourceManager.getColor(128, 255, 0);
+			Color foregroundColor = SWTResourceManager.getColor(255, 0, 128);
+			drawSpot(gc, new Vector(5.5, 0), foregroundColor);
+
+			Color cian = SWTResourceManager.getColor(128, 255, 255);
+			Color lt_green = SWTResourceManager.getColor(128, 255, 0);
 			
 			switch (getId())
 			{
 				case 1:
-					gc.setBackground(ciano);
-					gc.fillOval(realx(position.getX() - 5.5 - tamMarca), realy(position.getY() - tamMarca), realx(tamMarca * 2), realy(tamMarca * 2));
+					drawSpot(gc, new Vector(-5.5, 0), cian);
 					break;
 				case 2:
-					gc.setBackground(verdinho);
-					gc.fillOval(realx(position.getX() - 5.5 - tamMarca), realy(position.getY() - tamMarca), realx(tamMarca * 2), realy(tamMarca * 2));
+					drawSpot(gc, new Vector(-5.5, 0), lt_green);
 					break;					
 				case 3:
-					gc.setBackground(ciano);
-					gc.fillOval(realx(position.getX() - tamMarca), realy(position.getY() - 5.5 - tamMarca), realx(tamMarca * 2), realy(tamMarca * 2));
+					drawSpot(gc, new Vector(0, -5.5), cian);
 					break;					
 				case 4:
-					gc.setBackground(verdinho);
-					gc.fillOval(realx(position.getX() - tamMarca), realy(position.getY() - 5.5 - tamMarca), realx(tamMarca * 2), realy(tamMarca * 2));
+					drawSpot(gc, new Vector(0, -5.5), lt_green);
 					break;									
 			}
+
 		}
-		
-		
-		
 		gc.setBackground(old);
 		
 	}
 
+	private void drawSpot(GC gc, Vector spotPositionAbsolute, Color color){
+		
+		//Rotate the spot to the actual angle
+		Vector spotPosition = spotPositionAbsolute.rotate(this.angle);
+		
+		Color old = gc.getBackground();
+		gc.setBackground(color);
+		gc.fillOval(realx(position.getX()+ spotPosition.getX() - SPOT_SIZE), realy(position.getY() + spotPosition.getY() - SPOT_SIZE), realx(SPOT_SIZE * 2), realy(SPOT_SIZE * 2));
+		gc.setBackground(old);
+	}
 	
 	@Override
 	public int realx(double x) {

@@ -209,4 +209,14 @@ public class Game {
 	public Object getTeamName(Team team) {
 		return Team.A.equals(team) ? nameTeamA : nameTeamB;
 	}
+
+	public void setPlayerRotation(String id, Double force) throws Exception {
+		if(mainWindow.getField() != null){
+			Robot r = (Robot) mainWindow.getField().getElement(id);
+			r.setRotationForce(force);
+		}
+		else {
+			throw new Exception("Cannot get element. Configure the mainWindow.getField() first");
+		}
+	}
 }

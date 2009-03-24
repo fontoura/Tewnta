@@ -15,6 +15,33 @@ public abstract class MovingElement implements VisualElement {
 	protected Vector velocity;
 	protected Vector force;
 	protected double mass;
+	protected double angle;
+	protected double rotationVelocity;
+	public double getRotationVelocity() {
+		return rotationVelocity;
+	}
+
+	public void setRotationVelocity(double rotationVelocity) {
+		this.rotationVelocity = rotationVelocity;
+	}
+
+	protected double rotationForce;
+
+	public double getAngle() {
+		return angle;
+	}
+
+	public void setAngle(double angle) {
+		this.angle = angle;
+	}
+
+	public double getRotationForce() {
+		return rotationForce;
+	}
+
+	public void setRotationForce(double rotationForce) {
+		this.rotationForce = rotationForce;
+	}
 
 	public Cartesian getPosition() {
 		return position;
@@ -36,6 +63,11 @@ public abstract class MovingElement implements VisualElement {
 		// a = F / m
 		Vector v = getField().getFriction(this).sum(force);
 		return v.divide(mass);
+	}
+
+	public double getRotationAcceleration() {
+		// a = F / m
+		return rotationForce / mass;
 	}
 
 	public void setForce(Vector force) {
@@ -67,10 +99,14 @@ public abstract class MovingElement implements VisualElement {
 				+ (getAcceleration().getX() * timeElapsed));
 		velocity.setY(velocity.getY()
 				+ (getAcceleration().getY() * timeElapsed));
-
+		
 		// updates the position
 		position.setX(position.getX() + velocity.getX() * timeElapsed);
 		position.setY(position.getY() + velocity.getY() * timeElapsed);
+		
+		//Calculate the new angle
+		rotationVelocity = rotationVelocity + getRotationAcceleration() * timeElapsed;
+		angle = angle + rotationVelocity * timeElapsed;
 	}
 
 	public void calculateCollision(MovingElement element) {

@@ -33,4 +33,9 @@ public class PlayerImpl implements Player {
 		return Game.getInstance().login(teamName);
 	}
 
+	@Override
+	public void setPlayerRotation(String id, Double force) throws Exception {
+		Game.getInstance().setPlayerRotation(id, force);
+	}
+
 }
