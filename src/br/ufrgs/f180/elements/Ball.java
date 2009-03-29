@@ -4,7 +4,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
 
-import br.ufrgs.f180.math.Cartesian;
+import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
 
 import com.cloudgarden.resource.SWTResourceManager;
@@ -12,7 +12,7 @@ import com.cloudgarden.resource.SWTResourceManager;
 public class Ball extends MovingElement {
 	public double radius;
 	
-	public Ball(Cartesian position){
+	public Ball(Point position){
 		this.setMass(1);
 		this.setForce(new Vector(0, 0));
 		this.setVelocity(new Vector(0, 0));
@@ -20,7 +20,7 @@ public class Ball extends MovingElement {
 	}
 
 	public Ball(double x, double y, double mass, double radius){
-		this(new Cartesian(x, y));
+		this(new Point(x, y));
 		this.setMass(mass);
 		this.setRadius(radius);
 	}

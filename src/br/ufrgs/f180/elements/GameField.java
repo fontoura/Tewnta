@@ -26,8 +26,11 @@ import com.cloudgarden.resource.SWTResourceManager;
  */
 public class GameField implements VisualElement {
 	private static final double GRAVITY_ACCELERATION = 10;
-	private static final int GOAL_DEPTH = (int)(GameProperties.getDoubleValue("goal.depth") * 100);
-	private static final int GOAL_SIZE = (int)(GameProperties.getDoubleValue("goal.size") * 100);
+	private static final double FIELD_BORDER = (double)(GameProperties.getDoubleValue("field.border") * 100);
+	private static final double FIELD_CENTERCIRCLE_RADIUS = (double)(GameProperties.getDoubleValue("field.centerCircle.radius") * 100);
+	private static final double FIELD_GOALAREA_RADIUS = (double)(GameProperties.getDoubleValue("field.goalArea.radius") * 100);
+	private static final double GOAL_DEPTH = (double)(GameProperties.getDoubleValue("goal.depth") * 100);
+	private static final double GOAL_SIZE = (double)(GameProperties.getDoubleValue("goal.size") * 100);
 	public static final String BALL_ELEMENT = "BALL";
 	private final double friction_coefficient;
 	private double scale_x;
@@ -39,8 +42,8 @@ public class GameField implements VisualElement {
 	private Map<String, MovingElement> elements = new HashMap<String, MovingElement>(); 
 	
 	public GameField(Canvas canvas, double width, double height){
-		this.width = width;
-		this.height = height;
+		this.width = width - 1;
+		this.height = height - 1;
 		this.scale_x = ((double) ((FormData) canvas.getLayoutData()).width) / width;
 		this.scale_y = ((double) ((FormData) canvas.getLayoutData()).height) / height;
 		this.friction_coefficient = 10;
@@ -50,23 +53,22 @@ public class GameField implements VisualElement {
 	private void createWalls() {
 		try {
 			// -
-			addWall(new Wall(getLeftBound(), getTopBound(), getRightBound(), getTopBound(), CollisionSide.NORMAL));
-			addWall(new Wall(getLeftBound(), getDownBound(), getRightBound(), getDownBound(), CollisionSide.REVERSE));
-			// |
-			addWall(new Wall(getLeftBound(), getTopBound(), getLeftBound(), getGoalTop(), CollisionSide.NORMAL));
-			addWall(new Wall(getLeftBound(), getGoalDown(), getLeftBound(), getDownBound(), CollisionSide.NORMAL));
-			// [
-			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalTop(), getLeftBound() - GOAL_DEPTH, getGoalDown(), CollisionSide.NORMAL));
-			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalTop(), getLeftBound(), getGoalTop(), CollisionSide.NORMAL));
-			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalDown(), getLeftBound(), getGoalDown(), CollisionSide.REVERSE));
+			addWall(new Wall(0, 0, width, 0, CollisionSide.NORMAL));
+			addWall(new Wall(0, height, width, height, CollisionSide.REVERSE));
 			
 			// |
-			addWall(new Wall(getRightBound(), getTopBound(), getRightBound(), getGoalTop(), CollisionSide.REVERSE));
-			addWall(new Wall(getRightBound(), getGoalDown(), getRightBound(), getDownBound(), CollisionSide.REVERSE));
+			addWall(new Wall(0, 0, 0, height, CollisionSide.NORMAL));
+			// [
+			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalTop(), getLeftBound() - GOAL_DEPTH, getGoalDown(), CollisionSide.BOTH));
+			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalTop(), getLeftBound(), getGoalTop(), CollisionSide.BOTH));
+			addWall(new Wall(getLeftBound() - GOAL_DEPTH, getGoalDown(), getLeftBound(), getGoalDown(), CollisionSide.BOTH));
+			
+			// |
+			addWall(new Wall(width, 0, width, height, CollisionSide.REVERSE));
 			// ]
-			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalTop(), getRightBound() + GOAL_DEPTH, getGoalDown(), CollisionSide.REVERSE));
-			addWall(new Wall(getRightBound(), getGoalTop(), getRightBound() + GOAL_DEPTH, getGoalTop(), CollisionSide.NORMAL));
-			addWall(new Wall(getRightBound(), getGoalDown(), getRightBound() + GOAL_DEPTH, getGoalDown(), CollisionSide.REVERSE));
+			addWall(new Wall(getRightBound() + GOAL_DEPTH, getGoalTop(), getRightBound() + GOAL_DEPTH, getGoalDown(), CollisionSide.BOTH));
+			addWall(new Wall(getRightBound(), getGoalTop(), getRightBound() + GOAL_DEPTH, getGoalTop(), CollisionSide.BOTH));
+			addWall(new Wall(getRightBound(), getGoalDown(), getRightBound() + GOAL_DEPTH, getGoalDown(), CollisionSide.BOTH));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -114,9 +116,19 @@ public class GameField implements VisualElement {
 	@Override
 	public void draw(GC gc) {
 		Color old = gc.getForeground();
-		Color c = SWTResourceManager.getColor(10, 160, 0);
+		Color c = SWTResourceManager.getColor(150, 150, 150);
 		gc.setForeground(c);
-		gc.drawLine(realx(width  / 2), realy(0), realx(width / 2), realy(height));
+		//Draw middle line and middle field
+		gc.drawLine(realx(getCenterX()), realy(getTopBound()), realx(getCenterX()), realy(getDownBound()));
+		gc.drawOval(realx(getCenterX() - FIELD_CENTERCIRCLE_RADIUS), realy(getCenterY() - FIELD_CENTERCIRCLE_RADIUS), realx(FIELD_CENTERCIRCLE_RADIUS * 2), realy(FIELD_CENTERCIRCLE_RADIUS * 2));
+
+		//Draw borders
+		gc.drawRectangle(realx(getLeftBound()), realy(getTopBound()), realx(getFieldWidth()), realy(getFieldHeight()));
+
+		//Draw goal areas
+		gc.drawArc(realx(getLeftBound() - FIELD_GOALAREA_RADIUS), realy(getCenterY() - FIELD_GOALAREA_RADIUS), realx(FIELD_GOALAREA_RADIUS * 2), realy(FIELD_GOALAREA_RADIUS * 2), 270, 180);
+		gc.drawArc(realx(getRightBound() - FIELD_GOALAREA_RADIUS), realy(getCenterY() - FIELD_GOALAREA_RADIUS), realx(FIELD_GOALAREA_RADIUS * 2), realy(FIELD_GOALAREA_RADIUS * 2), 90, 180);
+
 		for (Wall wall : walls) {
 			wall.draw(gc);
 		}
@@ -124,6 +136,14 @@ public class GameField implements VisualElement {
 			e.getValue().draw(gc);
 		}
 		gc.setForeground(old);
+	}
+
+	private double getCenterX() {
+		return width / 2;
+	}
+
+	private double getCenterY() {
+		return height / 2;
 	}
 
 	public double getGoalDown() {
@@ -176,19 +196,19 @@ public class GameField implements VisualElement {
 	}
 
 	public double getLeftBound() {
-		return GOAL_DEPTH;
+		return FIELD_BORDER;
 	}
 
 	public double getRightBound() {
-		return width - 1 - GOAL_DEPTH;
+		return width - 1 - FIELD_BORDER;
 	}
 
 	public double getTopBound() {
-		return 0;
+		return FIELD_BORDER;
 	}
 
 	public double getDownBound() {
-		return height - 1;
+		return height - 1 - FIELD_BORDER;
 	}
 	
 	public int relativeRealy(int y){

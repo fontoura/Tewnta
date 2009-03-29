@@ -1,10 +1,10 @@
 package br.ufrgs.f180.math;
 
-public class Cartesian {
+public class Point {
 	protected Double x;
 	protected Double y;
 
-	public Cartesian(double x, double y){
+	public Point(double x, double y){
 		this.x = Double.isNaN(x) ? 0 : x;
 		this.y = Double.isNaN(y) ? 0 : y;
 	}

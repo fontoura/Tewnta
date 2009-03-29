@@ -309,7 +309,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FootballFieldLData.left =  new FormAttachment(0, 1000, 0);
 				FootballFieldLData.top =  new FormAttachment(0, 1000, 0);
 				FootballField.setLayoutData(FootballFieldLData);
-				FootballField.setBackground(SWTResourceManager.getColor(0, 100, 0));
+				FootballField.setBackground(SWTResourceManager.getColor(0, 80, 0));
 				FootballField.setForeground(SWTResourceManager.getColor(0, 0, 0));
 				FootballField.setSize(860, 625);
 				FootballField.addPaintListener(new PaintListener() {

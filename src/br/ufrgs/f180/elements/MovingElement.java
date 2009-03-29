@@ -4,14 +4,12 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.GC;
 
-import br.ufrgs.f180.elements.Wall.CollisionSide;
-import br.ufrgs.f180.math.Cartesian;
+import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
-import java.lang.Math;
 
 public abstract class MovingElement implements VisualElement {
 	protected GameField field;
-	protected Cartesian position;
+	protected Point position;
 	protected Vector velocity;
 	protected Vector force;
 	protected double mass;
@@ -43,11 +41,11 @@ public abstract class MovingElement implements VisualElement {
 		this.rotationForce = rotationForce;
 	}
 
-	public Cartesian getPosition() {
+	public Point getPosition() {
 		return position;
 	}
 
-	public void setPosition(Cartesian position) {
+	public void setPosition(Point position) {
 		this.position = position;
 	}
 
@@ -123,10 +121,7 @@ public abstract class MovingElement implements VisualElement {
 			this.setVelocity(fv1[0]);
 			element.setVelocity(fv1[1]);
 
-			//FIXME: This is a workaround to prevent objects of being glued to each other 
-			//calculatePosition(0.005);
-			//element.calculatePosition(0.005);
-			
+		
 			// calcula a distância entre o centros dos 2 elementos
 			double dist = Math.sqrt((element.position.getX() - this.position.getX())*(element.position.getX() - this.position.getX()) + (element.position.getY() - this.position.getY())*(element.position.getY() - this.position.getY()));
 			// caso a distância seja menor do que a soma dos raios
@@ -142,13 +137,13 @@ public abstract class MovingElement implements VisualElement {
 				// Coloca o elemento rente ao elemento em questão
 				x *= (this.getRadius() + element.getRadius());
 				y *= (this.getRadius() + element.getRadius());
-				element.setPosition(new Cartesian((int)(this.getPosition().getX() + x),(int)(this.getPosition().getY() + y)));
+				element.setPosition(new Point((int)(this.getPosition().getX() + x),(int)(this.getPosition().getY() + y)));
 			}
 		}
 	}
 
 	private Vector[] calculateFinalVelocity(double m1, double m2, Vector v1,
-			Vector v2, Cartesian p1, Cartesian p2) {
+			Vector v2, Point p1, Point p2) {
 		double x1 = p1.getX();
 		double y1 = p1.getY();
 		double x2 = p2.getX();
@@ -200,90 +195,21 @@ public abstract class MovingElement implements VisualElement {
 	 */
 	public void calculateCollisionWithWalls(List<Wall> walls) {
 		for (Wall wall : walls) {
-			//Vertical
-			if(wall.getLeft() == wall.getRight() && position.getY() >= wall.getTop() && position.getY() <= wall.getDown()){
-				if(CollisionSide.NORMAL.equals(wall.getCollisionSide())){
-					// caso o robô tenha atravessado ou esteja encostado
-					if (position.getX() - getRadius() <= wall.getLeft()) {
-						// inverte a velocidade caso ela seja negativa
-						if (velocity.getX() < 0)
-						{
-							velocity.setX(-velocity.getX());
-						}
-						// coloca o robô rente à parede
-						position.setX(wall.getLeft() + getRadius());
 
-						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						//calculatePosition(0.01);
-					}
-				}
-				else{
-					// caso o robô tenha atravessado ou esteja encostado
-					if (position.getX() + getRadius() >= wall.getRight()) {
-						// inverte a velocidade caso ela seja negativa
-						if (velocity.getX() > 0)
-						{
-							velocity.setX(-velocity.getX());
-						}
-						// coloca o robô rente à parede
-						position.setX(wall.getRight() - getRadius());
-
-						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						//calculatePosition(0.01);
-					}
-				}
+			//Gets the perpendicular projection of the point into the wall
+			Point projection = wall.perpendicularProjection(this.position);
+			//Verify if it is possible to collide
+			if(projection.getX() >= wall.getX0() && projection.getX() <= wall.getX1() && projection.getY() >= wall.getY0() && projection.getY() <= wall.getY1()){
+				WallCollisionPoint e = new WallCollisionPoint(projection);
+				calculateCollision(e);				
 			}
-			//horizontal
-			if(wall.getTop() == wall.getDown() && position.getX() >= wall.getLeft() && position.getX() <= wall.getRight()){
-				if(CollisionSide.NORMAL.equals(wall.getCollisionSide())){
-					// caso o robô tenha atravessado ou esteja encostado
-					if (position.getY() - getRadius() <= wall.getTop())
-					{
-						// inverte a velocidade caso ela seja negativa
-						if (velocity.getY() < 0)
-						{
-							velocity.setY(-velocity.getY());
-						}
-						// coloca o robô rente à parede
-						position.setY(wall.getTop() + getRadius());
-
-						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						//calculatePosition(0.01);
-					}
-				}
-				else{
-					// caso o robô tenha atravessado ou esteja encostado
-					if (position.getY() + getRadius() >= wall.getDown()) {
-						// inverte a velocidade caso ela seja negativa
-						if (velocity.getY() > 0)
-						{
-								velocity.setY(-velocity.getY());
-						}
-						// coloca o robô rente à parede
-						position.setY(wall.getDown() - getRadius());
-
-						//FIXME: This is a workaround to prevent objects of being glued to each other 
-						//calculatePosition(0.01);
-					}
-				}
-			}
-			//corners
-			Cartesian c1 = new Cartesian(wall.getLeft(), wall.getTop());
-			Cartesian c2 = new Cartesian(wall.getRight(), wall.getDown());
-			Vector vc1 = new Vector(this.position.getX() - c1.getX(), this.position.getY() - c1.getY());
-			Vector vc2 = new Vector(this.position.getX() - c2.getX(), this.position.getY() - c2.getY());
-			if(vc1.module() <= this.getRadius()){
-				velocity = calculateFinalVelocity(this.mass, Double.MAX_VALUE, this.getVelocity(), new Vector(0, 0), this.position, c1)[0];
-
-				//FIXME: This is a workaround to prevent objects of being glued to each other 
-				calculatePosition(0.01);
-			}
-			else if(vc2.module() <= this.getRadius()){
-				velocity = calculateFinalVelocity(this.mass, Double.MAX_VALUE, this.getVelocity(), new Vector(0, 0), this.position, c2)[0];
-
-				//FIXME: This is a workaround to prevent objects of being glued to each other 
-				calculatePosition(0.01);
-			}
+			
+			//Check the corners
+			WallCollisionPoint e = new WallCollisionPoint(new Point(wall.getX0(), wall.getY0()));
+			calculateCollision(e);				
+			e = new WallCollisionPoint(new Point(wall.getX1(), wall.getY1()));
+			calculateCollision(e);				
+			
 		}
 	}
 

@@ -1,7 +1,7 @@
 package br.ufrgs.f180.math;
 
 
-public class Vector extends Cartesian implements Cloneable{
+public class Vector extends Point implements Cloneable{
 
 	public Vector(double x, double y) {
 		super(x, y);
@@ -44,7 +44,7 @@ public class Vector extends Cartesian implements Cloneable{
 	 * @param center
 	 * @return
 	 */
-	public Vector(Cartesian point1, Cartesian point2){
+	public Vector(Point point1, Point point2){
 		super(point2.getX() - point1.getX(), point2.getY() - point1.getY());
 	}
 	

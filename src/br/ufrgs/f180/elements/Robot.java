@@ -3,7 +3,7 @@ package br.ufrgs.f180.elements;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
-import br.ufrgs.f180.math.Cartesian;
+import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
 
 import com.cloudgarden.resource.SWTResourceManager;
@@ -45,7 +45,7 @@ public class Robot extends MovingElement {
 	}
 	private Team team;
 	
-	public Robot(Cartesian position, Team team){
+	public Robot(Point position, Team team){
 		this.setAngle(0);
 		this.setRotationForce(0);
 		this.setRotationVelocity(0);
@@ -61,7 +61,7 @@ public class Robot extends MovingElement {
 	
 
 	public Robot(double x, double y, Team team, double mass, double radius, String id){
-		this(new Cartesian(x, y), team);
+		this(new Point(x, y), team);
 		this.setMass(mass);
 		this.setRadius(radius);
 		this.setId(id);
