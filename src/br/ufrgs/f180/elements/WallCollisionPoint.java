@@ -24,7 +24,7 @@ public class WallCollisionPoint extends MovingElement {
 
 	@Override
 	public double getRadius() {
-		return 1;
+		return 0;
 	}
 
 	@Override
