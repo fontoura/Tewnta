@@ -129,15 +129,15 @@ public abstract class MovingElement implements VisualElement {
 			{
 				double x,y;
 				// calcula o vetor do elemento em questão até o elemento que este irá colidir
-				x = element.position.getX() - this.position.getX();
-				y = element.position.getY() - this.position.getY();
+				x = this.position.getX() - element.position.getX();
+				y = this.position.getY() - element.position.getY();
 				// normaliza o vetor
 				x /= dist; 
 				y /= dist;
 				// Coloca o elemento rente ao elemento em questão
 				x *= (this.getRadius() + element.getRadius());
 				y *= (this.getRadius() + element.getRadius());
-				element.setPosition(new Point((int)(this.getPosition().getX() + x),(int)(this.getPosition().getY() + y)));
+				this.setPosition(new Point((int)(element.getPosition().getX() + x),(int)(element.getPosition().getY() + y)));
 			}
 		}
 	}
