@@ -15,6 +15,7 @@
 		<copy todir="${basedir}/dist">
 			<fileset dir="${basedir}/src">
 				<include name="*.properties" />
+				<include name="*.bmp" />
 			</fileset>
 		</copy>
 	</target>
