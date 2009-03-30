@@ -382,6 +382,14 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 						{
 							aboutMenuItem = new MenuItem(helpMenu, SWT.CASCADE);
 							aboutMenuItem.setText("About");
+							aboutMenuItem.addSelectionListener(new SelectionAdapter() {
+								public void widgetSelected(SelectionEvent evt) {
+									System.out.println("aboutMenuItem.widgetSelected, event="+evt);
+
+									AboutDialog about = new AboutDialog(getShell(), SWT.DIALOG_TRIM);
+									about.open();
+								}
+							});
 						}
 						helpMenuItem.setMenu(helpMenu);
 					}
@@ -407,6 +415,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		final MainWindow inst = new MainWindow(shell, SWT.NULL);
 		Point size = inst.getSize();
 		shell.setLayout(new FillLayout());
+		shell.setText("Tewnta Robocup F-180 Simulator");
+		shell.setImage(SWTResourceManager.getImage("icon.bmp"));
 		shell.layout();
 		if(size.x == 0 && size.y == 0) {
 			inst.pack();
