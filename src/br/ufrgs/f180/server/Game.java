@@ -11,12 +11,12 @@ import br.ufrgs.f180.resources.GameProperties;
 /**
  * 
  * @author Gabriel Detoni
- *
+ * 
  */
 public class Game {
 
 	private static Game instance = null;
-	
+
 	/**
 	 * Time interval on which the elements state will be updated in ms
 	 */
@@ -26,7 +26,7 @@ public class Game {
 	 * This is the visual container of this game.
 	 */
 	private MainWindow mainWindow;
-	
+
 	/**
 	 * Game state variables
 	 */
@@ -36,17 +36,18 @@ public class Game {
 	private int scoreTeamA;
 	private int scoreTeamB;
 	private long elapsedTime;
-	
-	protected Game(){};
 
-	public static Game getInstance(){
-		if(instance == null){
+	protected Game() {
+	};
+
+	public static Game getInstance() {
+		if (instance == null) {
 			instance = new Game();
 		}
 		return instance;
 	}
 
-	public void resetGame(){
+	public void resetGame() {
 		gameRunning = false;
 		nameTeamA = null;
 		nameTeamB = null;
@@ -54,49 +55,55 @@ public class Game {
 		scoreTeamB = 0;
 		elapsedTime = 0;
 	}
-	
-	public void startGame(){
+
+	public void startGame() {
 		gameRunning = true;
 	}
 
-	public void pauseGame(){
+	public void pauseGame() {
 		gameRunning = false;
 	}
-	
-	public void setUp(MainWindow window) throws Exception{
+
+	public void setUp(MainWindow window) throws Exception {
 		this.mainWindow = window;
-		mainWindow.setField(new GameField(window.getFootballFieldCanvas(), GameProperties.getDoubleValue("field.width") * 100d, GameProperties.getDoubleValue("field.height") * 100d));
+		mainWindow.setField(new GameField(window.getFootballFieldCanvas(),
+				GameProperties.getDoubleValue("field.width") * 100d,
+				GameProperties.getDoubleValue("field.height") * 100d));
 		setUpBall();
 	}
-	
-	public void addPlayer(String teamId, String id, double x, double y) throws Exception{
-		mainWindow.addRobot(id, x, y, getTeam(teamId), GameProperties.getDoubleValue("robot.mass"), GameProperties.getDoubleValue("robot.radius") * 100d);
+
+	public void addPlayer(String teamId, String id, double x, double y)
+			throws Exception {
+		mainWindow.addRobot(id, x, y, getTeam(teamId), GameProperties
+				.getDoubleValue("robot.mass"), GameProperties
+				.getDoubleValue("robot.radius") * 100d);
 	}
-	
 
 	private Team getTeam(String teamId) {
 		return Team.valueOf(teamId);
 	}
 
-	public void setPlayerForce(String id, double x, double y) throws Exception{
-		if(mainWindow.getField() != null){
+	public void setPlayerForce(String id, double x, double y) throws Exception {
+		if (mainWindow.getField() != null) {
 			Robot r = (Robot) mainWindow.getField().getElement(id);
 			r.setForce(new Vector(x, y));
-		}
-		else {
-			throw new Exception("Cannot get element. Configure the mainWindow.getField() first");
+		} else {
+			throw new Exception(
+					"Cannot get element. Configure the mainWindow.getField() first");
 		}
 	}
-	
+
 	/**
-	 * This is the method that updates the game state due a given time in milliseconds.
-	 * Usually invoked in the main loop.
-	 * @param d time in ms
+	 * This is the method that updates the game state due a given time in
+	 * milliseconds. Usually invoked in the main loop.
+	 * 
+	 * @param d
+	 *            time in ms
 	 */
 	public void updateState(double d) {
-		if(gameRunning){
+		if (gameRunning) {
 			elapsedTime += d * 1000;
-			if(mainWindow.getField() != null){
+			if (mainWindow.getField() != null) {
 				mainWindow.getField().updateElementsState(d);
 				ScoredGoal s = goalScored();
 				switch (s) {
@@ -116,34 +123,48 @@ public class Game {
 			}
 		}
 	}
-	
+
 	/**
 	 * Put the Ball back into its initial position
 	 */
 	private void setUpBall() {
 		try {
-			mainWindow.getField().addElement(GameField.BALL_ELEMENT, new Ball(GameProperties.getDoubleValue("field.width") * 100d / 2d, GameProperties.getDoubleValue("field.height") * 100d / 2d, GameProperties.getDoubleValue("ball.mass"), GameProperties.getDoubleValue("ball.radius") * 100d));
+			mainWindow
+					.getField()
+					.addElement(
+							GameField.BALL_ELEMENT,
+							new Ball(
+									GameProperties
+											.getDoubleValue("field.width") * 100d / 2d,
+									GameProperties
+											.getDoubleValue("field.height") * 100d / 2d,
+									GameProperties.getDoubleValue("ball.mass"),
+									GameProperties
+											.getDoubleValue("ball.radius") * 100d));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public enum ScoredGoal {
-		NONE,
-		SCORED_LEFT,
-		SCORED_RIGHT
+		NONE, SCORED_LEFT, SCORED_RIGHT
 	};
-	
+
 	public ScoredGoal goalScored() {
-		
-		Ball b = (Ball)mainWindow.getField().getElement(GameField.BALL_ELEMENT);
+
+		Ball b = (Ball) mainWindow.getField()
+				.getElement(GameField.BALL_ELEMENT);
 		double left = b.getPosition().getX() - b.getRadius();
 		double right = b.getPosition().getX() + b.getRadius();
-		if(left >= mainWindow.getField().getRightBound()){
-			return ScoredGoal.SCORED_RIGHT;
-		}
-		if(right <= mainWindow.getField().getLeftBound()){
-			return ScoredGoal.SCORED_LEFT;
+		if (b.getPosition().getY() >= mainWindow.getField().getGoalTop()
+				&& b.getPosition().getY() <= mainWindow.getField()
+						.getGoalDown()) {
+			if (left >= mainWindow.getField().getRightBound()) {
+				return ScoredGoal.SCORED_RIGHT;
+			}
+			if (right <= mainWindow.getField().getLeftBound()) {
+				return ScoredGoal.SCORED_LEFT;
+			}
 		}
 		return ScoredGoal.NONE;
 	}
@@ -184,16 +205,14 @@ public class Game {
 		return gameRunning;
 	}
 
-	public String login(String teamName) throws Exception{
-		if(nameTeamA == null){
+	public String login(String teamName) throws Exception {
+		if (nameTeamA == null) {
 			nameTeamA = teamName;
 			return Team.A.toString();
-		}
-		else if(nameTeamB == null){
+		} else if (nameTeamB == null) {
 			nameTeamB = teamName;
 			return Team.B.toString();
-		}
-		else {
+		} else {
 			throw new Exception("All players already defined.");
 		}
 	}
@@ -211,12 +230,12 @@ public class Game {
 	}
 
 	public void setPlayerRotation(String id, Double force) throws Exception {
-		if(mainWindow.getField() != null){
+		if (mainWindow.getField() != null) {
 			Robot r = (Robot) mainWindow.getField().getElement(id);
 			r.setRotationForce(force);
-		}
-		else {
-			throw new Exception("Cannot get element. Configure the mainWindow.getField() first");
+		} else {
+			throw new Exception(
+					"Cannot get element. Configure the mainWindow.getField() first");
 		}
 	}
 }

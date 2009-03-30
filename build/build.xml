@@ -12,6 +12,11 @@
 		<javac srcdir="${basedir}/src" destdir="${basedir}/dist" classpathref="classpath">
 			<include name="**/*.java" />
 		</javac>
+		<copy todir="${basedir}/dist">
+			<fileset dir="${basedir}/src">
+				<include name="*.properties" />
+			</fileset>
+		</copy>
 	</target>
 	
 	<target name="jar" depends="compile">
