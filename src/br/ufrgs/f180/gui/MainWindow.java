@@ -49,10 +49,7 @@ import br.ufrgs.f180.math.Vector;
 public class MainWindow extends org.eclipse.swt.widgets.Composite {
 
 	private Menu menu1;
-	private Button down;
-	private Button up;
-	private Button right;
-	private Button left;
+	private Button buttonResetGame;
 	private Button buttonStartGame;
 	private Label labelScoreTeamB;
 	private Label labelX;
@@ -107,62 +104,17 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			FormLayout thisLayout = new FormLayout();
 			this.setLayout(thisLayout);
 			{
-				down = new Button(this, SWT.PUSH | SWT.CENTER);
-				FormData downLData = new FormData();
-				downLData.width = 25;
-				downLData.height = 25;
-				downLData.left =  new FormAttachment(0, 1000, 923);
-				downLData.top =  new FormAttachment(0, 1000, 207);
-				down.setLayoutData(downLData);
-				down.setText("v");
-				down.addSelectionListener(new SelectionAdapter() {
+				buttonResetGame = new Button(this, SWT.PUSH | SWT.CENTER);
+				FormData button1LData = new FormData();
+				button1LData.width = 132;
+				button1LData.height = 23;
+				button1LData.left =  new FormAttachment(0, 1000, 866);
+				button1LData.top =  new FormAttachment(0, 1000, 180);
+				buttonResetGame.setLayoutData(button1LData);
+				buttonResetGame.setText("Reset");
+				buttonResetGame.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent evt) {
-						downWidgetSelected(evt);
-					}
-				});
-			}
-			{
-				up = new Button(this, SWT.PUSH | SWT.CENTER);
-				FormData upLData = new FormData();
-				upLData.width = 25;
-				upLData.height = 25;
-				upLData.left =  new FormAttachment(0, 1000, 923);
-				upLData.top =  new FormAttachment(0, 1000, 182);
-				up.setLayoutData(upLData);
-				up.setText("^");
-				up.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent evt) {
-						upWidgetSelected(evt);
-					}
-				});
-			}
-			{
-				right = new Button(this, SWT.PUSH | SWT.CENTER);
-				FormData rightLData = new FormData();
-				rightLData.width = 25;
-				rightLData.height = 25;
-				rightLData.left =  new FormAttachment(0, 1000, 948);
-				rightLData.top =  new FormAttachment(0, 1000, 207);
-				right.setLayoutData(rightLData);
-				right.setText(">");
-				right.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent evt) {
-						rightWidgetSelected(evt);
-					}
-				});
-			}
-			{
-				left = new Button(this, SWT.PUSH | SWT.CENTER);
-				FormData leftLData = new FormData();
-				leftLData.width = 25;
-				leftLData.height = 25;
-				leftLData.left =  new FormAttachment(0, 1000, 898);
-				leftLData.top =  new FormAttachment(0, 1000, 207);
-				left.setLayoutData(leftLData);
-				left.setText("<");
-				left.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent evt) {
-						leftWidgetSelected(evt);
+						buttonResetGameWidgetSelected(evt);
 					}
 				});
 			}
@@ -603,41 +555,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			Game.getInstance().setGameRunning(true);
 		}
 	}
-	private void downWidgetSelected(SelectionEvent evt){
-		System.out.println("Baixo");
-		if(listPlayers.getSelection().length == 1){
-			String selectedId = listPlayers.getSelection()[0];
-			Robot e = (Robot) field.getElement(selectedId);
-			e.setVelocity(new Vector(0,0));
-			e.setForce(new Vector(0,252));
-		}
-	}
-	private void upWidgetSelected(SelectionEvent evt){
-		System.out.println("Cima");
-		if(listPlayers.getSelection().length == 1){
-			String selectedId = listPlayers.getSelection()[0];
-			Robot e = (Robot) field.getElement(selectedId);
-			e.setVelocity(new Vector(0,0));
-			e.setForce(new Vector(0,-252));
-		}
-	}
-	private void leftWidgetSelected(SelectionEvent evt){
-		System.out.println("Esquerda");
-		if(listPlayers.getSelection().length == 1){
-			String selectedId = listPlayers.getSelection()[0];
-			Robot e = (Robot) field.getElement(selectedId);
-			e.setVelocity(new Vector(0,0));
-			e.setForce(new Vector(-252,0));
-		}
-	}
-	private void rightWidgetSelected(SelectionEvent evt){
-		System.out.println("Direita");
-		if(listPlayers.getSelection().length == 1){
-			String selectedId = listPlayers.getSelection()[0];
-			Robot e = (Robot) field.getElement(selectedId);
-			e.setVelocity(new Vector(0,0));
-			e.setForce(new Vector(252,0));
-		}
-	}
 	
+	private void buttonResetGameWidgetSelected(SelectionEvent evt) {
+		System.out.println("buttonResetGame.widgetSelected, event="+evt);
+		Game.getInstance().resetGame();
+	}
 }

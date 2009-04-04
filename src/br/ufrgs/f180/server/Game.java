@@ -54,6 +54,7 @@ public class Game {
 		scoreTeamA = 0;
 		scoreTeamB = 0;
 		elapsedTime = 0;
+		setUpBall();
 	}
 
 	public void startGame() {
