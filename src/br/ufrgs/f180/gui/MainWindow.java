@@ -1,6 +1,8 @@
 package br.ufrgs.f180.gui;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -32,7 +34,6 @@ import br.ufrgs.f180.server.Game;
 import br.ufrgs.f180.server.Server;
 
 import com.cloudgarden.resource.SWTResourceManager;
-import br.ufrgs.f180.math.Vector;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -559,5 +560,28 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private void buttonResetGameWidgetSelected(SelectionEvent evt) {
 		System.out.println("buttonResetGame.widgetSelected, event="+evt);
 		Game.getInstance().resetGame();
+	}
+
+	/**
+	 * Removes the robots from a team from the game
+	 * @param team
+	 */
+	public void removeRobotsFromTeam(Team team) {
+		Map<String, MovingElement> map = getField().getElements();
+		ArrayList<String> toRemove = new ArrayList<String>();
+		for (Entry<String, MovingElement> e : map.entrySet()) {
+			MovingElement element = e.getValue();
+			if(element instanceof Robot){
+				if(team.equals(((Robot) element).getTeam())){
+					System.out.println("Removing: " + e.getKey());
+					toRemove.add(e.getKey());
+				}
+			}
+		}
+		for (String string : toRemove) {
+			map.remove(string);
+			playerNames.remove(string);
+		}
+		invalidPlayers = true;
 	}
 }

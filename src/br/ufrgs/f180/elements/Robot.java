@@ -1,5 +1,7 @@
 package br.ufrgs.f180.elements;
 
+import java.util.NoSuchElementException;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
@@ -32,16 +34,6 @@ public class Robot extends MovingElement {
 		public String toString(){
 			return value;
 		}
-		
-		/*		
-		@Override
-		public void valueOf(String str){
-			for (Team team : Team.values()) {
-				if(team.value.equals(str)) return team;
-			}
-			return null;
-		}
-		*/
 	}
 	private Team team;
 	

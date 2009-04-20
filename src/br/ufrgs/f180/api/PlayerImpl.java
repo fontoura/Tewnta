@@ -38,4 +38,10 @@ public class PlayerImpl implements Player {
 		Game.getInstance().setPlayerRotation(id, force);
 	}
 
+	@Override
+	public void logout(String teamId) throws Exception {
+		
+		Game.getInstance().logout(teamId);
+	}
+
 }

@@ -239,4 +239,16 @@ public class Game {
 					"Cannot get element. Configure the mainWindow.getField() first");
 		}
 	}
+
+	public void logout(String teamId) throws Exception {
+		switch (getTeam(teamId)) {
+		case A:	
+			nameTeamA = null;
+			mainWindow.removeRobotsFromTeam(getTeam(teamId));
+			break;
+		case B:
+			nameTeamB = null;
+			break;
+		}
+	}
 }

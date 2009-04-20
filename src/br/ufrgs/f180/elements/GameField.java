@@ -41,6 +41,10 @@ public class GameField implements VisualElement {
 	private List<Wall> walls = new ArrayList<Wall>();
 	private Map<String, MovingElement> elements = new HashMap<String, MovingElement>(); 
 	
+	public Map<String, MovingElement> getElements() {
+		return elements;
+	}
+
 	public GameField(Canvas canvas, double width, double height){
 		this.width = width - 1;
 		this.height = height - 1;
@@ -229,4 +233,5 @@ public class GameField implements VisualElement {
 		}
 		return v;
 	}
+
 }
