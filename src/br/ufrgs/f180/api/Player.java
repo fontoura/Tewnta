@@ -1,6 +1,11 @@
 package br.ufrgs.f180.api;
 
+import java.util.List;
+
 import javax.jws.WebService;
+
+import br.ufrgs.f180.model.BallInformation;
+import br.ufrgs.f180.model.RobotInformation;
 
 /**
  * 
@@ -15,4 +20,6 @@ public interface Player {
 	void setPlayer(String teamId, String id, Double x, Double y) throws Exception;
 	void setPlayerForce(String id, Double x, Double y) throws Exception;
 	void setPlayerRotation(String id, Double force) throws Exception;
+	List<RobotInformation> getRobotsFromTeam(String teamId);
+	BallInformation getBallInformation();
 }

@@ -19,8 +19,12 @@ public class Robot extends MovingElement {
 	
 	private static final double SPOT_SIZE = 2.5;
 	private double radius;
-	private Vector frente;
+	private Vector front;
 	private String id;
+
+	public String getId() {
+		return id;
+	}
 
 	public enum Team{
 		A("A"),
@@ -79,7 +83,7 @@ public class Robot extends MovingElement {
 			Color cian = SWTResourceManager.getColor(128, 255, 255);
 			Color lt_green = SWTResourceManager.getColor(128, 255, 0);
 			
-			switch (getId())
+			switch (getIndex())
 			{
 				case 1:
 					drawSpot(gc, new Vector(-5.5, 0), cian);
@@ -138,13 +142,13 @@ public class Robot extends MovingElement {
 		this.radius = radius;
 	}
 	
-	public void setFrente(int x, int y) {
-		this.frente.setX(x);
-		this.frente.setY(y);
+	public void setFront(int x, int y) {
+		this.front.setX(x);
+		this.front.setY(y);
 	}
 	
-	public Vector getFrente() {
-		return this.frente;
+	public Vector getFront() {
+		return this.front;
 		
 	}
 	
@@ -156,7 +160,7 @@ public class Robot extends MovingElement {
 	
 	//retorna índice do robô
 	
-	public int getId()
+	public int getIndex()
 	{
 		
 		return id.charAt(id.length()-1) - '0';

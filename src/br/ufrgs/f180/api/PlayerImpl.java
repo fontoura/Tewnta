@@ -1,7 +1,11 @@
 package br.ufrgs.f180.api;
 
+import java.util.List;
+
 import javax.jws.WebService;
 
+import br.ufrgs.f180.model.BallInformation;
+import br.ufrgs.f180.model.RobotInformation;
 import br.ufrgs.f180.server.Game;
 
 /**
@@ -42,6 +46,16 @@ public class PlayerImpl implements Player {
 	public void logout(String teamId) throws Exception {
 		
 		Game.getInstance().logout(teamId);
+	}
+
+	@Override
+	public BallInformation getBallInformation() {
+		return Game.getInstance().getBallInformation();
+	}
+
+	@Override
+	public List<RobotInformation> getRobotsFromTeam(String teamId) {
+		return Game.getInstance().getRobotsFromTeam(teamId);
 	}
 
 }

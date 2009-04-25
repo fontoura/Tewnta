@@ -30,6 +30,7 @@ import br.ufrgs.f180.elements.GameField;
 import br.ufrgs.f180.elements.MovingElement;
 import br.ufrgs.f180.elements.Robot;
 import br.ufrgs.f180.elements.Robot.Team;
+import br.ufrgs.f180.model.RobotInformation;
 import br.ufrgs.f180.server.Game;
 import br.ufrgs.f180.server.Server;
 
@@ -583,5 +584,24 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			playerNames.remove(string);
 		}
 		invalidPlayers = true;
+	}
+
+	public java.util.List<RobotInformation> getRobotsFromTeam(Team team) {
+		Map<String, MovingElement> map = getField().getElements();
+		ArrayList<RobotInformation> robots = new ArrayList<RobotInformation>();
+		for (Entry<String, MovingElement> e : map.entrySet()) {
+			MovingElement element = e.getValue();
+			if(element instanceof Robot){
+				if(team.equals(((Robot) element).getTeam())){
+					System.out.println("Listing: " + e.getKey());
+					RobotInformation r = new RobotInformation();
+					r.setAngle(element.getAngle());
+					r.setPosition(element.getPosition());
+					r.setId(((Robot) element).getId());
+					robots.add(r);
+				}
+			}
+		}
+		return robots;
 	}
 }

@@ -1,11 +1,15 @@
 package br.ufrgs.f180.server;
 
+import java.util.List;
+
 import br.ufrgs.f180.elements.Ball;
 import br.ufrgs.f180.elements.GameField;
 import br.ufrgs.f180.elements.Robot;
 import br.ufrgs.f180.elements.Robot.Team;
 import br.ufrgs.f180.gui.MainWindow;
 import br.ufrgs.f180.math.Vector;
+import br.ufrgs.f180.model.BallInformation;
+import br.ufrgs.f180.model.RobotInformation;
 import br.ufrgs.f180.resources.GameProperties;
 
 /**
@@ -250,5 +254,19 @@ public class Game {
 			nameTeamB = null;
 			break;
 		}
+	}
+	
+	public BallInformation getBallInformation(){
+		Ball b = (Ball) mainWindow.getField()
+		.getElement(GameField.BALL_ELEMENT);
+
+		BallInformation ball = new BallInformation();
+		ball.setAngle(b.getAngle());
+		ball.setPosition(b.getPosition());
+		return ball; 		
+	}
+
+	public List<RobotInformation> getRobotsFromTeam(String teamId) {
+		return mainWindow.getRobotsFromTeam(getTeam(teamId));
 	}
 }
