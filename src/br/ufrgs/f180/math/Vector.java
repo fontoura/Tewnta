@@ -3,6 +3,8 @@ package br.ufrgs.f180.math;
 
 public class Vector extends Point implements Cloneable{
 
+	public Vector() {}
+
 	public Vector(double x, double y) {
 		super(x, y);
 	}

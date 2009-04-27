@@ -58,4 +58,9 @@ public class PlayerImpl implements Player {
 		return Game.getInstance().getRobotsFromTeam(teamId);
 	}
 
+	@Override
+	public RobotInformation getPlayerInformation(String playerId) {
+		return Game.getInstance().getPlayerInformation(playerId);
+	}
+
 }

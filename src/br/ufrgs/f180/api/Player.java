@@ -21,5 +21,6 @@ public interface Player {
 	void setPlayerForce(String id, Double x, Double y) throws Exception;
 	void setPlayerRotation(String id, Double force) throws Exception;
 	List<RobotInformation> getRobotsFromTeam(String teamId);
+	RobotInformation getPlayerInformation(String playerId);
 	BallInformation getBallInformation();
 }

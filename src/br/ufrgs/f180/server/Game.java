@@ -263,10 +263,15 @@ public class Game {
 		BallInformation ball = new BallInformation();
 		ball.setAngle(b.getAngle());
 		ball.setPosition(b.getPosition());
+		ball.setVelocity(b.getVelocity());
 		return ball; 		
 	}
 
 	public List<RobotInformation> getRobotsFromTeam(String teamId) {
 		return mainWindow.getRobotsFromTeam(getTeam(teamId));
+	}
+
+	public RobotInformation getPlayerInformation(String playerId) {
+		return mainWindow.getPlayerInformation(playerId);
 	}
 }

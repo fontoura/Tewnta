@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -105,6 +107,11 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			this.setBackground(SWTResourceManager.getColor(192, 192, 192));
 			FormLayout thisLayout = new FormLayout();
 			this.setLayout(thisLayout);
+			this.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent evt) {
+					thisWidgetDisposed(evt);
+				}
+			});
 			{
 				buttonResetGame = new Button(this, SWT.PUSH | SWT.CENTER);
 				FormData button1LData = new FormData();
@@ -405,9 +412,6 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-		if(inst.server != null && inst.server.isStarted()){
-			inst.server.stopServer();
-		}
 		System.exit(0);
 	}
 
@@ -594,14 +598,41 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			if(element instanceof Robot){
 				if(team.equals(((Robot) element).getTeam())){
 					System.out.println("Listing: " + e.getKey());
-					RobotInformation r = new RobotInformation();
-					r.setAngle(element.getAngle());
-					r.setPosition(element.getPosition());
-					r.setId(((Robot) element).getId());
-					robots.add(r);
+					robots.add(asRobotInformation(element));
 				}
 			}
 		}
 		return robots;
+	}
+	
+	private RobotInformation asRobotInformation(MovingElement element) {
+		RobotInformation r = new RobotInformation();
+		r.setAngle(element.getAngle());
+		r.setPosition(element.getPosition());
+		r.setId(((Robot) element).getId());
+		r.setVelocity(element.getVelocity());
+		return r;
+	}
+
+	private void thisWidgetDisposed(DisposeEvent evt) {
+		System.out.println("this.widgetDisposed, event="+evt);
+		if(server != null && server.isStarted()){
+			try {
+				server.stopServer();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public RobotInformation getPlayerInformation(String playerId) {
+		Map<String, MovingElement> map = getField().getElements();
+		MovingElement element = map.get(playerId);
+		if(element instanceof Robot){
+			return asRobotInformation(element);
+		}
+		else {
+			return null;
+		}
 	}
 }
