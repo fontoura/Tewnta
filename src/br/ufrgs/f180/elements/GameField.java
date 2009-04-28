@@ -32,7 +32,7 @@ public class GameField implements VisualElement {
 	private static final double GOAL_DEPTH = (double)(GameProperties.getDoubleValue("goal.depth") * 100);
 	private static final double GOAL_SIZE = (double)(GameProperties.getDoubleValue("goal.size") * 100);
 	public static final String BALL_ELEMENT = "BALL";
-	private final double friction_coefficient;
+	private static final double FRICTION_COHEFICIENT = (double)GameProperties.getDoubleValue("field.frictionCoheficient");;
 	private double scale_x;
 	private double scale_y;
 	private double width;
@@ -50,7 +50,6 @@ public class GameField implements VisualElement {
 		this.height = height - 1;
 		this.scale_x = ((double) ((FormData) canvas.getLayoutData()).width) / width;
 		this.scale_y = ((double) ((FormData) canvas.getLayoutData()).height) / height;
-		this.friction_coefficient = 10;
 		createWalls();
 	}
 
@@ -228,7 +227,7 @@ public class GameField implements VisualElement {
 		if(e.getVelocity().module() > 0){
 			double cos = -e.getVelocity().getCosDirection();
 			double sin = -e.getVelocity().getSinDirection();
-			double module = Math.abs(e.getMass() * GRAVITY_ACCELERATION * friction_coefficient); 
+			double module = Math.abs(e.getMass() * GRAVITY_ACCELERATION * FRICTION_COHEFICIENT); 
 			v = new Vector(module * cos, module * sin);
 		}
 		return v;

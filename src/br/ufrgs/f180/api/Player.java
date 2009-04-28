@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.jws.WebService;
 
-import br.ufrgs.f180.model.BallInformation;
-import br.ufrgs.f180.model.RobotInformation;
+import br.ufrgs.f180.api.model.BallInformation;
+import br.ufrgs.f180.api.model.RobotInformation;
 
 /**
  * 

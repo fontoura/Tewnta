@@ -28,11 +28,11 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import br.ufrgs.f180.api.model.RobotInformation;
 import br.ufrgs.f180.elements.GameField;
 import br.ufrgs.f180.elements.MovingElement;
 import br.ufrgs.f180.elements.Robot;
 import br.ufrgs.f180.elements.Robot.Team;
-import br.ufrgs.f180.model.RobotInformation;
 import br.ufrgs.f180.server.Game;
 import br.ufrgs.f180.server.Server;
 

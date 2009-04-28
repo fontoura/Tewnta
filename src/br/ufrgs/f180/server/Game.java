@@ -2,14 +2,14 @@ package br.ufrgs.f180.server;
 
 import java.util.List;
 
+import br.ufrgs.f180.api.model.BallInformation;
+import br.ufrgs.f180.api.model.RobotInformation;
 import br.ufrgs.f180.elements.Ball;
 import br.ufrgs.f180.elements.GameField;
 import br.ufrgs.f180.elements.Robot;
 import br.ufrgs.f180.elements.Robot.Team;
 import br.ufrgs.f180.gui.MainWindow;
 import br.ufrgs.f180.math.Vector;
-import br.ufrgs.f180.model.BallInformation;
-import br.ufrgs.f180.model.RobotInformation;
 import br.ufrgs.f180.resources.GameProperties;
 
 /**
