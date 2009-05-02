@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Canvas;
 
 import br.ufrgs.f180.elements.Wall.CollisionSide;
@@ -48,11 +47,15 @@ public class GameField implements VisualElement {
 	public GameField(Canvas canvas, double width, double height){
 		this.width = width - 1;
 		this.height = height - 1;
-		this.scale_x = ((double) ((FormData) canvas.getLayoutData()).width) / width;
-		this.scale_y = ((double) ((FormData) canvas.getLayoutData()).height) / height;
+		updateProportions(canvas);
 		createWalls();
 	}
 
+	public void updateProportions(Canvas canvas){
+		this.scale_x = ((double) canvas.getBounds().width) / width;
+		this.scale_y = ((double) canvas.getBounds().height) / height;
+	}
+	
 	private void createWalls() {
 		try {
 			// -

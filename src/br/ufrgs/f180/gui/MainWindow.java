@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -91,11 +93,18 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		SWTResourceManager.registerResourceUser(this);
 	}
 
-	public MainWindow(Composite parent, int style) {
+	public MainWindow(Composite parent, int style) throws Exception {
 		super(parent, style);
 		initGUI();
+		//Create the game fixture
+		setUpGame();
+	}
+
+	public void setUpGame() throws Exception{
 		server = new Server();
 		playerNames = new ArrayList<String>();
+		//Set up the game
+		Game.getInstance().setUp(this);			
 	}
 	
 	/**
@@ -103,7 +112,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	*/
 	private void initGUI() {
 		try {
-			this.setSize(1010, 633);
+			this.setSize(660, 379);
 			this.setBackground(SWTResourceManager.getColor(192, 192, 192));
 			FormLayout thisLayout = new FormLayout();
 			this.setLayout(thisLayout);
@@ -115,10 +124,10 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			{
 				buttonResetGame = new Button(this, SWT.PUSH | SWT.CENTER);
 				FormData button1LData = new FormData();
-				button1LData.width = 132;
-				button1LData.height = 23;
-				button1LData.left =  new FormAttachment(0, 1000, 866);
-				button1LData.top =  new FormAttachment(0, 1000, 180);
+				button1LData.width = 51;
+				button1LData.height = 22;
+				button1LData.top =  new FormAttachment(0, 1000, 112);
+				button1LData.left =  new FormAttachment(0, 1000, 10);
 				buttonResetGame.setLayoutData(button1LData);
 				buttonResetGame.setText("Reset");
 				buttonResetGame.addSelectionListener(new SelectionAdapter() {
@@ -130,10 +139,10 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			{
 				buttonStartGame = new Button(this, SWT.PUSH | SWT.CENTER);
 				FormData buttonStartGameLData = new FormData();
-				buttonStartGameLData.width = 132;
+				buttonStartGameLData.width = 50;
 				buttonStartGameLData.height = 23;
-				buttonStartGameLData.left =  new FormAttachment(0, 1000, 866);
-				buttonStartGameLData.top =  new FormAttachment(0, 1000, 151);
+				buttonStartGameLData.top =  new FormAttachment(0, 1000, 112);
+				buttonStartGameLData.left =  new FormAttachment(0, 1000, 67);
 				buttonStartGame.setLayoutData(buttonStartGameLData);
 				buttonStartGame.setText("Play");
 				buttonStartGame.addSelectionListener(new SelectionAdapter() {
@@ -147,8 +156,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData labelScoreTeamBLData = new FormData();
 				labelScoreTeamBLData.width = 51;
 				labelScoreTeamBLData.height = 25;
-				labelScoreTeamBLData.left =  new FormAttachment(0, 1000, 947);
-				labelScoreTeamBLData.top =  new FormAttachment(0, 1000, 36);
+				labelScoreTeamBLData.top =  new FormAttachment(0, 1000, 35);
+				labelScoreTeamBLData.left =  new FormAttachment(0, 1000, 92);
 				labelScoreTeamB.setLayoutData(labelScoreTeamBLData);
 				labelScoreTeamB.setText("0");
 				labelScoreTeamB.setAlignment(SWT.CENTER);
@@ -158,10 +167,10 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			{
 				labelX = new Label(this, SWT.NONE);
 				FormData labelXLData = new FormData();
-				labelXLData.width = 18;
+				labelXLData.width = 17;
 				labelXLData.height = 19;
-				labelXLData.left =  new FormAttachment(0, 1000, 923);
-				labelXLData.top =  new FormAttachment(0, 1000, 42);
+				labelXLData.top =  new FormAttachment(0, 1000, 41);
+				labelXLData.left =  new FormAttachment(0, 1000, 69);
 				labelX.setLayoutData(labelXLData);
 				labelX.setText("X");
 				labelX.setAlignment(SWT.CENTER);
@@ -172,8 +181,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData labelScoreTeamALData = new FormData();
 				labelScoreTeamALData.width = 51;
 				labelScoreTeamALData.height = 25;
-				labelScoreTeamALData.left =  new FormAttachment(0, 1000, 866);
-				labelScoreTeamALData.top =  new FormAttachment(0, 1000, 36);
+				labelScoreTeamALData.top =  new FormAttachment(0, 1000, 35);
+				labelScoreTeamALData.left =  new FormAttachment(0, 1000, 10);
 				labelScoreTeamA.setLayoutData(labelScoreTeamALData);
 				labelScoreTeamA.setText("0");
 				labelScoreTeamA.setAlignment(SWT.CENTER);
@@ -184,9 +193,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				labelTeamB = new Label(this, SWT.NONE);
 				FormData labelTeamBLData = new FormData();
 				labelTeamBLData.width = 57;
-				labelTeamBLData.height = 24;
-				labelTeamBLData.left =  new FormAttachment(0, 1000, 941);
-				labelTeamBLData.top =  new FormAttachment(0, 1000, 6);
+				labelTeamBLData.height = 18;
+				labelTeamBLData.top =  new FormAttachment(0, 1000, 12);
+				labelTeamBLData.left =  new FormAttachment(0, 1000, 86);
 				labelTeamB.setLayoutData(labelTeamBLData);
 				labelTeamB.setText("Team B");
 				labelTeamB.setAlignment(SWT.CENTER);
@@ -196,9 +205,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				labelTeamA = new Label(this, SWT.NONE);
 				FormData labelTeamALData = new FormData();
 				labelTeamALData.width = 57;
-				labelTeamALData.height = 24;
-				labelTeamALData.left =  new FormAttachment(0, 1000, 866);
-				labelTeamALData.top =  new FormAttachment(0, 1000, 6);
+				labelTeamALData.height = 18;
+				labelTeamALData.top =  new FormAttachment(0, 1000, 12);
+				labelTeamALData.left =  new FormAttachment(0, 1000, 10);
 				labelTeamA.setLayoutData(labelTeamALData);
 				labelTeamA.setText("Team A");
 				labelTeamA.setAlignment(SWT.CENTER);
@@ -206,25 +215,25 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			}
 			{
 				FormData labelElapsedTimeCountLData = new FormData();
-				labelElapsedTimeCountLData.width = 132;
-				labelElapsedTimeCountLData.height = 22;
-				labelElapsedTimeCountLData.left =  new FormAttachment(0, 1000, 866);
-				labelElapsedTimeCountLData.top =  new FormAttachment(0, 1000, 94);
+				labelElapsedTimeCountLData.width = 91;
+				labelElapsedTimeCountLData.height = 16;
+				labelElapsedTimeCountLData.top =  new FormAttachment(0, 1000, 66);
+				labelElapsedTimeCountLData.left =  new FormAttachment(0, 1000, 52);
 				labelElapsedTimeCount = new Label(this, SWT.NONE);
 				labelElapsedTimeCount.setLayoutData(labelElapsedTimeCountLData);
-				labelElapsedTimeCount.setFont(SWTResourceManager.getFont("Tahoma", 12, 0, false, false));
+				labelElapsedTimeCount.setFont(SWTResourceManager.getFont("Tahoma", 10, 0, false, false));
 				labelElapsedTimeCount.setAlignment(SWT.CENTER);
 			}
 			{
 				labelElapsedTime = new Label(this, SWT.NONE);
 				FormData labelElapsedTimeLData = new FormData();
-				labelElapsedTimeLData.width = 132;
-				labelElapsedTimeLData.height = 22;
-				labelElapsedTimeLData.left =  new FormAttachment(0, 1000, 866);
-				labelElapsedTimeLData.top =  new FormAttachment(0, 1000, 67);
+				labelElapsedTimeLData.width = 34;
+				labelElapsedTimeLData.height = 15;
+				labelElapsedTimeLData.top =  new FormAttachment(0, 1000, 66);
+				labelElapsedTimeLData.left =  new FormAttachment(0, 1000, 12);
 				labelElapsedTime.setLayoutData(labelElapsedTimeLData);
-				labelElapsedTime.setText("Elapsed Time:");
-				labelElapsedTime.setFont(SWTResourceManager.getFont("Tahoma", 12, 0, false, false));
+				labelElapsedTime.setText("Time:");
+				labelElapsedTime.setFont(SWTResourceManager.getFont("Tahoma", 10, 1, false, false));
 				labelElapsedTime.setAlignment(SWT.CENTER);
 			}
 			{
@@ -232,17 +241,17 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData DetailsLabelLData = new FormData();
 				DetailsLabelLData.width = 132;
 				DetailsLabelLData.height = 13;
-				DetailsLabelLData.left =  new FormAttachment(0, 1000, 866);
-				DetailsLabelLData.top =  new FormAttachment(0, 1000, 409);
+				DetailsLabelLData.top =  new FormAttachment(0, 1000, 264);
+				DetailsLabelLData.left =  new FormAttachment(0, 1000, 12);
 				DetailsLabel.setLayoutData(DetailsLabelLData);
 				DetailsLabel.setText("Player Details:");
 			}
 			{
 				FormData PlayerDetailsLData = new FormData();
 				PlayerDetailsLData.width = 126;
-				PlayerDetailsLData.height = 166;
-				PlayerDetailsLData.left =  new FormAttachment(0, 1000, 866);
-				PlayerDetailsLData.top =  new FormAttachment(0, 1000, 425);
+				PlayerDetailsLData.height = 89;
+				PlayerDetailsLData.top =  new FormAttachment(0, 1000, 282);
+				PlayerDetailsLData.left =  new FormAttachment(0, 1000, 12);
 				PlayerDetails = new Text(this, SWT.MULTI | SWT.WRAP);
 				PlayerDetails.setLayoutData(PlayerDetailsLData);
 				PlayerDetails.setEditable(false);
@@ -251,10 +260,10 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				ToggleServer = new Button(this, SWT.TOGGLE | SWT.CENTER);
 				ToggleServer.setText("Start Server");
 				FormData ToggleServerLData = new FormData();
-				ToggleServerLData.width = 132;
-				ToggleServerLData.height = 23;
-				ToggleServerLData.left =  new FormAttachment(0, 1000, 866);
-				ToggleServerLData.top =  new FormAttachment(0, 1000, 122);
+				ToggleServerLData.width = 77;
+				ToggleServerLData.height = 24;
+				ToggleServerLData.top =  new FormAttachment(0, 1000, 87);
+				ToggleServerLData.left =  new FormAttachment(0, 1000, 10);
 				ToggleServer.setLayoutData(ToggleServerLData);
 				ToggleServer.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent evt) {
@@ -264,25 +273,31 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			}
 			{
 				FootballField = new Canvas(this, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
-				FormData FootballFieldLData = new FormData(860, 625);
-				FootballFieldLData.width = 860;
-				FootballFieldLData.height = 625;
-				FootballFieldLData.left =  new FormAttachment(0, 1000, 0);
-				FootballFieldLData.top =  new FormAttachment(0, 1000, 0);
+				FormData FootballFieldLData = new FormData();
+				FootballFieldLData.width = 495;
+				FootballFieldLData.height = 360;
+				FootballFieldLData.left =  new FormAttachment(0, 1000, 154);
+				FootballFieldLData.top =  new FormAttachment(0, 1000, 12);
+				FootballFieldLData.bottom =  new FormAttachment(982, 1000, 0);
+				FootballFieldLData.right =  new FormAttachment(984, 1000, 0);
 				FootballField.setLayoutData(FootballFieldLData);
 				FootballField.setBackground(SWTResourceManager.getColor(0, 80, 0));
 				FootballField.setForeground(SWTResourceManager.getColor(0, 0, 0));
-				FootballField.setSize(860, 625);
+				FootballField.addControlListener(new ControlAdapter() {
+					public void controlResized(ControlEvent evt) {
+						FootballFieldControlResized(evt);
+					}
+				});
 				FootballField.addPaintListener(new PaintListener() {
 					public void paintControl(PaintEvent evt) {
-
-				        // Draw the background
+						
+						// Draw the background
 						evt.gc.setForeground(evt.gc.getForeground());
 						evt.gc.setBackground(evt.gc.getBackground());
 						evt.gc.fillRectangle(((Canvas)evt.getSource()).getClientArea());
-
+						
 						if(getField() != null) getField().draw(evt.gc);
-
+						
 					}
 				});
 			}
@@ -291,18 +306,18 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				labelPlayers.setText("Connected Players:");
 				FormData labelPlayersLData = new FormData();
 				labelPlayersLData.width = 132;
-				labelPlayersLData.height = 13;
-				labelPlayersLData.left =  new FormAttachment(0, 1000, 866);
-				labelPlayersLData.top =  new FormAttachment(0, 1000, 238);
+				labelPlayersLData.height = 12;
+				labelPlayersLData.top =  new FormAttachment(0, 1000, 147);
+				labelPlayersLData.left =  new FormAttachment(0, 1000, 12);
 				labelPlayers.setLayoutData(labelPlayersLData);
 			}
 			{
 				listPlayers = new List(this, SWT.NONE);
 				FormData listPlayersLData = new FormData();
 				listPlayersLData.width = 129;
-				listPlayersLData.height = 143;
-				listPlayersLData.left =  new FormAttachment(0, 1000, 866);
-				listPlayersLData.top =  new FormAttachment(0, 1000, 254);
+				listPlayersLData.height = 89;
+				listPlayersLData.top =  new FormAttachment(0, 1000, 163);
+				listPlayersLData.left =  new FormAttachment(0, 1000, 12);
 				listPlayers.setLayoutData(listPlayersLData);
 				listPlayers.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent evt) {
@@ -357,9 +372,6 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				}
 			}
 			this.layout();
-
-			//Set up the game
-			Game.getInstance().setUp(this);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -634,5 +646,11 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		else {
 			return null;
 		}
+	}
+		
+	private void FootballFieldControlResized(ControlEvent evt) {
+		System.out.println("FootballField.controlResized, event="+evt);
+		if(getField() != null) getField().updateProportions(FootballField);
+		if(FootballField != null) FootballField.redraw();
 	}
 }
