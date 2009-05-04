@@ -102,6 +102,18 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 
 	public void setUpGame() throws Exception{
 		server = new Server();
+
+		try {
+			if(!server.isStarted()){
+				server.startServer();
+			}
+			ToggleServer.setText("Stop Server");
+			ToggleServer.setSelection(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			ToggleServer.setSelection(false);
+		}
+
 		playerNames = new ArrayList<String>();
 		//Set up the game
 		Game.getInstance().setUp(this);			
