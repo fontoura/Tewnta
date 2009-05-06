@@ -1,7 +1,5 @@
 package br.ufrgs.f180.elements;
 
-import java.util.NoSuchElementException;
-
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
@@ -21,6 +19,19 @@ public class Robot extends MovingElement {
 	private double radius;
 	private Vector front;
 	private String id;
+
+	/**
+	 * True means the force will be displayed as an arrow inside the robot
+	 */
+	private boolean displayForce = false;
+	/**
+	 * True means the colored balls will be displayed inside the robot
+	 */
+	private boolean displayMarks = true;
+	/**
+	 * True means the colored balls will be displayed inside the robot
+	 */
+	private boolean displayName = false;
 
 	public String getId() {
 		return id;
@@ -70,39 +81,71 @@ public class Robot extends MovingElement {
 		Color backgroundColor = SWTResourceManager.getColor(0, 0, 0);
 		gc.setBackground(backgroundColor);
 		gc.fillOval(realx(position.getX() - radius), realy(position.getY() - radius), realx(radius * 2), realy(radius * 2));
-		Color centerColor = Team.A.equals(team) ? SWTResourceManager.getColor(0, 0, 200) : SWTResourceManager.getColor(200, 200, 0);
 
+		drawMarks(gc);
+		drawName(gc);
+		drawForce(gc);
 
-		drawSpot(gc, new Vector(0, 0), centerColor);
-		
-		if (Team.A.equals(team))
-		{
-			Color foregroundColor = SWTResourceManager.getColor(255, 0, 128);
-			drawSpot(gc, new Vector(5.5, 0), foregroundColor);
-
-			Color cian = SWTResourceManager.getColor(128, 255, 255);
-			Color lt_green = SWTResourceManager.getColor(128, 255, 0);
-			
-			switch (getIndex())
-			{
-				case 1:
-					drawSpot(gc, new Vector(-5.5, 0), cian);
-					break;
-				case 2:
-					drawSpot(gc, new Vector(-5.5, 0), lt_green);
-					break;					
-				case 3:
-					drawSpot(gc, new Vector(0, -5.5), cian);
-					break;					
-				case 4:
-					drawSpot(gc, new Vector(0, -5.5), lt_green);
-					break;									
-			}
-
-		}
 		gc.setBackground(old);
 		
 	}
+
+	private void drawForce(GC gc) {
+		if(isDisplayForce()) {
+			double x1 = getPosition().getX();
+			double y1 = getPosition().getY();
+			double x2 = getPosition().getX()+ getForce().getX();
+			double y2 = getPosition().getY() + getForce().getY();
+			Color old = gc.getForeground();
+			Color foregroundColor = SWTResourceManager.getColor(0, 255, 55);
+			gc.setForeground(foregroundColor);
+			gc.drawLine(realx(x1), realy(y1), realx(x2), realy(y2));
+			gc.setForeground(old);
+		}
+		
+	}
+
+
+	private void drawName(GC gc) {
+		if(isDisplayName()) {
+			gc.drawString(getId(), realx(getPosition().getX() - getRadius()), realy(getPosition().getY() + getRadius()), true);
+		}
+	}
+
+
+	private void drawMarks(GC gc) {
+		if(isDisplayMarks()) {
+			Color centerColor = Team.A.equals(team) ? SWTResourceManager.getColor(0, 0, 200) : SWTResourceManager.getColor(200, 200, 0);
+			drawSpot(gc, new Vector(0, 0), centerColor);
+			
+			if (Team.A.equals(team))
+			{
+				Color foregroundColor = SWTResourceManager.getColor(255, 0, 128);
+				drawSpot(gc, new Vector(5.5, 0), foregroundColor);
+	
+				Color cian = SWTResourceManager.getColor(128, 255, 255);
+				Color lt_green = SWTResourceManager.getColor(128, 255, 0);
+				
+				switch (getIndex())
+				{
+					case 1:
+						drawSpot(gc, new Vector(-5.5, 0), cian);
+						break;
+					case 2:
+						drawSpot(gc, new Vector(-5.5, 0), lt_green);
+						break;					
+					case 3:
+						drawSpot(gc, new Vector(0, -5.5), cian);
+						break;					
+					case 4:
+						drawSpot(gc, new Vector(0, -5.5), lt_green);
+						break;									
+				}
+	
+			}
+		}
+	}
+
 
 	private void drawSpot(GC gc, Vector spotPositionAbsolute, Color color){
 		
@@ -165,5 +208,34 @@ public class Robot extends MovingElement {
 		
 		return id.charAt(id.length()-1) - '0';
 	}	
+
+	public boolean isDisplayForce() {
+		return displayForce;
+	}
+
+
+	public void setDisplayForce(boolean displayForce) {
+		this.displayForce = displayForce;
+	}
+
+
+	public boolean isDisplayMarks() {
+		return displayMarks;
+	}
+
+
+	public void setDisplayMarks(boolean displayMarks) {
+		this.displayMarks = displayMarks;
+	}
+
+
+	public boolean isDisplayName() {
+		return displayName;
+	}
+
+
+	public void setDisplayName(boolean displayName) {
+		this.displayName = displayName;
+	}
 	
 }
