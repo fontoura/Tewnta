@@ -54,13 +54,23 @@ public class Wall implements VisualElement {
 	}
 
 	@Override
+	public int scalex(double x) {
+		return field.scalex(x);
+	}
+
+	@Override
+	public int scaley(double y) {
+		return field.scaley(y);
+	}
+
+	@Override
 	public int realx(double x) {
-		return (int)(x * field.getScale_x());
+		return field.realx(x);
 	}
 
 	@Override
 	public int realy(double y) {
-		return (int)(y * field.getScale_y());
+		return field.realy(y);
 	}
 
 	public double getY0() {

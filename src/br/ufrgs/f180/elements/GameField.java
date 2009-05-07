@@ -36,6 +36,8 @@ public class GameField implements VisualElement {
 	private double scale_y;
 	private double width;
 	private double height;
+	private int canvasWidth;
+	private int canvasHeight;
 	
 	private List<Wall> walls = new ArrayList<Wall>();
 	private Map<String, MovingElement> elements = new HashMap<String, MovingElement>(); 
@@ -52,8 +54,10 @@ public class GameField implements VisualElement {
 	}
 
 	public void updateProportions(Canvas canvas){
-		this.scale_x = ((double) canvas.getBounds().width) / width;
-		this.scale_y = ((double) canvas.getBounds().height) / height;
+		this.canvasHeight = canvas.getBounds().height;
+		this.canvasWidth = canvas.getBounds().width;
+		this.scale_x = ((double) canvasWidth) / width;
+		this.scale_y = ((double) canvasHeight) / height;
 	}
 	
 	private void createWalls() {
@@ -125,15 +129,15 @@ public class GameField implements VisualElement {
 		Color c = SWTResourceManager.getColor(150, 150, 150);
 		gc.setForeground(c);
 		//Draw middle line and middle field
-		gc.drawLine(realx(getCenterX()), realy(getTopBound()), realx(getCenterX()), realy(getDownBound()));
-		gc.drawOval(realx(getCenterX() - FIELD_CENTERCIRCLE_RADIUS), realy(getCenterY() - FIELD_CENTERCIRCLE_RADIUS), realx(FIELD_CENTERCIRCLE_RADIUS * 2), realy(FIELD_CENTERCIRCLE_RADIUS * 2));
+		gc.drawLine(realx(getCenterX()), realy(getDownBound()), realx(getCenterX()), realy(getTopBound()));
+		gc.drawOval(realx(getCenterX() - FIELD_CENTERCIRCLE_RADIUS), realy(getCenterY() + FIELD_CENTERCIRCLE_RADIUS), scalex(FIELD_CENTERCIRCLE_RADIUS * 2), scaley(FIELD_CENTERCIRCLE_RADIUS * 2));
 
 		//Draw borders
-		gc.drawRectangle(realx(getLeftBound()), realy(getTopBound()), realx(getFieldWidth()), realy(getFieldHeight()));
+		gc.drawRectangle(realx(getLeftBound()), realy(getDownBound()), scalex(getFieldWidth()), scaley(getFieldHeight()));
 
 		//Draw goal areas
-		gc.drawArc(realx(getLeftBound() - FIELD_GOALAREA_RADIUS), realy(getCenterY() - FIELD_GOALAREA_RADIUS), realx(FIELD_GOALAREA_RADIUS * 2), realy(FIELD_GOALAREA_RADIUS * 2), 270, 180);
-		gc.drawArc(realx(getRightBound() - FIELD_GOALAREA_RADIUS), realy(getCenterY() - FIELD_GOALAREA_RADIUS), realx(FIELD_GOALAREA_RADIUS * 2), realy(FIELD_GOALAREA_RADIUS * 2), 90, 180);
+		gc.drawArc(realx(getLeftBound() - FIELD_GOALAREA_RADIUS), realy(getCenterY() + FIELD_GOALAREA_RADIUS), scalex(FIELD_GOALAREA_RADIUS * 2), scaley(FIELD_GOALAREA_RADIUS * 2), 270, 180);
+		gc.drawArc(realx(getRightBound() - FIELD_GOALAREA_RADIUS), realy(getCenterY() + FIELD_GOALAREA_RADIUS), scalex(FIELD_GOALAREA_RADIUS * 2), scaley(FIELD_GOALAREA_RADIUS * 2), 90, 180);
 
 		for (Wall wall : walls) {
 			wall.draw(gc);
@@ -177,13 +181,23 @@ public class GameField implements VisualElement {
 	}
 
 	@Override
+	public int scalex(double x) {
+		return (int)(x * scale_x);
+	}
+
+	@Override
+	public int scaley(double y) {
+		return (int)(y * scale_y);
+	}
+
+	@Override
 	public int realx(double x) {
 		return (int)(x * scale_x);
 	}
 
 	@Override
 	public int realy(double y) {
-		return (int)(y * scale_y);
+		return canvasHeight - (int)(y * scale_y);
 	}
 
 	public void updateElementsState(double timeElapsed){
@@ -209,16 +223,16 @@ public class GameField implements VisualElement {
 		return width - 1 - FIELD_BORDER;
 	}
 
-	public double getTopBound() {
+	public double getDownBound() {
 		return FIELD_BORDER;
 	}
 
-	public double getDownBound() {
+	public double getTopBound() {
 		return height - 1 - FIELD_BORDER;
 	}
 	
 	public int relativeRealy(int y){
-		return realy(getDownBound()) - y;	
+		return realy(getDownBound()) + y;	
 	}
 
 	public int relativeRealx(int x){

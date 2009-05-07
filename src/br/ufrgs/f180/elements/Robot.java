@@ -80,7 +80,7 @@ public class Robot extends MovingElement {
 		Color old = gc.getBackground();
 		Color backgroundColor = SWTResourceManager.getColor(0, 0, 0);
 		gc.setBackground(backgroundColor);
-		gc.fillOval(realx(position.getX() - radius), realy(position.getY() - radius), realx(radius * 2), realy(radius * 2));
+		gc.fillOval(realx(position.getX() - radius), realy(position.getY() + radius), scalex(radius * 2), scaley(radius * 2));
 
 		drawMarks(gc);
 		drawName(gc);
@@ -108,7 +108,7 @@ public class Robot extends MovingElement {
 
 	private void drawName(GC gc) {
 		if(isDisplayName()) {
-			gc.drawString(getId(), realx(getPosition().getX() - getRadius()), realy(getPosition().getY() + getRadius()), true);
+			gc.drawString(getId(), realx(getPosition().getX() - getRadius()), realy(getPosition().getY() - getRadius()), true);
 		}
 	}
 
@@ -154,18 +154,28 @@ public class Robot extends MovingElement {
 		
 		Color old = gc.getBackground();
 		gc.setBackground(color);
-		gc.fillOval(realx(position.getX()+ spotPosition.getX() - SPOT_SIZE), realy(position.getY() + spotPosition.getY() - SPOT_SIZE), realx(SPOT_SIZE * 2), realy(SPOT_SIZE * 2));
+		gc.fillOval(realx(position.getX()+ spotPosition.getX() - SPOT_SIZE), realy(position.getY() - spotPosition.getY() + SPOT_SIZE), scalex(SPOT_SIZE * 2), scaley(SPOT_SIZE * 2));
 		gc.setBackground(old);
+	}
+
+	@Override
+	public int scalex(double x) {
+		return field.scalex(x);
+	}
+	
+	@Override
+	public int scaley(double y) {
+		return field.scaley(y);
 	}
 	
 	@Override
 	public int realx(double x) {
-		return (int)(x * field.getScale_x());
+		return field.realx(x);
 	}
 
 	@Override
 	public int realy(double y) {
-		return (int)(y * field.getScale_y());
+		return field.realy(y);
 	}
 
 	@Override

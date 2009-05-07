@@ -37,4 +37,14 @@ public class WallCollisionPoint extends MovingElement {
 		return 0;
 	}
 
+	@Override
+	public int scalex(double x) {
+		return field.scalex(x);
+	}
+
+	@Override
+	public int scaley(double y) {
+		return field.scaley(y);
+	}
+
 }

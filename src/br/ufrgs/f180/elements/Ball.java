@@ -30,7 +30,7 @@ public class Ball extends MovingElement {
 		Color old = gc.getForeground();
 		Color c = SWTResourceManager.getColor(255, 128, 0);
 		gc.setBackground(c);
-		gc.fillOval(realx(position.getX() - radius), realy(position.getY() - radius) , realx(radius * 2), realy(radius * 2) );
+		gc.fillOval(realx(position.getX() - radius), realy(position.getY() + radius) , scalex(radius * 2), scaley(radius * 2) );
 		gc.setBackground(old);
 		//int y1 = realy(position.getY());
 		//int y2 = getField().relativeRealy(realy(position.getY() + velocity.getY()));
@@ -39,14 +39,24 @@ public class Ball extends MovingElement {
 
 	@Override
 	public int realx(double x) {
-		return (int)(x * field.getScale_x());
+		return field.realx(x);
 	}
 
 	@Override
 	public int realy(double y) {
-		return (int)(y * field.getScale_y());
+		return field.realy(y);
 	}
 
+	@Override
+	public int scalex(double x) {
+		return field.scalex(x);
+	}
+
+	@Override
+	public int scaley(double y) {
+		return field.scaley(y);
+	}
+	
 	@Override
 	public double getRadius() {
 		return radius;
