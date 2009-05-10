@@ -4,20 +4,25 @@
 |                                  Robotic Soccer Simulator for                                 |
 |                                    the F180 Robocup League                                    |
 |                                                                                               |
-|                                         Release 0.1                                           |
+|                                         Release 1.0                                           |
 |                                                                                               |
-|                       Author Gabriel Girardello Detoni, Brazil 2008.                       |
-|                             
+|                       Created by Gabriel Girardello Detoni, Brazil 2008.                      |
+|																								|
+|						           Maintained by Tewnta team									|
+|								http://code.google.com/p/tewnta                       			|
+|																								|
 |   This project is hosted and distributed under Google Code terms and conditions.              |
 |   All feedback is welcome as well as new members. If you want to be a part of it check the    |
-| project home at http://code.google.com/p/tewnta .                                             |
+| project home at Google code.																	|
 |                                                                                               |
 +-----------------------------------------------------------------------------------------------+
 
-1. LICENSE:
+1. LICENSE
+ ---------
   This program can be freely copied and distributed according to LGPL license terms.
 
-2. INSTALLING AND RUNNING:
+2. INSTALLING AND RUNNING
+ ------------------------
   1) Make sure to have JRE 1.6 or higher installed and JAVA_HOME environment variable correctly 
 set as well as JRE \bin directory in the PATH environment variable.
     Ex: 
@@ -31,7 +36,14 @@ set as well as JRE \bin directory in the PATH environment variable.
 and extract all files.
   4) Execute the simulator.cmd file.
 
+  2.1 Demonstration 
+   -----------------
+   Inside this package there is a demonstration team that can be used as a basis to understand 
+ the APIs as well as the game dynamics. 
+   To execute the demo run the demo.cmd file.
+
 3. API REFERENCE
+ ---------------
   $TEWNTA runs a SOAP web service to allow upcoming connections. Check the project wiki at 
 http://code.google.com/p/tewnta/w/list to get the latest API documentation.
     

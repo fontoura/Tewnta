@@ -1,5 +1,7 @@
 <project name="tewnta" default="jar" basedir="../">
-
+	
+	<property file="${basedir}/build/build.properties"/>
+	
 	<path id="classpath">
 		<fileset dir="${basedir}/lib">
 			<include name="**/*" />
@@ -21,18 +23,28 @@
 	</target>
 	
 	<target name="jar" depends="compile">
-		<mkdir dir="${basedir}/artifacts"/>
-		<jar destfile="${basedir}/artifacts/simulator.jar" manifest="${basedir}/MANIFEST.MF">
+		<mkdir dir="${basedir}/artifacts/components"/>
+		<jar destfile="${basedir}/artifacts/components/simulator.jar" manifest="${basedir}/MANIFEST.MF">
 			<fileset dir="${basedir}/dist">
 				<include name="**/*.*" />
 			</fileset>
 		</jar>
-		<copy file="${basedir}/Readme.txt" todir="${basedir}/artifacts" />
-		<copy file="${basedir}/simulator.cmd" todir="${basedir}/artifacts" />
+		<copy file="${basedir}/Readme.txt" todir="${basedir}/artifacts/components" />
+		<copy file="${basedir}/simulator.cmd" todir="${basedir}/artifacts/components" />
+		<copy file="${basedir}/demo.cmd" todir="${basedir}/artifacts/components" />
 		<delete dir="${basedir}/dist" />
 	</target>
 
 	<target name="javadoc">
 		<javadoc destdir="${basedir}/javadoc" sourcepath="${basedir}/src"/>
 	</target>
+	
+	<target name="package" depends="jar">
+		<zip destfile="${basedir}/artifacts/tewnta_${release.version}_bin.zip">
+			<fileset dir="${basedir}/artifacts/components">
+				<include name="**/*.*" />
+			</fileset>
+		</zip>
+	</target>
+
 </project>
