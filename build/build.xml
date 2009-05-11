@@ -34,9 +34,10 @@
 		<copy file="${basedir}/demo.cmd" todir="${basedir}/artifacts/components" />
 		<delete dir="${basedir}/dist" />
 	</target>
-
+    	
 	<target name="javadoc">
-		<javadoc destdir="${basedir}/javadoc" sourcepath="${basedir}/src"/>
+	    <property environment="env"/>
+		<javadoc executable="${env.JAVA_HOME}/bin/javadoc.exe" destdir="${basedir}/javadoc" sourcepath="${basedir}/src"/>
 	</target>
 	
 	<target name="package" depends="jar">
