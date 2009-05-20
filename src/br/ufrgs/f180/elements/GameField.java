@@ -13,6 +13,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 
 import br.ufrgs.f180.elements.Wall.CollisionSide;
+import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
 import br.ufrgs.f180.resources.GameProperties;
 
@@ -39,6 +40,8 @@ public class GameField implements VisualElement {
 	private int canvasWidth;
 	private int canvasHeight;
 	
+	private Point mousePosition;
+	
 	private List<Wall> walls = new ArrayList<Wall>();
 	private Map<String, MovingElement> elements = new HashMap<String, MovingElement>(); 
 	
@@ -47,15 +50,15 @@ public class GameField implements VisualElement {
 	}
 
 	public GameField(Canvas canvas, double width, double height){
-		this.width = width - 1;
-		this.height = height - 1;
+		this.width = width;
+		this.height = height;
 		updateProportions(canvas);
 		createWalls();
 	}
 
 	public void updateProportions(Canvas canvas){
-		this.canvasHeight = canvas.getBounds().height;
-		this.canvasWidth = canvas.getBounds().width;
+		this.canvasHeight = canvas.getBounds().height - 1;
+		this.canvasWidth = canvas.getBounds().width - 1;
 		this.scale_x = ((double) canvasWidth) / width;
 		this.scale_y = ((double) canvasHeight) / height;
 	}
@@ -83,6 +86,14 @@ public class GameField implements VisualElement {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private double yUnit() {
+		return scale_y;
+	}
+
+	private double xUnit() {
+		return scale_x;
 	}
 
 	/**
@@ -208,9 +219,12 @@ public class GameField implements VisualElement {
 			MovingElement element = e.getValue();
 			element.calculatePosition(timeElapsed);
 			element.calculateCollisionWithWalls(walls);
-			collisors.remove(e);
+			//collisors.remove(e);
 			for (Entry<String, MovingElement> e2 : collisors) {
-				element.calculateCollision(e2.getValue());
+				//Need to see why the collisions only work 180 deg
+				if(e2 != e){
+					element.calculateCollision(e2.getValue());
+				}
 			}
 		}
 	}
@@ -220,7 +234,7 @@ public class GameField implements VisualElement {
 	}
 
 	public double getRightBound() {
-		return width - 1 - FIELD_BORDER;
+		return width - FIELD_BORDER;
 	}
 
 	public double getDownBound() {
@@ -228,7 +242,7 @@ public class GameField implements VisualElement {
 	}
 
 	public double getTopBound() {
-		return height - 1 - FIELD_BORDER;
+		return height - FIELD_BORDER;
 	}
 	
 	public int relativeRealy(int y){
@@ -248,6 +262,20 @@ public class GameField implements VisualElement {
 			v = new Vector(module * cos, module * sin);
 		}
 		return v;
+	}
+
+	public void setMousePosition(int x, int y) {
+		double xpos = x / scale_x;
+		double ypos = (canvasHeight - y) / scale_y;
+//		if(xpos <= getLeftBound()) xpos = getLeftBound(); 
+//		if(xpos >= getRightBound()) xpos = getRightBound(); 
+//		if(ypos <= getTopBound()) ypos = getTopBound(); 
+//		if(ypos >= getDownBound()) ypos = getDownBound(); 
+		this.mousePosition = new Point(xpos, ypos);
+	}
+
+	public Point getMousePosition() {
+		return mousePosition;
 	}
 
 }

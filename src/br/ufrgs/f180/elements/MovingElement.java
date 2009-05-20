@@ -8,6 +8,7 @@ import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
 
 public abstract class MovingElement implements VisualElement {
+
 	protected GameField field;
 	protected Point position;
 	protected Vector velocity;
@@ -15,6 +16,13 @@ public abstract class MovingElement implements VisualElement {
 	protected double mass;
 	protected double angle;
 	protected double rotationVelocity;
+	
+	protected boolean dragging;
+	
+	public boolean isDragging() {
+		return dragging;
+	}
+
 	public double getRotationVelocity() {
 		return rotationVelocity;
 	}
@@ -92,6 +100,10 @@ public abstract class MovingElement implements VisualElement {
 	 * Calculates the position of the element after 1ms is passed
 	 */
 	public void calculatePosition(double timeElapsed) {
+		if(isDragging()){
+			this.position = field.getMousePosition();
+		}
+		
 		// Calculates the velocity
 		velocity.setX(velocity.getX()
 				+ (getAcceleration().getX() * timeElapsed));
@@ -125,7 +137,7 @@ public abstract class MovingElement implements VisualElement {
 			// calcula a distância entre o centros dos 2 elementos
 			double dist = Math.sqrt((element.position.getX() - this.position.getX())*(element.position.getX() - this.position.getX()) + (element.position.getY() - this.position.getY())*(element.position.getY() - this.position.getY()));
 			// caso a distância seja menor do que a soma dos raios
-			if (dist  < this.getRadius() + element.getRadius())
+			if (dist < this.getRadius() + element.getRadius())
 			{
 				double x,y;
 				// calcula o vetor do elemento em questão até o elemento que este irá colidir
@@ -248,4 +260,26 @@ public abstract class MovingElement implements VisualElement {
 
 		return vdistance.module() < distance;
 	}
+
+	public synchronized void drag() {
+		if(Math.abs(field.getMousePosition().getX() - this.getPosition().getX()) <= this.getRadius()){
+			if(Math.abs(field.getMousePosition().getY() - this.getPosition().getY()) <= this.getRadius()){
+				System.out.println("Dragging.");
+				velocity = new Vector(0, 0);
+				force = new Vector(0, 0);
+				dragging = true;
+				rotationVelocity = 0;
+				rotationForce = 0;
+				position = field.getMousePosition();
+			}
+		}
+	}
+
+	public synchronized void drop() {
+		if(isDragging()) {
+			System.out.println("Dropping");
+		}
+		dragging = false;
+	}
+	
 }

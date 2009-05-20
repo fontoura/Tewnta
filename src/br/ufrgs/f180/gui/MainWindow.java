@@ -9,6 +9,9 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -19,8 +22,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -337,6 +338,19 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FootballField.setLayoutData(FootballFieldLData);
 				FootballField.setBackground(SWTResourceManager.getColor(0, 80, 0));
 				FootballField.setForeground(SWTResourceManager.getColor(0, 0, 0));
+				FootballField.addMouseMoveListener(new MouseMoveListener() {
+					public void mouseMove(MouseEvent evt) {
+						FootballFieldMouseMove(evt);
+					}
+				});
+				FootballField.addMouseListener(new MouseAdapter() {
+					public void mouseUp(MouseEvent evt) {
+						FootballFieldMouseUp(evt);
+					}
+					public void mouseDown(MouseEvent evt) {
+						FootballFieldMouseDown(evt);
+					}
+				});
 				FootballField.addControlListener(new ControlAdapter() {
 					public void controlResized(ControlEvent evt) {
 						FootballFieldControlResized(evt);
@@ -715,5 +729,27 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				((Robot) element).setDisplayMarks(buttonMarks.getSelection());
 			}
 		}
+	}
+	
+	private void FootballFieldMouseDown(MouseEvent evt) {
+		System.out.println("FootballField.mouseDown, event="+evt);
+		Map<String, MovingElement> map = getField().getElements();
+		for (Entry<String, MovingElement> e : map.entrySet()) {
+			MovingElement element = e.getValue();
+			element.drag();
+		}
+	}
+	
+	private void FootballFieldMouseUp(MouseEvent evt) {
+		System.out.println("FootballField.mouseUp, event="+evt);
+		Map<String, MovingElement> map = getField().getElements();
+		for (Entry<String, MovingElement> e : map.entrySet()) {
+			MovingElement element = e.getValue();
+			element.drop();
+		}
+	}
+	
+	private void FootballFieldMouseMove(MouseEvent evt) {
+		field.setMousePosition(evt.x, evt.y);
 	}
 }
