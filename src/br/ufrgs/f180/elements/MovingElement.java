@@ -135,21 +135,16 @@ public abstract class MovingElement implements VisualElement {
 
 		
 			// calcula a distância entre o centros dos 2 elementos
-			double dist = Math.sqrt((element.position.getX() - this.position.getX())*(element.position.getX() - this.position.getX()) + (element.position.getY() - this.position.getY())*(element.position.getY() - this.position.getY()));
-			// caso a distância seja menor do que a soma dos raios
-			if (dist < this.getRadius() + element.getRadius())
-			{
-				double x,y;
-				// calcula o vetor do elemento em questão até o elemento que este irá colidir
-				x = this.position.getX() - element.position.getX();
-				y = this.position.getY() - element.position.getY();
-				// normaliza o vetor
-				x /= dist; 
-				y /= dist;
-				// Coloca o elemento rente ao elemento em questão
-				x *= (this.getRadius() + element.getRadius());
-				y *= (this.getRadius() + element.getRadius());
-				this.setPosition(new Point((int)(element.getPosition().getX() + x),(int)(element.getPosition().getY() + y)));
+			Vector dist = new Vector(this.getPosition(), element.getPosition());
+			// caso a distância seja menor do que a soma dos raios ajusta as posicoes de forma a evitar que 
+			// os objetos se soldem 
+			double diff = (this.getRadius() + element.getRadius()) - dist.module(); 
+			if (diff > 0) {
+				//Divides the difference between both elements and translate them
+				Vector edist = dist.normalize().multiply(diff / 2);
+				element.setPosition(element.getPosition().sum(edist));
+				Vector tdist = edist.rotate(Math.PI);
+				this.setPosition(this.getPosition().sum(tdist));
 			}
 		}
 	}

@@ -3,7 +3,13 @@ package br.ufrgs.f180.math;
 
 public class Vector extends Point implements Cloneable{
 
-	public Vector() {}
+	public Vector(Point p) {
+		super(p);
+	}
+	
+	public Vector() {
+		super();
+	}
 
 	public Vector(double x, double y) {
 		super(x, y);
@@ -13,20 +19,12 @@ public class Vector extends Point implements Cloneable{
 		return new Vector(x / value, y / value);
 	}
 	
-	public Vector sum(Vector vector){
-		return new Vector(vector.getX() + x, vector.getY() + y);
-	}
-
 	public double getSinDirection(){
 		return y / hipotenuse();
 	}
 
 	public double getCosDirection(){
 		return x / hipotenuse();
-	}
-
-	public double getIntensity(){
-		return hipotenuse();
 	}
 
 	private double hipotenuse(){
@@ -52,6 +50,10 @@ public class Vector extends Point implements Cloneable{
 	
 	public double module(){
 		return hipotenuse();
+	}
+	
+	public Vector normalize(){
+		return new Vector(getCosDirection(), getSinDirection());
 	}
 	
 	public static double cos(Vector v1, Vector v2){
@@ -89,4 +91,13 @@ public class Vector extends Point implements Cloneable{
 	public Vector clone(){
 		return new Vector(this.getX(), this.getY());
 	}
+
+	public Vector subtract(Vector vector) {
+		return new Vector(x - vector.getX(), y - vector.getY());
+	}
+
+	public Vector sum(Vector p) {
+		return new Vector(p.getX() + x, p.getY() + y);
+	}
+	
 }

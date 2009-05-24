@@ -12,7 +12,7 @@ public class WallCollisionPoint extends MovingElement {
 	 * @param position
 	 */
 	public WallCollisionPoint(Point position) {
-		this.setMass(Double.MAX_VALUE);
+		this.setMass(1.7976931348623157E+52D);
 		this.setForce(new Vector(0, 0));
 		this.setVelocity(new Vector(0, 0));
 		this.setPosition(position);
