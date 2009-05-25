@@ -69,8 +69,11 @@
     	
 	<target name="javadoc">
 	    <property environment="env"/>
-		<javadoc executable="${env.JAVA_HOME}/bin/javadoc.exe" destdir="${basedir}/javadoc" sourcepath="${basedir}/src"/>
-		<javadoc executable="${env.JAVA_HOME}/bin/javadoc.exe" destdir="${basedir}/javadoc" sourcepath="${basedir}/commons"/>
+		<path id="sources">
+			<dirset dir="${basedir}/src"/>
+			<dirset dir="${basedir}/commons"/>
+		</path>
+		<javadoc executable="${env.JAVA_HOME}/bin/javadoc.exe" destdir="${basedir}/javadoc" sourcepathref="sources"/>
 	</target>
 	
 	<target name="package" depends="jar">
