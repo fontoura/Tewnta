@@ -1,17 +1,49 @@
 <project name="tewnta" default="jar" basedir="../">
 	
 	<property file="${basedir}/build/build.properties"/>
-	
+
+	<property name="tewntaCommons.jar.path" value="${basedir}/artifacts/components/tewntaCommons.jar"/>
+
 	<path id="classpath">
 		<fileset dir="${basedir}/lib">
 			<include name="**/*" />
 		</fileset>
 	</path>
 
-	<target name="compile">
+	<target name="compile.commons">
 		<delete dir="${basedir}/dist" failonerror="false"/>
 		<mkdir dir="${basedir}/dist" />
-		<javac srcdir="${basedir}/src" destdir="${basedir}/dist" classpathref="classpath">
+		<javac srcdir="${basedir}/commons" destdir="${basedir}/dist" classpathref="classpath">
+			<include name="**/*.java" />
+		</javac>
+		<copy todir="${basedir}/dist">
+			<fileset dir="${basedir}/commons">
+				<include name="*.properties" />
+				<include name="*.bmp" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="jar.commons" depends="compile.commons">
+		<mkdir dir="${basedir}/artifacts/components"/>
+		<jar destfile="${tewntaCommons.jar.path}">
+			<fileset dir="${basedir}/dist">
+				<include name="**/*.*" />
+			</fileset>
+		</jar>
+		<delete dir="${basedir}/dist" />
+	</target>
+	
+	<target name="compile" depends="jar.commons">
+		<delete dir="${basedir}/dist" failonerror="false"/>
+		<mkdir dir="${basedir}/dist" />
+
+		<path id="classpath.with.commons">
+			<pathelement path="${classpath}"/>
+			<pathelement path="${tewntaCommons.jar.path}"/>
+		</path>
+
+		<javac srcdir="${basedir}/src" destdir="${basedir}/dist" classpathref="classpath.with.commons">
 			<include name="**/*.java" />
 		</javac>
 		<copy todir="${basedir}/dist">

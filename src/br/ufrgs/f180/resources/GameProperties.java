@@ -5,6 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * This class is responsible for loading the physical parameters of the simulation.
+ * 
+ * @author Gabriel
+ *
+ */
 public class GameProperties extends Properties {
 	/**
 	 * 
@@ -30,10 +36,20 @@ public class GameProperties extends Properties {
 		return instance;
 	}
 	
+	/**
+	 * Loads properties as double values
+	 * @param key
+	 * @return
+	 */
 	public static double getDoubleValue(String key){
 		return Double.valueOf(getInstance().getProperty(key));
 	}
 
+	/**
+	 * Loads properties as integer values
+	 * @param key
+	 * @return
+	 */
 	public static int getIntValue(String key){
 		return Integer.valueOf(getInstance().getProperty(key));
 	}

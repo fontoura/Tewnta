@@ -97,7 +97,7 @@ public abstract class MovingElement implements VisualElement {
 	}
 
 	/**
-	 * Calculates the position of the element after 1ms is passed
+	 * Calculates the position of the element after an ammount of milliseconds are passed.
 	 */
 	public void calculatePosition(double timeElapsed) {
 		if(isDragging()){
@@ -119,6 +119,11 @@ public abstract class MovingElement implements VisualElement {
 		angle = angle + rotationVelocity * timeElapsed;
 	}
 
+	/**
+	 *   This is one of the most important methods in this class. It calculates the force distribution among 
+	 * colliding elements. 
+	 * @param element the element that will be checked for collision.
+	 */
 	public void calculateCollision(MovingElement element) {
 
 		if (this.collide(element)) {
@@ -149,6 +154,16 @@ public abstract class MovingElement implements VisualElement {
 		}
 	}
 
+	/**
+	 *   This method simulates a collision between two bodies and distributes the velocity relative to their mass.
+	 * @param m1
+	 * @param m2
+	 * @param v1
+	 * @param v2
+	 * @param p1
+	 * @param p2
+	 * @return
+	 */
 	private Vector[] calculateFinalVelocity(double m1, double m2, Vector v1,
 			Vector v2, Point p1, Point p2) {
 		double x1 = p1.getX();
@@ -220,6 +235,10 @@ public abstract class MovingElement implements VisualElement {
 		}
 	}
 
+	/**
+	 * Rotates the element a given angle.
+	 * @param angle
+	 */
 	public void rotate(double angle) {
 		double rotationMatrix[][] = { { Math.cos(angle), -Math.sin(angle) },
 				{ Math.sin(angle), Math.cos(angle) } };
@@ -245,6 +264,11 @@ public abstract class MovingElement implements VisualElement {
 		return force;
 	}
 
+	/**
+	 * Check if two elements collide.
+	 * @param element
+	 * @return
+	 */
 	public boolean collide(MovingElement element) {
 		double x1 = this.getPosition().getX();
 		double y1 = this.getPosition().getY();
@@ -256,6 +280,10 @@ public abstract class MovingElement implements VisualElement {
 		return vdistance.module() < distance;
 	}
 
+	/**
+	 * Drag and drop behavior.
+	 * Dragging will make the element to stop moving.
+	 */
 	public synchronized void drag() {
 		if(Math.abs(field.getMousePosition().getX() - this.getPosition().getX()) <= this.getRadius()){
 			if(Math.abs(field.getMousePosition().getY() - this.getPosition().getY()) <= this.getRadius()){
@@ -270,6 +298,10 @@ public abstract class MovingElement implements VisualElement {
 		}
 	}
 
+	/**
+	 * Drag and drop behavior.
+	 * Dragging will make the element to stop moving.
+	 */
 	public synchronized void drop() {
 		if(isDragging()) {
 			System.out.println("Dropping");

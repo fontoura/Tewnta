@@ -9,6 +9,9 @@ import br.ufrgs.f180.api.model.RobotInformation;
 import br.ufrgs.f180.server.Game;
 
 /**
+ * This is the implementation of the Player APIs. 
+ * 
+ * Most information is gathered from the Game.java class.
  * 
  * @author Gabriel Detoni
  *

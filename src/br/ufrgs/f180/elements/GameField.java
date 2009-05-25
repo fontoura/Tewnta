@@ -20,19 +20,52 @@ import br.ufrgs.f180.resources.GameProperties;
 import com.cloudgarden.resource.SWTResourceManager;
 
 /**
+ *   This object merges the both physical simulation and visual representation of the game field.
+ *   There are methods responsible for visual display as well as methods responsible for the physical phenomenas
+ * that guides the simulation.
  * 
+ *   It is important to notice that visual representation of the logical field uses the following notation:
+ *    (x, y) = (0, 0): this means the left bottom of the screen. Where x will increase from left to right and
+ *    y will increase from bottom to top of the screen.  
+ *  
  * @author Gabriel Detoni
  *
  */
 public class GameField implements VisualElement {
+	/**
+	 * Field physical properties. Mostly read from the game properties resource file.
+	 */
 	private static final double GRAVITY_ACCELERATION = 10;
-	private static final double FIELD_BORDER = (double)(GameProperties.getDoubleValue("field.border") * 100);
-	private static final double FIELD_CENTERCIRCLE_RADIUS = (double)(GameProperties.getDoubleValue("field.centerCircle.radius") * 100);
-	private static final double FIELD_GOALAREA_RADIUS = (double)(GameProperties.getDoubleValue("field.goalArea.radius") * 100);
-	private static final double GOAL_DEPTH = (double)(GameProperties.getDoubleValue("goal.depth") * 100);
-	private static final double GOAL_SIZE = (double)(GameProperties.getDoubleValue("goal.size") * 100);
-	public static final String BALL_ELEMENT = "BALL";
+	/**
+	 * Field physical properties. Mostly read from the game properties resource file.
+	 */
 	private static final double FRICTION_COHEFICIENT = (double)GameProperties.getDoubleValue("field.frictionCoheficient");;
+
+	/**
+	 * Field data to draw the lines. Mostly read from the game properties resource file.
+	 */
+	private static final double FIELD_BORDER = (double)(GameProperties.getDoubleValue("field.border") * 100);
+	/**
+	 * Field data to draw the lines. Mostly read from the game properties resource file.
+	 */
+	private static final double FIELD_CENTERCIRCLE_RADIUS = (double)(GameProperties.getDoubleValue("field.centerCircle.radius") * 100);
+	/**
+	 * Field data to draw the lines. Mostly read from the game properties resource file.
+	 */
+	private static final double FIELD_GOALAREA_RADIUS = (double)(GameProperties.getDoubleValue("field.goalArea.radius") * 100);
+	/**
+	 * Field data to draw the lines. Mostly read from the game properties resource file.
+	 */
+	private static final double GOAL_DEPTH = (double)(GameProperties.getDoubleValue("goal.depth") * 100);
+	/**
+	 * Field data to draw the lines. Mostly read from the game properties resource file.
+	 */
+	private static final double GOAL_SIZE = (double)(GameProperties.getDoubleValue("goal.size") * 100);
+	/**
+	 * The ball is an element without an ID so this is a constant used to identify it.
+	 */
+	public static final String BALL_ELEMENT = "BALL";
+
 	private double scale_x;
 	private double scale_y;
 	private double width;
@@ -40,11 +73,17 @@ public class GameField implements VisualElement {
 	private int canvasWidth;
 	private int canvasHeight;
 	
+	/**
+	 * Keeps the mouse position within the field. Used for drag and drop behavior.
+	 */
 	private Point mousePosition;
 	
 	private List<Wall> walls = new ArrayList<Wall>();
 	private Map<String, MovingElement> elements = new HashMap<String, MovingElement>(); 
 	
+	/**
+	 * @return all moving elements that are present in the field. Mostly robots and the ball.
+	 */
 	public Map<String, MovingElement> getElements() {
 		return elements;
 	}
@@ -54,8 +93,13 @@ public class GameField implements VisualElement {
 		this.height = height;
 		updateProportions(canvas);
 		createWalls();
+
 	}
 
+	/**
+	 * Window resizes require the scales to be adjusted. This method is responsible for that.
+	 * @param canvas the container of this game field.
+	 */
 	public void updateProportions(Canvas canvas){
 		this.canvasHeight = canvas.getBounds().height - 1;
 		this.canvasWidth = canvas.getBounds().width - 1;
@@ -63,6 +107,9 @@ public class GameField implements VisualElement {
 		this.scale_y = ((double) canvasHeight) / height;
 	}
 	
+	/**
+	 * Creates the walls that surround the field and prevent elements from escaping.
+	 */
 	private void createWalls() {
 		try {
 			// -
@@ -86,14 +133,6 @@ public class GameField implements VisualElement {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private double yUnit() {
-		return scale_y;
-	}
-
-	private double xUnit() {
-		return scale_x;
 	}
 
 	/**
@@ -123,17 +162,35 @@ public class GameField implements VisualElement {
 		walls.add(e);
 	}
 	
-	private boolean overlap(String id, MovingElement e) {
+	/**
+	 * Simple check to see if objects are overlapping.
+	 * @param id the element to be tested.
+	 * @param otherElement the element to be checked for overlap.
+	 * @return true if the element identified by 'id' overlaps the otherElement.
+	 */
+	private boolean overlap(String id, MovingElement otherElement) {
 		for (Entry<String, MovingElement> iterable : elements.entrySet()) {
-			if(!iterable.getKey().equals(id) && e.collide(iterable.getValue())) return true;
+			if(!iterable.getKey().equals(id) && otherElement.collide(iterable.getValue())) return true;
 		}
 		return false;
 	}
 
+	/**
+	 * Finds an element by its id.
+	 * @param id
+	 * @return the element if found. Null otherwise.
+	 */
 	public MovingElement getElement(String id){
 		return elements.get(id);
 	}
 
+	/**
+	 *  This method is responsible for drawing everything inside the field. 
+	 *  It delegates to the elements to draw themselves.
+	 * 
+	 *  This method is invoked in a fixed interval and it is not bound to the physical simulation that is 
+	 * expected to occur much more frequently.
+	 */
 	@Override
 	public void draw(GC gc) {
 		Color old = gc.getForeground();
@@ -159,58 +216,99 @@ public class GameField implements VisualElement {
 		gc.setForeground(old);
 	}
 
+	/**
+	 * Gets the center of the field.
+	 * @return horizontal axis center
+	 */
 	private double getCenterX() {
 		return width / 2;
 	}
 
+	/**
+	 * Gets the center of the field.
+	 * @return vertical axis center
+	 */
 	private double getCenterY() {
 		return height / 2;
 	}
 
+	/**
+	 * Returns the vertical position of the goal. As both goals have the same vertical position, 
+	 * this is a single method for both.
+	 * @return 
+	 */
 	public double getGoalDown() {
 		return (height + GOAL_SIZE) / 2;
 	}
 
+	/**
+	 * Returns the vertical position of the goal. As both goals have the same vertical position, 
+	 * this is a single method for both.
+	 * @return 
+	 */
 	public double getGoalTop() {
 		return (height - GOAL_SIZE) / 2;
 	}
 
-	public double getScale_x() {
-		return scale_x;
-	}
-
-	public double getScale_y() {
-		return scale_y;
-	}
-
+	/**
+	 * @return the logical field width. This value is not subject to the scale. 
+	 * It will represent the actual field width regardless of the screen size.
+	 */
 	public double getFieldWidth() {
 		return getRightBound() - getLeftBound();
 	}
 
+	/**
+	 * @return the logical field height. This value is not subject to the scale. 
+	 * It will represent the actual field height regardless of the screen size.
+	 */
 	public double getFieldHeight() {
 		return getDownBound() - getTopBound();
 	}
 
+	/**
+	 * @return the horizontal proportion of the field relative to the canvas where it is being drawn. 
+	 * This is used to draw elements correctly.
+	 */
 	@Override
 	public int scalex(double x) {
 		return (int)(x * scale_x);
 	}
 
+	/**
+	 * @return the vertical proportion of the field relative to the canvas where it is being drawn. 
+	 * This is used to draw elements correctly.
+	 */
 	@Override
 	public int scaley(double y) {
 		return (int)(y * scale_y);
 	}
 
+	/**
+	 * This method translates a logical position in the field to a real position in the screen. 
+	 * @return the screen position. 
+	 * This is used to draw elements correctly.
+	 */
 	@Override
 	public int realx(double x) {
 		return (int)(x * scale_x);
 	}
 
+	/**
+	 * This method translates a logical position in the field to a real position in the screen. 
+	 * @return the screen position. 
+	 * This is used to draw elements correctly.
+	 */
 	@Override
 	public int realy(double y) {
 		return canvasHeight - (int)(y * scale_y);
 	}
 
+	/**
+	 *  This method is the central point of the physical simulation. It will go elements one by one and calculate its
+	 * position relative to the amount time that was elapsed since the last invocation.
+	 * @param timeElapsed the time elapsed since the latest invocation, in millis
+	 */
 	public void updateElementsState(double timeElapsed){
 		Set<Entry<String, MovingElement>> collisors = new HashSet<Entry<String,MovingElement>>();
 		collisors.addAll(elements.entrySet());
@@ -229,30 +327,39 @@ public class GameField implements VisualElement {
 		}
 	}
 
+	/**
+	 * @return the logical field bound. This value is not subject to the scale.
+	 */
 	public double getLeftBound() {
 		return FIELD_BORDER;
 	}
 
+	/**
+	 * @return the logical field bound. This value is not subject to the scale.
+	 */
 	public double getRightBound() {
 		return width - FIELD_BORDER;
 	}
 
+	/**
+	 * @return the logical field bound. This value is not subject to the scale.
+	 */
 	public double getDownBound() {
 		return FIELD_BORDER;
 	}
 
+	/**
+	 * @return the logical field bound. This value is not subject to the scale.
+	 */
 	public double getTopBound() {
 		return height - FIELD_BORDER;
 	}
-	
-	public int relativeRealy(int y){
-		return realy(getDownBound()) + y;	
-	}
 
-	public int relativeRealx(int x){
-		return realx(getLeftBound() + x);	
-	}
-
+	/**
+	 * This method calculates the friction force between the field and an element.
+	 * @param e
+	 * @return the friction.
+	 */
 	public Vector getFriction(MovingElement e) {
 		Vector v = new Vector(0, 0);
 		if(e.getVelocity().module() > 0){
@@ -264,6 +371,11 @@ public class GameField implements VisualElement {
 		return v;
 	}
 
+	/**
+	 * Updates the relative mouse position.
+	 * @param x
+	 * @param y
+	 */
 	public void setMousePosition(int x, int y) {
 		double xpos = x / scale_x;
 		double ypos = (canvasHeight - y) / scale_y;
