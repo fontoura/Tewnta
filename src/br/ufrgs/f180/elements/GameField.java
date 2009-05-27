@@ -1,6 +1,7 @@
 package br.ufrgs.f180.elements;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -78,8 +79,8 @@ public class GameField implements VisualElement {
 	 */
 	private Point mousePosition;
 	
-	private List<Wall> walls = new ArrayList<Wall>();
-	private Map<String, MovingElement> elements = new HashMap<String, MovingElement>(); 
+	private List<Wall> walls = Collections.synchronizedList(new ArrayList<Wall>());
+	private Map<String, MovingElement> elements = Collections.synchronizedMap(new HashMap<String, MovingElement>()); 
 	
 	/**
 	 * @return all moving elements that are present in the field. Mostly robots and the ball.
