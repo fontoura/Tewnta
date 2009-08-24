@@ -5,6 +5,7 @@ import org.eclipse.swt.graphics.GC;
 
 import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
+import br.ufrgs.f180.resources.GameProperties;
 
 import com.cloudgarden.resource.SWTResourceManager;
 
@@ -15,6 +16,7 @@ import com.cloudgarden.resource.SWTResourceManager;
  */
 public class Robot extends MovingElement {
 	
+	private static final double ROBOT_MAX_VELOCITY = (double)GameProperties.getDoubleValue("robot.max.velocity") * 100;
 	private static final double SPOT_SIZE = 2.5;
 	private double radius;
 	private Vector front;
@@ -247,5 +249,12 @@ public class Robot extends MovingElement {
 	public void setDisplayName(boolean displayName) {
 		this.displayName = displayName;
 	}
-	
+
+	@Override
+	public void setVelocity(Vector velocity) {
+		if(velocity.module() > ROBOT_MAX_VELOCITY){
+			velocity = velocity.normalize().multiply(ROBOT_MAX_VELOCITY);
+		}
+		super.setVelocity(velocity);
+	}
 }

@@ -72,6 +72,18 @@ public interface Player {
 	void setPlayerForce(String id, Double x, Double y) throws Exception;
 
 	/**
+	 *   Sets a velocity vector that will be used for robot motion. Considering the robots are omnidirectional it is 
+	 * assumed a single force vector to be distributed in the 3 electric motors that will produce the expected 
+	 * resulting velocity. 
+	 * The robot will use the maximum force until the desired velocity is reached.
+	 * @param id the id of the robot to receive the setting
+	 * @param x horizontal component of the velocity vector
+	 * @param y vertical component of the velocity vector
+	 * @throws Exception
+	 */
+	void setPlayerVelocity(String id, Double x, Double y) throws Exception;
+	
+	/**
 	 *   Sets a rotation force that will be used for robot motion. Considering the robots are omnidirectional it is 
 	 * assumed a single force vector to be distributed in the 3 electric motors that will produce the expected 
 	 * resulting rotation motion.
@@ -80,6 +92,16 @@ public interface Player {
 	 * @throws Exception
 	 */
 	void setPlayerRotation(String id, Double force) throws Exception;
+
+	/**
+	 *   Sets a rotation velocity that will be used for robot motion. Considering the robots are omnidirectional it is 
+	 * assumed a single force vector to be distributed in the 3 electric motors that will produce the expected 
+	 * resulting rotation motion.
+	 * @param id the id of the robot to receive the setting.
+	 * @param force the rotation force. 
+	 * @throws Exception
+	 */
+	void setPlayerRotationVelocity(String id, Double velocity) throws Exception;
 	
 	/**
 	 *   Lists all the robots from a given team.

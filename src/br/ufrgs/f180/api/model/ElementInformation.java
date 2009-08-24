@@ -10,6 +10,7 @@ import br.ufrgs.f180.math.Vector;
  *
  */
 public class ElementInformation {
+	protected Double timestamp;
 	protected Point position;
 	protected Double angle;
 	protected Vector velocity;
@@ -46,5 +47,13 @@ public class ElementInformation {
 
 	public void setAngle(Double angle) {
 		this.angle = angle;
+	}
+
+	public Double getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Double timestamp) {
+		this.timestamp = timestamp;
 	}
 }

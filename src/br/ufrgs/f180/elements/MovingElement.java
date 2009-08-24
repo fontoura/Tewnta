@@ -135,8 +135,9 @@ public abstract class MovingElement implements VisualElement {
 			double m2 = element.getMass();
 			Vector v2 = element.getVelocity();
 			Vector[] fv1 = calculateFinalVelocity(m1, m2, v1, v2, position, element.position);
-			this.setVelocity(fv1[0]);
-			element.setVelocity(fv1[1]);
+			//Make the collision not completelly elastic 
+			this.setVelocity(fv1[0].multiply(0.9));
+			element.setVelocity(fv1[1].multiply(0.9));
 
 		
 			// calcula a distância entre o centros dos 2 elementos

@@ -66,4 +66,17 @@ public class PlayerImpl implements Player {
 		return Game.getInstance().getPlayerInformation(playerId);
 	}
 
+	@Override
+	public void setPlayerVelocity(String id, Double x, Double y)
+			throws Exception {
+		System.out.println("Set Velocity" + x + " " + y);
+		Game.getInstance().setPlayerVelocity(id, x, y);		
+	}
+
+	@Override
+	public void setPlayerRotationVelocity(String id, Double velocity)
+			throws Exception {
+		Game.getInstance().setPlayerRotationVelocity(id, velocity);		
+	}
+
 }

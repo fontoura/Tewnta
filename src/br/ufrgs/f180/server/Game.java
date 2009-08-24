@@ -246,7 +246,7 @@ public class Game {
 
 	public void logout(String teamId) throws Exception {
 		switch (getTeam(teamId)) {
-		case A:	
+		case A:
 			nameTeamA = null;
 			mainWindow.removeRobotsFromTeam(getTeam(teamId));
 			break;
@@ -255,23 +255,66 @@ public class Game {
 			break;
 		}
 	}
-	
-	public BallInformation getBallInformation(){
+
+	public BallInformation getBallInformation() {
 		Ball b = (Ball) mainWindow.getField()
-		.getElement(GameField.BALL_ELEMENT);
+				.getElement(GameField.BALL_ELEMENT);
 
 		BallInformation ball = new BallInformation();
+		ball.setTimestamp(((double) this.elapsedTime) / 10000.0);
 		ball.setAngle(b.getAngle());
 		ball.setPosition(b.getPosition());
 		ball.setVelocity(b.getVelocity());
-		return ball; 		
+		return ball;
 	}
 
 	public List<RobotInformation> getRobotsFromTeam(String teamId) {
-		return mainWindow.getRobotsFromTeam(getTeam(teamId));
+		List<RobotInformation> l = mainWindow.getRobotsFromTeam(getTeam(teamId));
+		for (RobotInformation robotInformation : l) {
+			robotInformation.setTimestamp(((double) this.elapsedTime) / 10000.0);
+		}
+		return l;
 	}
 
 	public RobotInformation getPlayerInformation(String playerId) {
-		return mainWindow.getPlayerInformation(playerId);
+		RobotInformation r = mainWindow.getPlayerInformation(playerId);
+		r.setTimestamp(((double) this.elapsedTime) / 10000.0);
+		return r;
+	}
+
+	/**
+	 * Support for CMDragons
+	 * @param id
+	 * @param x
+	 * @param y
+	 * @throws Exception
+	 */
+	public void setPlayerVelocity(String id, Double x, Double y) throws Exception {
+		if (mainWindow.getField() != null) {
+			Robot r = (Robot) mainWindow.getField().getElement(id);
+			r.setForce(new Vector(0, 0));
+			r.setVelocity(new Vector(x, y));
+		} else {
+			throw new Exception(
+					"Cannot get element. Configure the mainWindow.getField() first");
+		}
+	}
+
+	/**
+	 * Support for CMDragons
+	 * @param id
+	 * @param x
+	 * @param y
+	 * @throws Exception
+	 */
+	public void setPlayerRotationVelocity(String id, Double velocity) throws Exception {
+		if (mainWindow.getField() != null) {
+			Robot r = (Robot) mainWindow.getField().getElement(id);
+			r.setRotationForce(0d);
+			r.setRotationVelocity(velocity);
+		} else {
+			throw new Exception(
+					"Cannot get element. Configure the mainWindow.getField() first");
+		}
 	}
 }
