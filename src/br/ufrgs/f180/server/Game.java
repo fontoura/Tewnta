@@ -106,26 +106,31 @@ public class Game {
 	 *            time in ms
 	 */
 	public void updateState(double d) {
-		if (gameRunning) {
-			elapsedTime += d * 1000;
-			if (mainWindow.getField() != null) {
-				mainWindow.getField().updateElementsState(d);
-				ScoredGoal s = goalScored();
-				switch (s) {
-				case SCORED_LEFT:
-					System.out.println("Goal Team A");
-					gameRunning = false;
-					setUpBall();
-					scoreTeamB++;
-					break;
-				case SCORED_RIGHT:
-					System.out.println("Goal Team B");
-					gameRunning = false;
-					setUpBall();
-					scoreTeamA++;
-					break;
-				}
+		
+		if (mainWindow.getField() != null) {
+			double timeInterval = 0;
+			if (gameRunning) {
+				timeInterval = d;
 			}
+			elapsedTime += timeInterval * 1000;
+			mainWindow.getField().updateElementsState(timeInterval);
+			
+			ScoredGoal s = goalScored();
+			switch (s) {
+			case SCORED_LEFT:
+				System.out.println("Goal Team A");
+				gameRunning = false;
+				setUpBall();
+				scoreTeamB++;
+				break;
+			case SCORED_RIGHT:
+				System.out.println("Goal Team B");
+				gameRunning = false;
+				setUpBall();
+				scoreTeamA++;
+				break;
+			}
+			
 		}
 	}
 
@@ -265,13 +270,16 @@ public class Game {
 		ball.setAngle(b.getAngle());
 		ball.setPosition(b.getPosition());
 		ball.setVelocity(b.getVelocity());
+		ball.setRadius(b.radius);
 		return ball;
 	}
 
 	public List<RobotInformation> getRobotsFromTeam(String teamId) {
-		List<RobotInformation> l = mainWindow.getRobotsFromTeam(getTeam(teamId));
+		List<RobotInformation> l = mainWindow
+				.getRobotsFromTeam(getTeam(teamId));
 		for (RobotInformation robotInformation : l) {
-			robotInformation.setTimestamp(((double) this.elapsedTime) / 10000.0);
+			robotInformation
+					.setTimestamp(((double) this.elapsedTime) / 10000.0);
 		}
 		return l;
 	}
@@ -284,12 +292,14 @@ public class Game {
 
 	/**
 	 * Support for CMDragons
+	 * 
 	 * @param id
 	 * @param x
 	 * @param y
 	 * @throws Exception
 	 */
-	public void setPlayerVelocity(String id, Double x, Double y) throws Exception {
+	public void setPlayerVelocity(String id, Double x, Double y)
+			throws Exception {
 		if (mainWindow.getField() != null) {
 			Robot r = (Robot) mainWindow.getField().getElement(id);
 			r.setForce(new Vector(0, 0));
@@ -302,12 +312,14 @@ public class Game {
 
 	/**
 	 * Support for CMDragons
+	 * 
 	 * @param id
 	 * @param x
 	 * @param y
 	 * @throws Exception
 	 */
-	public void setPlayerRotationVelocity(String id, Double velocity) throws Exception {
+	public void setPlayerRotationVelocity(String id, Double velocity)
+			throws Exception {
 		if (mainWindow.getField() != null) {
 			Robot r = (Robot) mainWindow.getField().getElement(id);
 			r.setRotationForce(0d);

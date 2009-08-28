@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -45,18 +44,17 @@ import br.ufrgs.f180.server.Server;
 import com.cloudgarden.resource.SWTResourceManager;
 
 /**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
+ * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
+ * Builder, which is free for non-commercial use. If Jigloo is being used
+ * commercially (ie, by a corporation, company or business for any purpose
+ * whatever) then you should purchase a license for each developer using Jigloo.
+ * Please visit www.cloudgarden.com for details. Use of Jigloo implies
+ * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
+ * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
+ * ANY CORPORATE OR COMMERCIAL PURPOSE.
+ */
 public class MainWindow extends org.eclipse.swt.widgets.Composite {
+	private static final Display display = Display.getDefault();
 
 	private Menu menu1;
 	private Button buttonName;
@@ -79,8 +77,6 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private Label DetailsLabel;
 	private Text PlayerDetails;
 	private Canvas FootballField;
-	private Label labelPlayers;
-	private List listPlayers;
 	private MenuItem aboutMenuItem;
 	private MenuItem contentsMenuItem;
 	private Menu helpMenu;
@@ -92,30 +88,30 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private MenuItem openFileMenuItem;
 	private Menu fileMenu;
 	private MenuItem fileMenuItem;
-	
+
 	private boolean invalidPlayers = false;
 	private ArrayList<String> playerNames;
 	private Server server;
 	private GameField field;
 
 	{
-		//Register as a resource user - SWTResourceManager will
-		//handle the obtaining and disposing of resources
+		// Register as a resource user - SWTResourceManager will
+		// handle the obtaining and disposing of resources
 		SWTResourceManager.registerResourceUser(this);
 	}
 
 	public MainWindow(Composite parent, int style) throws Exception {
 		super(parent, style);
 		initGUI();
-		//Create the game fixture
+		// Create the game fixture
 		setUpGame();
 	}
 
-	public void setUpGame() throws Exception{
+	public void setUpGame() throws Exception {
 		server = new Server();
 
 		try {
-			if(!server.isStarted()){
+			if (!server.isStarted()) {
 				server.startServer();
 			}
 			ToggleServer.setText("Stop Server");
@@ -126,13 +122,13 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		}
 
 		playerNames = new ArrayList<String>();
-		//Set up the game
-		Game.getInstance().setUp(this);			
+		// Set up the game
+		Game.getInstance().setUp(this);
 	}
-	
+
 	/**
-	* Initializes the GUI.
-	*/
+	 * Initializes the GUI.
+	 */
 	private void initGUI() {
 		try {
 			this.setSize(660, 434);
@@ -145,33 +141,19 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData groupPlayersLData = new FormData();
 				groupPlayersLData.width = 148;
 				groupPlayersLData.height = 213;
-				groupPlayersLData.left =  new FormAttachment(0, 1000, 0);
-				groupPlayersLData.top =  new FormAttachment(0, 1000, 208);
+				groupPlayersLData.left = new FormAttachment(0, 1000, 0);
+				groupPlayersLData.top = new FormAttachment(0, 1000, 208);
 				groupPlayers.setLayoutData(groupPlayersLData);
 				groupPlayers.setText("Players");
 				{
-					listPlayers = new List(groupPlayers, SWT.NONE);
-					listPlayers.setBounds(12, 35, 132, 89);
-					listPlayers.addSelectionListener(new SelectionAdapter() {
-						public void widgetSelected(SelectionEvent evt) {
-							listPlayersWidgetSelected(evt);
-						}
-					});
-				}
-				{
-					labelPlayers = new Label(groupPlayers, SWT.NONE);
-					labelPlayers.setText("Connected:");
-					labelPlayers.setBounds(12, 17, 129, 12);
-				}
-				{
 					PlayerDetails = new Text(groupPlayers, SWT.MULTI | SWT.WRAP);
 					PlayerDetails.setEditable(false);
-					PlayerDetails.setBounds(12, 149, 132, 64);
+					PlayerDetails.setBounds(12, 36, 132, 177);
 				}
 				{
 					DetailsLabel = new Label(groupPlayers, SWT.NONE);
 					DetailsLabel.setText("Details:");
-					DetailsLabel.setBounds(12, 130, 132, 13);
+					DetailsLabel.setBounds(10, 17, 132, 13);
 				}
 			}
 			{
@@ -180,20 +162,22 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData groupGameLData = new FormData();
 				groupGameLData.width = 148;
 				groupGameLData.height = 72;
-				groupGameLData.left =  new FormAttachment(0, 1000, 0);
-				groupGameLData.top =  new FormAttachment(0, 1000, -1);
+				groupGameLData.left = new FormAttachment(0, 1000, 0);
+				groupGameLData.top = new FormAttachment(0, 1000, -1);
 				groupGame.setLayoutData(groupGameLData);
 				groupGame.setText("Game");
 				{
 					labelElapsedTime = new Label(groupGame, SWT.NONE);
 					labelElapsedTime.setText("Time:");
-					labelElapsedTime.setFont(SWTResourceManager.getFont("Tahoma",10,1,false,false));
+					labelElapsedTime.setFont(SWTResourceManager.getFont(
+							"Tahoma", 10, 1, false, false));
 					labelElapsedTime.setAlignment(SWT.CENTER);
 					labelElapsedTime.setBounds(14, 71, 34, 15);
 				}
 				{
 					labelElapsedTimeCount = new Label(groupGame, SWT.NONE);
-					labelElapsedTimeCount.setFont(SWTResourceManager.getFont("Tahoma",10,0,false,false));
+					labelElapsedTimeCount.setFont(SWTResourceManager.getFont(
+							"Tahoma", 10, 0, false, false));
 					labelElapsedTimeCount.setAlignment(SWT.CENTER);
 					labelElapsedTimeCount.setBounds(54, 71, 91, 16);
 				}
@@ -201,37 +185,44 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 					labelTeamA = new Label(groupGame, SWT.NONE);
 					labelTeamA.setText("Team A");
 					labelTeamA.setAlignment(SWT.CENTER);
-					labelTeamA.setForeground(SWTResourceManager.getColor(0,0,255));
+					labelTeamA.setForeground(SWTResourceManager.getColor(0, 0,
+							255));
 					labelTeamA.setBounds(12, 17, 57, 18);
 				}
 				{
 					labelTeamB = new Label(groupGame, SWT.NONE);
 					labelTeamB.setText("Team B");
 					labelTeamB.setAlignment(SWT.CENTER);
-					labelTeamB.setForeground(SWTResourceManager.getColor(255,0,0));
+					labelTeamB.setForeground(SWTResourceManager.getColor(255,
+							0, 0));
 					labelTeamB.setBounds(88, 17, 57, 18);
 				}
 				{
 					labelScoreTeamA = new Label(groupGame, SWT.NONE);
 					labelScoreTeamA.setText("0");
 					labelScoreTeamA.setAlignment(SWT.CENTER);
-					labelScoreTeamA.setForeground(SWTResourceManager.getColor(0,0,255));
-					labelScoreTeamA.setFont(SWTResourceManager.getFont("Tahoma",14,1,false,false));
+					labelScoreTeamA.setForeground(SWTResourceManager.getColor(
+							0, 0, 255));
+					labelScoreTeamA.setFont(SWTResourceManager.getFont(
+							"Tahoma", 14, 1, false, false));
 					labelScoreTeamA.setBounds(12, 40, 51, 25);
 				}
 				{
 					labelX = new Label(groupGame, SWT.NONE);
 					labelX.setText("X");
 					labelX.setAlignment(SWT.CENTER);
-					labelX.setFont(SWTResourceManager.getFont("Tahoma",12,0,false,false));
+					labelX.setFont(SWTResourceManager.getFont("Tahoma", 12, 0,
+							false, false));
 					labelX.setBounds(71, 46, 17, 19);
 				}
 				{
 					labelScoreTeamB = new Label(groupGame, SWT.NONE);
 					labelScoreTeamB.setText("0");
 					labelScoreTeamB.setAlignment(SWT.CENTER);
-					labelScoreTeamB.setFont(SWTResourceManager.getFont("Tahoma",14,1,false,false));
-					labelScoreTeamB.setForeground(SWTResourceManager.getColor(255,0,0));
+					labelScoreTeamB.setFont(SWTResourceManager.getFont(
+							"Tahoma", 14, 1, false, false));
+					labelScoreTeamB.setForeground(SWTResourceManager.getColor(
+							255, 0, 0));
 					labelScoreTeamB.setBounds(94, 40, 51, 25);
 				}
 			}
@@ -241,12 +232,13 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData groupCommandsLData = new FormData();
 				groupCommandsLData.width = 148;
 				groupCommandsLData.height = 64;
-				groupCommandsLData.left =  new FormAttachment(0, 1000, 0);
-				groupCommandsLData.top =  new FormAttachment(0, 1000, 87);
+				groupCommandsLData.left = new FormAttachment(0, 1000, 0);
+				groupCommandsLData.top = new FormAttachment(0, 1000, 87);
 				groupCommands.setLayoutData(groupCommandsLData);
 				groupCommands.setText("Commands");
 				{
-					ToggleServer = new Button(groupCommands, SWT.TOGGLE | SWT.CENTER);
+					ToggleServer = new Button(groupCommands, SWT.TOGGLE
+							| SWT.CENTER);
 					ToggleServer.setBounds(8, 18, 69, 23);
 					ToggleServer.setText("Start Server");
 					FormData ToggleServerLData = new FormData();
@@ -259,24 +251,28 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 					});
 				}
 				{
-					buttonResetGame = new Button(groupCommands, SWT.PUSH | SWT.CENTER);
+					buttonResetGame = new Button(groupCommands, SWT.PUSH
+							| SWT.CENTER);
 					buttonResetGame.setText("Reset");
 					buttonResetGame.setBounds(8, 46, 40, 23);
-					buttonResetGame.addSelectionListener(new SelectionAdapter() {
-						public void widgetSelected(SelectionEvent evt) {
-							buttonResetGameWidgetSelected(evt);
-						}
-					});
+					buttonResetGame
+							.addSelectionListener(new SelectionAdapter() {
+								public void widgetSelected(SelectionEvent evt) {
+									buttonResetGameWidgetSelected(evt);
+								}
+							});
 				}
 				{
-					buttonStartGame = new Button(groupCommands, SWT.PUSH | SWT.CENTER);
+					buttonStartGame = new Button(groupCommands, SWT.PUSH
+							| SWT.CENTER);
 					buttonStartGame.setBounds(60, 46, 41, 23);
 					buttonStartGame.setText("Play");
-					buttonStartGame.addSelectionListener(new SelectionAdapter() {
-						public void widgetSelected(SelectionEvent evt) {
-							buttonStartGameWidgetSelected(evt);
-						}
-					});
+					buttonStartGame
+							.addSelectionListener(new SelectionAdapter() {
+								public void widgetSelected(SelectionEvent evt) {
+									buttonStartGameWidgetSelected(evt);
+								}
+							});
 				}
 			}
 			{
@@ -285,12 +281,13 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData groupDisplayOptionsLData = new FormData();
 				groupDisplayOptionsLData.width = 148;
 				groupDisplayOptionsLData.height = 25;
-				groupDisplayOptionsLData.left =  new FormAttachment(0, 1000, 0);
-				groupDisplayOptionsLData.top =  new FormAttachment(0, 1000, 167);
+				groupDisplayOptionsLData.left = new FormAttachment(0, 1000, 0);
+				groupDisplayOptionsLData.top = new FormAttachment(0, 1000, 167);
 				groupDisplayOptions.setLayoutData(groupDisplayOptionsLData);
 				groupDisplayOptions.setText("Display");
 				{
-					buttonForce = new Button(groupDisplayOptions, SWT.CHECK | SWT.LEFT);
+					buttonForce = new Button(groupDisplayOptions, SWT.CHECK
+							| SWT.LEFT);
 					buttonForce.setText("Force");
 					buttonForce.setBounds(8, 18, 48, 16);
 					buttonForce.addSelectionListener(new SelectionAdapter() {
@@ -300,7 +297,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 					});
 				}
 				{
-					buttonMarks = new Button(groupDisplayOptions, SWT.CHECK | SWT.LEFT);
+					buttonMarks = new Button(groupDisplayOptions, SWT.CHECK
+							| SWT.LEFT);
 					buttonMarks.setText("Marks");
 					buttonMarks.setBounds(56, 18, 49, 16);
 					buttonMarks.setSelection(true);
@@ -311,7 +309,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 					});
 				}
 				{
-					buttonName = new Button(groupDisplayOptions, SWT.CHECK | SWT.LEFT);
+					buttonName = new Button(groupDisplayOptions, SWT.CHECK
+							| SWT.LEFT);
 					buttonName.setText("Name");
 					buttonName.setBounds(105, 18, 45, 16);
 					buttonName.addSelectionListener(new SelectionAdapter() {
@@ -327,17 +326,20 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				}
 			});
 			{
-				FootballField = new Canvas(this, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
+				FootballField = new Canvas(this, SWT.DOUBLE_BUFFERED
+						| SWT.NO_BACKGROUND);
 				FormData FootballFieldLData = new FormData();
 				FootballFieldLData.width = 506;
 				FootballFieldLData.height = 435;
-				FootballFieldLData.left =  new FormAttachment(0, 1000, 154);
-				FootballFieldLData.top =  new FormAttachment(0, 1000, -1);
-				FootballFieldLData.bottom =  new FormAttachment(1001, 1000, 0);
-				FootballFieldLData.right =  new FormAttachment(1000, 1000, 0);
+				FootballFieldLData.left = new FormAttachment(0, 1000, 154);
+				FootballFieldLData.top = new FormAttachment(0, 1000, -1);
+				FootballFieldLData.bottom = new FormAttachment(1001, 1000, 0);
+				FootballFieldLData.right = new FormAttachment(1000, 1000, 0);
 				FootballField.setLayoutData(FootballFieldLData);
-				FootballField.setBackground(SWTResourceManager.getColor(0, 80, 0));
-				FootballField.setForeground(SWTResourceManager.getColor(0, 0, 0));
+				FootballField.setBackground(SWTResourceManager.getColor(0, 80,
+						0));
+				FootballField.setForeground(SWTResourceManager
+						.getColor(0, 0, 0));
 				FootballField.addMouseMoveListener(new MouseMoveListener() {
 					public void mouseMove(MouseEvent evt) {
 						FootballFieldMouseMove(evt);
@@ -347,6 +349,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 					public void mouseUp(MouseEvent evt) {
 						FootballFieldMouseUp(evt);
 					}
+
 					public void mouseDown(MouseEvent evt) {
 						FootballFieldMouseDown(evt);
 					}
@@ -358,14 +361,16 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				});
 				FootballField.addPaintListener(new PaintListener() {
 					public void paintControl(PaintEvent evt) {
-						
+
 						// Draw the background
 						evt.gc.setForeground(evt.gc.getForeground());
 						evt.gc.setBackground(evt.gc.getBackground());
-						evt.gc.fillRectangle(((Canvas)evt.getSource()).getClientArea());
-						
-						if(getField() != null) getField().draw(evt.gc);
-						
+						evt.gc.fillRectangle(((Canvas) evt.getSource())
+								.getClientArea());
+
+						if (getField() != null)
+							getField().draw(evt.gc);
+
 					}
 				});
 			}
@@ -380,12 +385,17 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 						{
 							exitMenuItem = new MenuItem(fileMenu, SWT.CASCADE);
 							exitMenuItem.setText("Exit");
-							exitMenuItem.addSelectionListener(new SelectionAdapter() {
-								public void widgetSelected(SelectionEvent evt) {
-									System.out.println("exitMenuItem.widgetSelected, event="+evt);
-									MainWindow.this.getShell().dispose();
-								}
-							});
+							exitMenuItem
+									.addSelectionListener(new SelectionAdapter() {
+										public void widgetSelected(
+												SelectionEvent evt) {
+											System.out
+													.println("exitMenuItem.widgetSelected, event="
+															+ evt);
+											MainWindow.this.getShell()
+													.dispose();
+										}
+									});
 						}
 						fileMenuItem.setMenu(fileMenu);
 					}
@@ -396,20 +406,26 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 					{
 						helpMenu = new Menu(helpMenuItem);
 						{
-							contentsMenuItem = new MenuItem(helpMenu, SWT.CASCADE);
+							contentsMenuItem = new MenuItem(helpMenu,
+									SWT.CASCADE);
 							contentsMenuItem.setText("Contents");
 						}
 						{
 							aboutMenuItem = new MenuItem(helpMenu, SWT.CASCADE);
 							aboutMenuItem.setText("About");
-							aboutMenuItem.addSelectionListener(new SelectionAdapter() {
-								public void widgetSelected(SelectionEvent evt) {
-									System.out.println("aboutMenuItem.widgetSelected, event="+evt);
+							aboutMenuItem
+									.addSelectionListener(new SelectionAdapter() {
+										public void widgetSelected(
+												SelectionEvent evt) {
+											System.out
+													.println("aboutMenuItem.widgetSelected, event="
+															+ evt);
 
-									AboutDialog about = new AboutDialog(getShell(), SWT.DIALOG_TRIM);
-									about.open();
-								}
-							});
+											AboutDialog about = new AboutDialog(
+													getShell(), SWT.DIALOG_TRIM);
+											about.open();
+										}
+									});
 						}
 						helpMenuItem.setMenu(helpMenu);
 					}
@@ -420,14 +436,14 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	* Auto-generated main method to display this 
-	* org.eclipse.swt.widgets.Composite inside a new Shell.
-	 * @throws Exception 
-	*/
+	 * Auto-generated main method to display this
+	 * org.eclipse.swt.widgets.Composite inside a new Shell.
+	 * 
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
-		final Display display = Display.getDefault();
 		final Shell shell = new Shell(display);
 		final MainWindow inst = new MainWindow(shell, SWT.NULL);
 		Point size = inst.getSize();
@@ -435,7 +451,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		shell.setText("Tewnta Robocup F-180 Simulator");
 		shell.setImage(SWTResourceManager.getImage("icon.bmp"));
 		shell.layout();
-		if(size.x == 0 && size.y == 0) {
+		if (size.x == 0 && size.y == 0) {
 			inst.pack();
 			shell.pack();
 		} else {
@@ -444,26 +460,24 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		}
 		shell.open();
 
-		display.timerExec(0, new Runnable(){
+		display.timerExec(0, new Runnable() {
 			@Override
 			public void run() {
 				inst.gameLoop(Game.GAME_LOOP_INTERVAL / 1000d);
 				display.timerExec(Game.GAME_LOOP_INTERVAL, this);
 			}
-		}
-		);
-		
-		display.timerExec(0, new Runnable(){
+		});
+
+		display.timerExec(0, new Runnable() {
 			@Override
 			public void run() {
-				if(!shell.isDisposed()){
+				if (!shell.isDisposed()) {
 					inst.repaintLoop();
 					display.timerExec(40, this);
 				}
 			}
-		}
-		);
-		
+		});
+
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();
@@ -471,61 +485,61 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		System.exit(0);
 	}
 
-	public void gameLoop(double interval){
+	public void gameLoop(double interval) {
 		Game.getInstance().updateState(interval);
 	}
 
-	public void repaintLoop(){
-		if(invalidPlayers) updatePlayers();
-		
+	public void repaintLoop() {
+		if (invalidPlayers)
+			updatePlayers();
+
 		updateSelectedPlayer();
 		updateElapsedTime();
 		updateScores();
 		updateButtons();
 
-		if(FootballField != null) FootballField.redraw();
+		if (FootballField != null)
+			FootballField.redraw();
 	}
-	
+
 	/**
 	 * Update the buttons text that changes according to the game
 	 */
 	private void updateButtons() {
-		if(Game.getInstance().getGameRunning()){
+		if (Game.getInstance().getGameRunning()) {
 			buttonStartGame.setText("Pause");
-		}
-		else{
+		} else {
 			buttonStartGame.setText("Play");
 		}
 	}
-	
+
 	private void updateScores() {
 		String nameA = Game.getInstance().getNameTeamA();
 		labelTeamA.setText(nameA != null ? nameA : "Team A");
 		String nameB = Game.getInstance().getNameTeamB();
 		labelTeamB.setText(nameB != null ? nameB : "Team B");
-		labelScoreTeamA.setText(String.valueOf(Game.getInstance().getScoreTeamA()));
-		labelScoreTeamB.setText(String.valueOf(Game.getInstance().getScoreTeamB()));
+		labelScoreTeamA.setText(String.valueOf(Game.getInstance()
+				.getScoreTeamA()));
+		labelScoreTeamB.setText(String.valueOf(Game.getInstance()
+				.getScoreTeamB()));
 	}
 
 	private void updateElapsedTime() {
 		long time = Game.getInstance().getElapsedTime();
-		labelElapsedTimeCount.setText(String.format("%tM:%tS:%tL", time, time, time));
+		labelElapsedTimeCount.setText(String.format("%tM:%tS:%tL", time, time,
+				time));
 	}
 
-	private void updatePlayers(){
-		listPlayers.removeAll();		
-		for (String id : playerNames) {
-			listPlayers.add(id);	
-		}
-		updateSelectedPlayer();		
+	private void updatePlayers() {
+		updateSelectedPlayer();
 		invalidPlayers = false;
 	}
-	
+
 	private void ToggleServerWidgetSelected(SelectionEvent evt) {
-		System.out.println("ToggleServer.widgetSelected, event="+evt);
-		if(ToggleServer.getSelection()){
+		System.out.println("ToggleServer.widgetSelected, event=" + evt);
+		if (ToggleServer.getSelection()) {
 			try {
-				if(!server.isStarted()){
+				if (!server.isStarted()) {
 					server.startServer();
 				}
 				ToggleServer.setText("Stop Server");
@@ -533,10 +547,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				e.printStackTrace();
 				ToggleServer.setSelection(false);
 			}
-		}
-		else{
+		} else {
 			try {
-				if(server.isStarted()){
+				if (server.isStarted()) {
 					server.stopServer();
 				}
 				ToggleServer.setText("Start Server");
@@ -559,72 +572,99 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		this.field = field;
 	}
 
-	public void addRobot(String id, double x, double y, Team team, double mass, double radius) throws Exception {
-		if(getField() != null){
-			Robot r = new Robot(x, y, team, mass, radius, id);
-			getField().addElement(id, r);
-			if(playerNames.indexOf(id) < 0){
-				playerNames.add(id);
-			}
-			invalidPlayers = true;
-		}
-		else {
-			throw new Exception("Cannot add element. Configure the field first");
-		}
-	}
-	
-		
+	public void addRobot(final String id, final double x, final double y,
+			final Team team, final double mass, final double radius)
+			throws Exception {
+		// synchExec is used in order to prevent SWT thread issues
+		display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (getField() != null) {
+						Robot r = new Robot(x, y, team, mass, radius, id);
+						// Keep the selections
+						r.setDisplayForce(buttonForce.getSelection());
+						r.setDisplayName(buttonName.getSelection());
+						r.setDisplayMarks(buttonMarks.getSelection());
 
-	private void updateSelectedPlayer(){
-		if(listPlayers.getSelection().length == 1){
-			String selectedId = listPlayers.getSelection()[0];
-			Robot e = (Robot) field.getElement(selectedId);
+						getField().addElement(id, r);
+						if (playerNames.indexOf(id) < 0) {
+							playerNames.add(id);
+						}
+						invalidPlayers = true;
+					} else {
+						throw new Exception(
+								"Cannot add element. Configure the field first");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	private void updateSelectedPlayer() {
+		Robot selected = null;
+
+		Map<String, MovingElement> map = getField().getElements();
+		for (Entry<String, MovingElement> e : map.entrySet()) {
+			MovingElement element = e.getValue();
+			if (element.isSelected() && element instanceof Robot) {
+				selected = (Robot) element;
+				break;
+			}
+		}
+
+		if (selected != null) {
 			StringBuffer details = new StringBuffer();
 			details.append("Team: ");
-			details.append(Game.getInstance().getTeamName(e.getTeam()));
+			details.append(Game.getInstance().getTeamName(selected.getTeam()));
 			details.append("\n");
 			details.append("Velocity:\n");
 			details.append("  x:");
-			details.append(String.format("%.2f", e.getVelocity().getX()));
+			details
+					.append(String
+							.format("%.2f", selected.getVelocity().getX()));
 			details.append("\n");
 			details.append("  y:");
-			details.append(String.format("%.2f", e.getVelocity().getY()));
+			details
+					.append(String
+							.format("%.2f", selected.getVelocity().getY()));
 			details.append("\n");
 			details.append("Force:\n");
 			details.append("  x:");
-			details.append(String.format("%.2f", e.getForce().getX()));
+			details.append(String.format("%.2f", selected.getForce().getX()));
 			details.append("\n");
 			details.append("  y:");
-			details.append(String.format("%.2f", e.getForce().getY()));
+			details.append(String.format("%.2f", selected.getForce().getY()));
 			PlayerDetails.setText(details.toString());
-		}
-		else{
+		} else {
 			PlayerDetails.setText("");
 		}
 	}
-	
+
 	private void listPlayersWidgetSelected(SelectionEvent evt) {
-		System.out.println("listPlayers.widgetSelected, event="+evt);
+		System.out.println("listPlayers.widgetSelected, event=" + evt);
 		updateSelectedPlayer();
 	}
-	
+
 	private void buttonStartGameWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonStartGame.widgetSelected, event="+evt);
-		if(Game.getInstance().getGameRunning()){
+		System.out.println("buttonStartGame.widgetSelected, event=" + evt);
+		if (Game.getInstance().getGameRunning()) {
 			Game.getInstance().setGameRunning(false);
-		}
-		else{
+		} else {
 			Game.getInstance().setGameRunning(true);
 		}
 	}
-	
+
 	private void buttonResetGameWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonResetGame.widgetSelected, event="+evt);
+		System.out.println("buttonResetGame.widgetSelected, event=" + evt);
 		Game.getInstance().resetGame();
 	}
 
 	/**
 	 * Removes the robots from a team from the game
+	 * 
 	 * @param team
 	 */
 	public void removeRobotsFromTeam(Team team) {
@@ -632,8 +672,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		ArrayList<String> toRemove = new ArrayList<String>();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
-			if(element instanceof Robot){
-				if(team.equals(((Robot) element).getTeam())){
+			if (element instanceof Robot) {
+				if (team.equals(((Robot) element).getTeam())) {
 					System.out.println("Removing: " + e.getKey());
 					toRemove.add(e.getKey());
 				}
@@ -651,8 +691,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		ArrayList<RobotInformation> robots = new ArrayList<RobotInformation>();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
-			if(element instanceof Robot){
-				if(team.equals(((Robot) element).getTeam())){
+			if (element instanceof Robot) {
+				if (team.equals(((Robot) element).getTeam())) {
 					System.out.println("Listing: " + e.getKey());
 					robots.add(asRobotInformation(element));
 				}
@@ -660,19 +700,20 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		}
 		return robots;
 	}
-	
+
 	private RobotInformation asRobotInformation(MovingElement element) {
 		RobotInformation r = new RobotInformation();
 		r.setAngle(element.getAngle());
 		r.setPosition(element.getPosition());
 		r.setId(((Robot) element).getId());
 		r.setVelocity(element.getVelocity());
+		r.setRadius(element.getRadius());
 		return r;
 	}
 
 	private void thisWidgetDisposed(DisposeEvent evt) {
-		System.out.println("this.widgetDisposed, event="+evt);
-		if(server != null && server.isStarted()){
+		System.out.println("this.widgetDisposed, event=" + evt);
+		if (server != null && server.isStarted()) {
 			try {
 				server.stopServer();
 			} catch (Exception e) {
@@ -684,71 +725,73 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	public RobotInformation getPlayerInformation(String playerId) {
 		Map<String, MovingElement> map = getField().getElements();
 		MovingElement element = map.get(playerId);
-		if(element instanceof Robot){
+		if (element instanceof Robot) {
 			return asRobotInformation(element);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
-		
+
 	private void FootballFieldControlResized(ControlEvent evt) {
-		System.out.println("FootballField.controlResized, event="+evt);
-		if(getField() != null) getField().updateProportions(FootballField);
-		if(FootballField != null) FootballField.redraw();
+		System.out.println("FootballField.controlResized, event=" + evt);
+		if (getField() != null)
+			getField().updateProportions(FootballField);
+		if (FootballField != null)
+			FootballField.redraw();
 	}
-	
+
 	private void buttonForceWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonForce.widgetSelected, event="+evt);
+		System.out.println("buttonForce.widgetSelected, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
-			if(element instanceof Robot){
+			if (element instanceof Robot) {
 				((Robot) element).setDisplayForce(buttonForce.getSelection());
 			}
 		}
 	}
-	
+
 	private void buttonNameWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonName.widgetSelected, event="+evt);
+		System.out.println("buttonName.widgetSelected, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
-			if(element instanceof Robot){
+			if (element instanceof Robot) {
 				((Robot) element).setDisplayName(buttonName.getSelection());
 			}
 		}
 	}
-	
+
 	private void buttonMarksWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonMarks.widgetSelected, event="+evt);
+		System.out.println("buttonMarks.widgetSelected, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
-			if(element instanceof Robot){
+			if (element instanceof Robot) {
 				((Robot) element).setDisplayMarks(buttonMarks.getSelection());
 			}
 		}
 	}
-	
+
 	private void FootballFieldMouseDown(MouseEvent evt) {
-		System.out.println("FootballField.mouseDown, event="+evt);
+		System.out.println("FootballField.mouseDown, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
 			element.drag();
+			element.select();
 		}
 	}
-	
+
 	private void FootballFieldMouseUp(MouseEvent evt) {
-		System.out.println("FootballField.mouseUp, event="+evt);
+		System.out.println("FootballField.mouseUp, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
 			element.drop();
 		}
 	}
-	
+
 	private void FootballFieldMouseMove(MouseEvent evt) {
 		field.setMousePosition(evt.x, evt.y);
 	}

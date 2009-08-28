@@ -18,7 +18,16 @@ public abstract class MovingElement implements VisualElement {
 	protected double rotationVelocity;
 	
 	protected boolean dragging;
+	protected boolean selected;
 	
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
 	public boolean isDragging() {
 		return dragging;
 	}
@@ -308,6 +317,19 @@ public abstract class MovingElement implements VisualElement {
 			System.out.println("Dropping");
 		}
 		dragging = false;
+	}
+
+	/**
+	 * Selects the element displaying a yellow halo around it
+	 */
+	public void select() {
+		selected = false;
+		if(Math.abs(field.getMousePosition().getX() - this.getPosition().getX()) <= this.getRadius()){
+			if(Math.abs(field.getMousePosition().getY() - this.getPosition().getY()) <= this.getRadius()){
+				System.out.println("Selected.");
+				selected = true;
+			}
+		}
 	}
 	
 }

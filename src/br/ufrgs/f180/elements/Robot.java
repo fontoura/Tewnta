@@ -87,10 +87,26 @@ public class Robot extends MovingElement {
 		drawMarks(gc);
 		drawName(gc);
 		drawForce(gc);
+		drawSelection(gc);
 
 		gc.setBackground(old);
 		
 	}
+
+	/**
+	 * Draws yellow halo around object
+	 * @param gc
+	 */
+	private void drawSelection(GC gc) {
+		if(isSelected()){
+			Color old = gc.getForeground();
+			Color color = SWTResourceManager.getColor(200, 200, 0);
+			gc.setForeground(color);
+			gc.drawOval(realx(position.getX() - radius), realy(position.getY() + radius), scalex(radius * 2), scaley(radius * 2));
+			gc.setForeground(old);
+		}
+	}
+
 
 	private void drawForce(GC gc) {
 		if(isDisplayForce()) {

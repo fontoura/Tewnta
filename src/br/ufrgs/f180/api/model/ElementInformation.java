@@ -14,6 +14,19 @@ public class ElementInformation {
 	protected Point position;
 	protected Double angle;
 	protected Vector velocity;
+	protected Double radius;
+
+	/**
+	 * @return the radius of the bounding circle of the element.
+	 */
+	public Double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(Double radius) {
+		this.radius = radius;
+	}
+
 
 	/**
 	 * @return the velocity of the element within the game field.
