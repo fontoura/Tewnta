@@ -3,6 +3,7 @@ package br.ufrgs.f180.elements;
 import java.util.List;
 
 import org.eclipse.swt.graphics.GC;
+import org.mortbay.jetty.Main;
 
 import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
@@ -125,7 +126,9 @@ public abstract class MovingElement implements VisualElement {
 		
 		//Calculate the new angle
 		rotationVelocity = rotationVelocity + getRotationAcceleration() * timeElapsed;
-		angle = angle + rotationVelocity * timeElapsed;
+		angle = angle + rotationVelocity * timeElapsed ;
+		double circles = (int)(angle / (2 * Math.PI));
+		angle = angle - (circles * 2 * Math.PI);
 	}
 
 	/**

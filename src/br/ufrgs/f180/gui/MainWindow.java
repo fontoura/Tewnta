@@ -667,23 +667,33 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	 * 
 	 * @param team
 	 */
-	public void removeRobotsFromTeam(Team team) {
-		Map<String, MovingElement> map = getField().getElements();
-		ArrayList<String> toRemove = new ArrayList<String>();
-		for (Entry<String, MovingElement> e : map.entrySet()) {
-			MovingElement element = e.getValue();
-			if (element instanceof Robot) {
-				if (team.equals(((Robot) element).getTeam())) {
-					System.out.println("Removing: " + e.getKey());
-					toRemove.add(e.getKey());
+	public void removeRobotsFromTeam(final Team team) {
+		// synchExec is used in order to prevent SWT thread issues
+		display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Map<String, MovingElement> map = getField().getElements();
+					ArrayList<String> toRemove = new ArrayList<String>();
+					for (Entry<String, MovingElement> e : map.entrySet()) {
+						MovingElement element = e.getValue();
+						if (element instanceof Robot) {
+							if (team.equals(((Robot) element).getTeam())) {
+								System.out.println("Removing: " + e.getKey());
+								toRemove.add(e.getKey());
+							}
+						}
+					}
+					for (String string : toRemove) {
+						map.remove(string);
+						playerNames.remove(string);
+					}
+					invalidPlayers = true;
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
-		}
-		for (String string : toRemove) {
-			map.remove(string);
-			playerNames.remove(string);
-		}
-		invalidPlayers = true;
+		});
 	}
 
 	public java.util.List<RobotInformation> getRobotsFromTeam(Team team) {
@@ -708,6 +718,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		r.setId(((Robot) element).getId());
 		r.setVelocity(element.getVelocity());
 		r.setRadius(element.getRadius());
+		r.setDribbling(((Robot) element).isDribbling());
+		r.setKicking(((Robot) element).isKicking());
 		return r;
 	}
 

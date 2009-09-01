@@ -13,7 +13,7 @@ public class Matrix {
 		this.d11 = d11;
 	}
 	
-	public Vector multiply(Vector v){
+	public Vector multiply(Point v){
 		double x = v.getX();
 		double y = v.getY();
 		

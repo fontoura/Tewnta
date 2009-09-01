@@ -35,4 +35,30 @@ public class Point {
 	public Point sum(Point p){
 		return new Point(p.getX() + x, p.getY() + y);
 	}
+
+	public Point rotate(double angle){
+
+		Matrix rot = new Matrix(Math.cos(angle), -Math.sin(angle), Math.sin(angle), Math.cos(angle));
+		
+		return rot.multiply(this);
+		
+	}
+
+	protected double hipotenuse(){
+		return Math.sqrt((x*x) + (y*y));
+	}
+
+	public Vector subtract(Point vector) {
+		return new Vector(x - vector.getX(), y - vector.getY());
+	}
+	
+	/**
+	 * Calculates the 2D distance between a point and a line
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public double distanceFrom(Point point) {
+		return point.subtract(this).module();
+	}
 }

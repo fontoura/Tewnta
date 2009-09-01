@@ -79,4 +79,15 @@ public class PlayerImpl implements Player {
 		Game.getInstance().setPlayerRotationVelocity(id, velocity);		
 	}
 
+	@Override
+	public void setPlayerKick(String id, Boolean kick)
+			throws Exception {
+		Game.getInstance().setPlayerKick(id, kick);		
+	}
+
+	@Override
+	public void setPlayerDribble(String id, Boolean dribble) throws Exception {
+		Game.getInstance().setPlayerDribble(id, dribble);		
+	}
+
 }

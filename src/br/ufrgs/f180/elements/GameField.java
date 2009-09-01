@@ -316,6 +316,13 @@ public class GameField implements VisualElement {
 		
 		for (Entry<String, MovingElement> e : elements.entrySet()) {
 			MovingElement element = e.getValue();
+			//Robot has some special behaviors such as kick and dribble
+			if(element instanceof Robot){
+				Robot r = (Robot) element;
+				r.dribbleBall((Ball)elements.get(BALL_ELEMENT));
+				r.kickBall((Ball)elements.get(BALL_ELEMENT));
+			}
+						
 			element.calculatePosition(timeElapsed);
 			element.calculateCollisionWithWalls(walls);
 			//collisors.remove(e);

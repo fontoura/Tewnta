@@ -329,4 +329,24 @@ public class Game {
 					"Cannot get element. Configure the mainWindow.getField() first");
 		}
 	}
+
+	public void setPlayerKick(String id, Boolean kick) throws Exception {
+		if (mainWindow.getField() != null) {
+			Robot r = (Robot) mainWindow.getField().getElement(id);
+			r.setKicking(kick);
+		} else {
+			throw new Exception(
+					"Cannot get element. Configure the mainWindow.getField() first");
+		}
+	}
+
+	public void setPlayerDribble(String id, Boolean dribble) throws Exception {
+		if (mainWindow.getField() != null) {
+			Robot r = (Robot) mainWindow.getField().getElement(id);
+			r.setDribbling(dribble);
+		} else {
+			throw new Exception(
+					"Cannot get element. Configure the mainWindow.getField() first");
+		}
+	}
 }

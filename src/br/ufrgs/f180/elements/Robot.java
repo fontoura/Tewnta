@@ -3,6 +3,7 @@ package br.ufrgs.f180.elements;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
+import br.ufrgs.f180.elements.Wall.CollisionSide;
 import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
 import br.ufrgs.f180.resources.GameProperties;
@@ -12,15 +13,20 @@ import com.cloudgarden.resource.SWTResourceManager;
 /**
  * 
  * @author Gabriel Detoni
- *
+ * 
  */
 public class Robot extends MovingElement {
-	
-	private static final double ROBOT_MAX_VELOCITY = (double)GameProperties.getDoubleValue("robot.max.velocity") * 100;
+
+	private static final double ROBOT_MAX_VELOCITY = (double) GameProperties
+			.getDoubleValue("robot.max.velocity") * 100;
 	private static final double SPOT_SIZE = 2.5;
 	private double radius;
 	private Vector front;
 	private String id;
+
+	// dribbler and kicker
+	private boolean dribbling;
+	private boolean kicking;
 
 	/**
 	 * True means the force will be displayed as an arrow inside the robot
@@ -39,22 +45,22 @@ public class Robot extends MovingElement {
 		return id;
 	}
 
-	public enum Team{
-		A("A"),
-		B("B");
+	public enum Team {
+		A("A"), B("B");
 		private String value;
-		
-		Team(String str){
+
+		Team(String str) {
 			value = str;
 		}
-		
-		public String toString(){
+
+		public String toString() {
 			return value;
 		}
 	}
+
 	private Team team;
-	
-	public Robot(Point position, Team team){
+
+	public Robot(Point position, Team team) {
 		this.setAngle(0);
 		this.setRotationForce(0);
 		this.setRotationVelocity(0);
@@ -62,57 +68,112 @@ public class Robot extends MovingElement {
 		this.setForce(new Vector(0, 0));
 		this.setVelocity(new Vector(0, 0));
 		this.setPosition(position);
-		//this.setId(id);
-		//this.setFrente(getPosition()+, y);
+		// this.setId(id);
+		// this.setFrente(getPosition()+, y);
 		this.team = team;
-		
-	}
-	
 
-	public Robot(double x, double y, Team team, double mass, double radius, String id){
+	}
+
+	public Robot(double x, double y, Team team, double mass, double radius,
+			String id) {
 		this(new Point(x, y), team);
 		this.setMass(mass);
 		this.setRadius(radius);
 		this.setId(id);
-		
+
 	}
-	
+
 	@Override
 	public void draw(GC gc) {
 		Color old = gc.getBackground();
 		Color backgroundColor = SWTResourceManager.getColor(0, 0, 0);
 		gc.setBackground(backgroundColor);
-		gc.fillOval(realx(position.getX() - radius), realy(position.getY() + radius), scalex(radius * 2), scaley(radius * 2));
-
+		gc.fillOval(realx(position.getX() - radius), realy(position.getY()
+				+ radius), scalex(radius * 2), scaley(radius * 2));
 		drawMarks(gc);
+		drawDribbler(gc);
+		drawKicker(gc);
+
+		// UI status stuff
 		drawName(gc);
 		drawForce(gc);
 		drawSelection(gc);
 
 		gc.setBackground(old);
-		
+
 	}
 
 	/**
-	 * Draws yellow halo around object
+	 * Draws a red line that represents the dribbler turned on
+	 * 
 	 * @param gc
 	 */
-	private void drawSelection(GC gc) {
-		if(isSelected()){
+	private void drawDribbler(GC gc) {
+		if (isDribbling()) {
+			Point dribblerPositionAbsolute1 = this.getPosition().sum(
+					new Point(radius - 1, -3));
+			Point dribblerPositionAbsolute2 = this.getPosition().sum(
+					new Point(radius - 1, 3));
+			Point dribblerPosition1 = dribblerPositionAbsolute1
+					.rotate(this.angle);
+			Point dribblerPosition2 = dribblerPositionAbsolute2
+					.rotate(this.angle);
+
 			Color old = gc.getForeground();
-			Color color = SWTResourceManager.getColor(200, 200, 0);
+			Color color = SWTResourceManager.getColor(255, 0, 0);
 			gc.setForeground(color);
-			gc.drawOval(realx(position.getX() - radius), realy(position.getY() + radius), scalex(radius * 2), scaley(radius * 2));
+			gc.drawLine(realx(dribblerPosition1.getX()),
+					realy(dribblerPosition1.getY()), realx(dribblerPosition2
+							.getX()), realy(dribblerPosition2.getY()));
 			gc.setForeground(old);
 		}
 	}
 
+	/**
+	 * Draws a Blue line that represents the dribbler turned on
+	 * 
+	 * @param gc
+	 */
+	private void drawKicker(GC gc) {
+		if (isKicking()) {
+			Point kickerPositionAbsolute1 = this.getPosition().sum(
+					new Point(radius, -3));
+			Point kickerPositionAbsolute2 = this.getPosition().sum(
+					new Point(radius, 3));
+			Point kickerPosition1 = kickerPositionAbsolute1.rotate(this.angle);
+			Point kickerPosition2 = kickerPositionAbsolute2.rotate(this.angle);
+
+			Color old = gc.getForeground();
+			Color color = SWTResourceManager.getColor(0, 0, 255);
+			gc.setForeground(color);
+			gc.drawLine(realx(kickerPosition1.getX()), realy(kickerPosition1
+					.getY()), realx(kickerPosition2.getX()),
+					realy(kickerPosition2.getY()));
+			gc.setForeground(old);
+		}
+	}
+
+	/**
+	 * Draws yellow halo around object
+	 * 
+	 * @param gc
+	 */
+	private void drawSelection(GC gc) {
+		if (isSelected()) {
+			Color old = gc.getForeground();
+			Color color = SWTResourceManager.getColor(200, 200, 0);
+			gc.setForeground(color);
+			gc.drawOval(realx(position.getX() - radius), realy(position.getY()
+					+ radius), scalex(radius * 2), scaley(radius * 2));
+			gc.setForeground(old);
+		}
+	}
 
 	private void drawForce(GC gc) {
-		if(isDisplayForce()) {
+		if (isDisplayForce()) {
 			double x1 = getPosition().getX();
 			double y1 = getPosition().getY();
-			double x2 = getPosition().getX()+ getForce().getX();
+			double x2 = getPosition().getX() + getForce().getX();
 			double y2 = getPosition().getY() + getForce().getY();
 			Color old = gc.getForeground();
 			Color foregroundColor = SWTResourceManager.getColor(0, 255, 55);
@@ -120,59 +181,60 @@ public class Robot extends MovingElement {
 			gc.drawLine(realx(x1), realy(y1), realx(x2), realy(y2));
 			gc.setForeground(old);
 		}
-		
+
 	}
 
-
 	private void drawName(GC gc) {
-		if(isDisplayName()) {
-			gc.drawString(getId(), realx(getPosition().getX() - getRadius()), realy(getPosition().getY() - getRadius()), true);
+		if (isDisplayName()) {
+			gc.drawString(getId(), realx(getPosition().getX() - getRadius()),
+					realy(getPosition().getY() - getRadius()), true);
 		}
 	}
 
-
 	private void drawMarks(GC gc) {
-		if(isDisplayMarks()) {
-			Color centerColor = Team.A.equals(team) ? SWTResourceManager.getColor(0, 0, 200) : SWTResourceManager.getColor(200, 200, 0);
+		if (isDisplayMarks()) {
+			Color centerColor = Team.A.equals(team) ? SWTResourceManager
+					.getColor(0, 0, 200) : SWTResourceManager.getColor(200,
+					200, 0);
 			drawSpot(gc, new Vector(0, 0), centerColor);
-			
-			if (Team.A.equals(team))
-			{
-				Color foregroundColor = SWTResourceManager.getColor(255, 0, 128);
+
+			if (Team.A.equals(team)) {
+				Color foregroundColor = SWTResourceManager
+						.getColor(255, 0, 128);
 				drawSpot(gc, new Vector(5.5, 0), foregroundColor);
-	
+
 				Color cian = SWTResourceManager.getColor(128, 255, 255);
 				Color lt_green = SWTResourceManager.getColor(128, 255, 0);
-				
-				switch (getIndex())
-				{
-					case 1:
-						drawSpot(gc, new Vector(-5.5, 0), cian);
-						break;
-					case 2:
-						drawSpot(gc, new Vector(-5.5, 0), lt_green);
-						break;					
-					case 3:
-						drawSpot(gc, new Vector(0, -5.5), cian);
-						break;					
-					case 4:
-						drawSpot(gc, new Vector(0, -5.5), lt_green);
-						break;									
+
+				switch (getIndex()) {
+				case 1:
+					drawSpot(gc, new Vector(-5.5, 0), cian);
+					break;
+				case 2:
+					drawSpot(gc, new Vector(-5.5, 0), lt_green);
+					break;
+				case 3:
+					drawSpot(gc, new Vector(0, -5.5), cian);
+					break;
+				case 4:
+					drawSpot(gc, new Vector(0, -5.5), lt_green);
+					break;
 				}
-	
+
 			}
 		}
 	}
 
+	private void drawSpot(GC gc, Vector spotPositionAbsolute, Color color) {
 
-	private void drawSpot(GC gc, Vector spotPositionAbsolute, Color color){
-		
-		//Rotate the spot to the actual angle
+		// Rotate the spot to the actual angle
 		Vector spotPosition = spotPositionAbsolute.rotate(this.angle);
-		
+
 		Color old = gc.getBackground();
 		gc.setBackground(color);
-		gc.fillOval(realx(position.getX()+ spotPosition.getX() - SPOT_SIZE), realy(position.getY() - spotPosition.getY() + SPOT_SIZE), scalex(SPOT_SIZE * 2), scaley(SPOT_SIZE * 2));
+		gc.fillOval(realx(position.getX() + spotPosition.getX() - SPOT_SIZE),
+				realy(position.getY() - spotPosition.getY() + SPOT_SIZE),
+				scalex(SPOT_SIZE * 2), scaley(SPOT_SIZE * 2));
 		gc.setBackground(old);
 	}
 
@@ -180,12 +242,12 @@ public class Robot extends MovingElement {
 	public int scalex(double x) {
 		return field.scalex(x);
 	}
-	
+
 	@Override
 	public int scaley(double y) {
 		return field.scaley(y);
 	}
-	
+
 	@Override
 	public int realx(double x) {
 		return field.realx(x);
@@ -212,55 +274,48 @@ public class Robot extends MovingElement {
 	public void setRadius(double radius) {
 		this.radius = radius;
 	}
-	
+
 	public void setFront(int x, int y) {
 		this.front.setX(x);
 		this.front.setY(y);
 	}
-	
+
 	public Vector getFront() {
 		return this.front;
-		
+
 	}
-	
+
 	// seta índice do robo
-	public void setId(String newId)
-	{
+	public void setId(String newId) {
 		this.id = newId;
 	}
-	
-	//retorna índice do robô
-	
-	public int getIndex()
-	{
-		
-		return id.charAt(id.length()-1) - '0';
-	}	
+
+	// retorna índice do robô
+
+	public int getIndex() {
+
+		return id.charAt(id.length() - 1) - '0';
+	}
 
 	public boolean isDisplayForce() {
 		return displayForce;
 	}
 
-
 	public void setDisplayForce(boolean displayForce) {
 		this.displayForce = displayForce;
 	}
-
 
 	public boolean isDisplayMarks() {
 		return displayMarks;
 	}
 
-
 	public void setDisplayMarks(boolean displayMarks) {
 		this.displayMarks = displayMarks;
 	}
 
-
 	public boolean isDisplayName() {
 		return displayName;
 	}
-
 
 	public void setDisplayName(boolean displayName) {
 		this.displayName = displayName;
@@ -268,9 +323,102 @@ public class Robot extends MovingElement {
 
 	@Override
 	public void setVelocity(Vector velocity) {
-		if(velocity.module() > ROBOT_MAX_VELOCITY){
+		if (velocity.module() > ROBOT_MAX_VELOCITY) {
 			velocity = velocity.normalize().multiply(ROBOT_MAX_VELOCITY);
 		}
 		super.setVelocity(velocity);
+	}
+
+	public void setDribbling(boolean dribbling) {
+		this.dribbling = dribbling;
+	}
+
+	public boolean isDribbling() {
+		return dribbling;
+	}
+
+	public void setKicking(boolean kicking) {
+		this.kicking = kicking;
+	}
+
+	public boolean isKicking() {
+		return kicking;
+	}
+
+	/**
+	 * If the dribbler is on, retain the ball
+	 * 
+	 * @param movingElement
+	 */
+	public void dribbleBall(Ball ball) {
+		if (isDribbling()) {
+			Point dribblerPositionAbsolute1 = this.getPosition().sum(
+					new Point(radius - 1, -3));
+			Point dribblerPositionAbsolute2 = this.getPosition().sum(
+					new Point(radius - 1, 3));
+			Point dribblerPosition1 = dribblerPositionAbsolute1
+					.rotate(this.angle);
+			Point dribblerPosition2 = dribblerPositionAbsolute2
+					.rotate(this.angle);
+			Wall w = new Wall(dribblerPosition1.getX(), dribblerPosition1
+					.getY(), dribblerPosition2.getX(),
+					dribblerPosition2.getY(), CollisionSide.NORMAL);
+
+			// Verify the ball is within the bounds of the dribbler
+			Point projection = w.perpendicularProjection(ball.position);
+			if (projection.getX() >= w.getX0()
+					&& projection.getX() <= w.getX1()
+					&& projection.getY() >= w.getY0()
+					&& projection.getY() <= w.getY1()) {
+				double distanceFromBall = projection.subtract(ball.position)
+						.module();
+				if (distanceFromBall < 5) {
+					Vector direction = new Vector(ball.position, projection);
+					direction = direction.normalize().multiply(10);
+					ball.setVelocity(ball.velocity.sum(direction));
+					System.out.println("Dribbling");
+				}
+			}
+
+		}
+	}
+
+	/**
+	 * Trigger the kicker. Once it triggers it returns to resting position
+	 * 
+	 * @param movingElement
+	 */
+	public void kickBall(Ball ball) {
+		if (isKicking()) {
+			Point dribblerPositionAbsolute1 = this.getPosition().sum(
+					new Point(radius - 1, -3));
+			Point dribblerPositionAbsolute2 = this.getPosition().sum(
+					new Point(radius - 1, 3));
+			Point dribblerPosition1 = dribblerPositionAbsolute1
+					.rotate(this.angle);
+			Point dribblerPosition2 = dribblerPositionAbsolute2
+					.rotate(this.angle);
+			Wall w = new Wall(dribblerPosition1.getX(), dribblerPosition1
+					.getY(), dribblerPosition2.getX(),
+					dribblerPosition2.getY(), CollisionSide.NORMAL);
+
+			// Verify the ball is within the bounds of the dribbler
+			Point projection = w.perpendicularProjection(ball.position);
+			if (projection.getX() >= w.getX0()
+					&& projection.getX() <= w.getX1()
+					&& projection.getY() >= w.getY0()
+					&& projection.getY() <= w.getY1()) {
+				double distanceFromBall = projection.subtract(ball.position)
+						.module();
+				if (distanceFromBall < 5) {
+					Vector direction = new Vector(projection, ball.position);
+					direction = direction.normalize().multiply(150);
+					ball.setVelocity(ball.velocity.sum(direction));
+					System.out.println("Kicking");
+				}
+			}
+
+			kicking = false;
+		}
 	}
 }

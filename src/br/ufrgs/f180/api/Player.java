@@ -123,4 +123,20 @@ public interface Player {
 	 * @return
 	 */
 	BallInformation getBallInformation();
+
+	/**
+	 * Turn kick on or off  
+	 * @param id
+	 * @param kick state of the kicker. True means ON.
+	 * @throws Exception
+	 */
+	void setPlayerKick(String id, Boolean kick) throws Exception;
+
+	/**
+	 * Turn dribbler on or off  
+	 * @param id
+	 * @param dribbler state. True means ON.
+	 * @throws Exception
+	 */
+	void setPlayerDribble(String id, Boolean dribble) throws Exception;
 }

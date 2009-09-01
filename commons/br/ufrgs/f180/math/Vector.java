@@ -27,10 +27,6 @@ public class Vector extends Point implements Cloneable{
 		return x / hipotenuse();
 	}
 
-	private double hipotenuse(){
-		return Math.sqrt((x*x) + (y*y));
-	}
-
 	public Vector multiply(Vector vector) {
 		return new Vector(this.getX() * vector.getX(), this.getY() * vector.getY());
 	}
