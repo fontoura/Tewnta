@@ -3,7 +3,6 @@ package br.ufrgs.f180.elements;
 import java.util.List;
 
 import org.eclipse.swt.graphics.GC;
-import org.mortbay.jetty.Main;
 
 import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
@@ -234,7 +233,13 @@ public abstract class MovingElement implements VisualElement {
 			//Gets the perpendicular projection of the point into the wall
 			Point projection = wall.perpendicularProjection(this.position);
 			//Verify if it is possible to collide
-			if(projection.getX() >= wall.getX0() && projection.getX() <= wall.getX1() && projection.getY() >= wall.getY0() && projection.getY() <= wall.getY1()){
+			// Verify the ball is within the bounds of the dribbler
+			Point p1 = new Point(wall.getX0(), wall.getY0());
+			Point p2 = new Point(wall.getX1(), wall.getY1());
+			double dp1 = projection.distanceFrom(p1); 
+			double dp2 = projection.distanceFrom(p2);
+			double len = p2.distanceFrom(p1);
+			if (dp1 < len && dp2 < len) {
 				WallCollisionPoint e = new WallCollisionPoint(projection);
 				calculateCollision(e);				
 			}

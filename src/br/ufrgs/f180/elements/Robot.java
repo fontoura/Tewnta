@@ -103,6 +103,19 @@ public class Robot extends MovingElement {
 
 	}
 
+	private Point dribblerPosition1() {
+		Point dribblerPosition1 = new Point(radius, -3).rotate(-this.angle)
+				.sum(this.getPosition());
+
+		return dribblerPosition1;
+	}
+
+	private Point dribblerPosition2() {
+		Point dribblerPosition2 = new Point(radius, 3).rotate(-this.angle).sum(
+				this.getPosition());
+		return dribblerPosition2;
+	}
+
 	/**
 	 * Draws a red line that represents the dribbler turned on
 	 * 
@@ -110,14 +123,8 @@ public class Robot extends MovingElement {
 	 */
 	private void drawDribbler(GC gc) {
 		if (isDribbling()) {
-			Point dribblerPositionAbsolute1 = this.getPosition().sum(
-					new Point(radius - 1, -3));
-			Point dribblerPositionAbsolute2 = this.getPosition().sum(
-					new Point(radius - 1, 3));
-			Point dribblerPosition1 = dribblerPositionAbsolute1
-					.rotate(this.angle);
-			Point dribblerPosition2 = dribblerPositionAbsolute2
-					.rotate(this.angle);
+			Point dribblerPosition1 = dribblerPosition1();
+			Point dribblerPosition2 = dribblerPosition2();
 
 			Color old = gc.getForeground();
 			Color color = SWTResourceManager.getColor(255, 0, 0);
@@ -129,6 +136,18 @@ public class Robot extends MovingElement {
 		}
 	}
 
+	private Point kickerPosition1() {
+		Point kickerPosition1 = new Point(radius, -3).rotate(-this.angle).sum(
+				this.getPosition());
+		return kickerPosition1;
+	}
+
+	private Point kickerPosition2() {
+		Point kickerPosition2 = new Point(radius, 3).rotate(-this.angle).sum(
+				this.getPosition());
+		return kickerPosition2;
+	}
+
 	/**
 	 * Draws a Blue line that represents the dribbler turned on
 	 * 
@@ -136,12 +155,8 @@ public class Robot extends MovingElement {
 	 */
 	private void drawKicker(GC gc) {
 		if (isKicking()) {
-			Point kickerPositionAbsolute1 = this.getPosition().sum(
-					new Point(radius, -3));
-			Point kickerPositionAbsolute2 = this.getPosition().sum(
-					new Point(radius, 3));
-			Point kickerPosition1 = kickerPositionAbsolute1.rotate(this.angle);
-			Point kickerPosition2 = kickerPositionAbsolute2.rotate(this.angle);
+			Point kickerPosition1 = kickerPosition1();
+			Point kickerPosition2 = kickerPosition2();
 
 			Color old = gc.getForeground();
 			Color color = SWTResourceManager.getColor(0, 0, 255);
@@ -352,24 +367,20 @@ public class Robot extends MovingElement {
 	 */
 	public void dribbleBall(Ball ball) {
 		if (isDribbling()) {
-			Point dribblerPositionAbsolute1 = this.getPosition().sum(
-					new Point(radius - 1, -3));
-			Point dribblerPositionAbsolute2 = this.getPosition().sum(
-					new Point(radius - 1, 3));
-			Point dribblerPosition1 = dribblerPositionAbsolute1
-					.rotate(this.angle);
-			Point dribblerPosition2 = dribblerPositionAbsolute2
-					.rotate(this.angle);
+			Point dribblerPosition1 = dribblerPosition1();
+			Point dribblerPosition2 = dribblerPosition2();
 			Wall w = new Wall(dribblerPosition1.getX(), dribblerPosition1
 					.getY(), dribblerPosition2.getX(),
 					dribblerPosition2.getY(), CollisionSide.NORMAL);
 
 			// Verify the ball is within the bounds of the dribbler
 			Point projection = w.perpendicularProjection(ball.position);
-			if (projection.getX() >= w.getX0()
-					&& projection.getX() <= w.getX1()
-					&& projection.getY() >= w.getY0()
-					&& projection.getY() <= w.getY1()) {
+			Point p1 = new Point(w.getX0(), w.getY0());
+			Point p2 = new Point(w.getX1(), w.getY1());
+			double dp1 = projection.distanceFrom(p1); 
+			double dp2 = projection.distanceFrom(p2);
+			double len = p2.distanceFrom(p1);
+			if (dp1 < len && dp2 < len) {
 				double distanceFromBall = projection.subtract(ball.position)
 						.module();
 				if (distanceFromBall < 5) {
@@ -390,24 +401,21 @@ public class Robot extends MovingElement {
 	 */
 	public void kickBall(Ball ball) {
 		if (isKicking()) {
-			Point dribblerPositionAbsolute1 = this.getPosition().sum(
-					new Point(radius - 1, -3));
-			Point dribblerPositionAbsolute2 = this.getPosition().sum(
-					new Point(radius - 1, 3));
-			Point dribblerPosition1 = dribblerPositionAbsolute1
-					.rotate(this.angle);
-			Point dribblerPosition2 = dribblerPositionAbsolute2
-					.rotate(this.angle);
-			Wall w = new Wall(dribblerPosition1.getX(), dribblerPosition1
-					.getY(), dribblerPosition2.getX(),
-					dribblerPosition2.getY(), CollisionSide.NORMAL);
+			Point kickerPosition1 = kickerPosition1();
+			Point kickerPosition2 = kickerPosition2();
+			Wall w = new Wall(kickerPosition1.getX(), kickerPosition1
+					.getY(), kickerPosition2.getX(),
+					kickerPosition2.getY(), CollisionSide.NORMAL);
 
 			// Verify the ball is within the bounds of the dribbler
+			// Verify the ball is within the bounds of the dribbler
 			Point projection = w.perpendicularProjection(ball.position);
-			if (projection.getX() >= w.getX0()
-					&& projection.getX() <= w.getX1()
-					&& projection.getY() >= w.getY0()
-					&& projection.getY() <= w.getY1()) {
+			Point p1 = new Point(w.getX0(), w.getY0());
+			Point p2 = new Point(w.getX1(), w.getY1());
+			double dp1 = projection.distanceFrom(p1); 
+			double dp2 = projection.distanceFrom(p2);
+			double len = p2.distanceFrom(p1);
+			if (dp1 < len && dp2 < len) {
 				double distanceFromBall = projection.subtract(ball.position)
 						.module();
 				if (distanceFromBall < 5) {
