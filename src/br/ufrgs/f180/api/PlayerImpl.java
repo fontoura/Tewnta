@@ -89,4 +89,9 @@ public class PlayerImpl implements Player {
 		Game.getInstance().setPlayerDribble(id, dribble);		
 	}
 
+	@Override
+	public List<RobotInformation> getRobotsFromOpponentTeam(String teamId) throws Exception {
+		return Game.getInstance().getRobotsFromOpponentTeam(teamId);
+	}
+
 }

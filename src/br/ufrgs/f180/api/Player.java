@@ -139,4 +139,13 @@ public interface Player {
 	 * @throws Exception
 	 */
 	void setPlayerDribble(String id, Boolean dribble) throws Exception;
+
+	/**
+	 * Returns all the information from the opponent team. 
+	 * 
+	 * @param teamId the ID of my team. One team is not supposed to know the ID of its opponent, only its own.
+	 * @return
+	 * @throws Exception 
+	 */
+	List<RobotInformation> getRobotsFromOpponentTeam(String teamId) throws Exception;
 }

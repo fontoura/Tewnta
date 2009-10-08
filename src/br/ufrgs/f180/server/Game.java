@@ -106,7 +106,7 @@ public class Game {
 	 *            time in ms
 	 */
 	public void updateState(double d) {
-		
+
 		if (mainWindow.getField() != null) {
 			double timeInterval = 0;
 			if (gameRunning) {
@@ -114,7 +114,7 @@ public class Game {
 			}
 			elapsedTime += timeInterval * 1000;
 			mainWindow.getField().updateElementsState(timeInterval);
-			
+
 			ScoredGoal s = goalScored();
 			switch (s) {
 			case SCORED_LEFT:
@@ -130,7 +130,7 @@ public class Game {
 				scoreTeamA++;
 				break;
 			}
-			
+
 		}
 	}
 
@@ -348,5 +348,19 @@ public class Game {
 			throw new Exception(
 					"Cannot get element. Configure the mainWindow.getField() first");
 		}
+	}
+
+	public List<RobotInformation> getRobotsFromOpponentTeam(String teamId) throws Exception {
+		Team team = Team.valueOf(teamId);
+
+		switch(team){
+		case A:
+			return getRobotsFromTeam(Team.B.toString());
+		case B:
+			return getRobotsFromTeam(Team.A.toString());
+			default:
+				throw new Exception("No team ID matching: " + team.toString());
+		}
+		
 	}
 }
