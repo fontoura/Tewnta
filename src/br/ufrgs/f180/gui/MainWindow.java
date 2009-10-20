@@ -288,7 +288,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				{
 					buttonForce = new Button(groupDisplayOptions, SWT.CHECK
 							| SWT.LEFT);
-					buttonForce.setText("Force");
+					buttonForce.setText("Velocity");
 					buttonForce.setBounds(8, 18, 48, 16);
 					buttonForce.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent evt) {

@@ -253,12 +253,12 @@ public class Game {
 		switch (getTeam(teamId)) {
 		case A:
 			nameTeamA = null;
-			mainWindow.removeRobotsFromTeam(getTeam(teamId));
 			break;
 		case B:
 			nameTeamB = null;
 			break;
 		}
+		mainWindow.removeRobotsFromTeam(getTeam(teamId));
 	}
 
 	public BallInformation getBallInformation() {

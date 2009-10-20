@@ -10,9 +10,9 @@ import br.ufrgs.f180.math.Vector;
 public abstract class MovingElement implements VisualElement {
 
 	protected GameField field;
-	protected Point position;
-	protected Vector velocity;
-	protected Vector force;
+	protected Point position = new Point();
+	protected Vector velocity = new Vector();
+	protected Vector force = new Vector();
 	protected double mass;
 	protected double angle;
 	protected double rotationVelocity;
