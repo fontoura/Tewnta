@@ -103,5 +103,8 @@ public class Vector extends Point implements Cloneable{
 		}
 		return angle;
 	}
-	
+
+	public Vector inverse(){
+		return new Vector(-x, -y);
+	}
 }
