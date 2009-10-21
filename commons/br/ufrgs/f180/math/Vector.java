@@ -14,7 +14,7 @@ public class Vector extends Point implements Cloneable{
 	public Vector(double x, double y) {
 		super(x, y);
 	}
-	
+
 	public Vector divide(double value){
 		return new Vector(x / value, y / value);
 	}
@@ -94,6 +94,14 @@ public class Vector extends Point implements Cloneable{
 
 	public Vector sum(Vector p) {
 		return new Vector(p.getX() + x, p.getY() + y);
+	}
+	
+	public double getAngle(){
+		double angle = Math.acos(getCosDirection());
+		if(getSinDirection() < 0) {
+				angle = 2 * Math.PI - angle;
+		}
+		return angle;
 	}
 	
 }
