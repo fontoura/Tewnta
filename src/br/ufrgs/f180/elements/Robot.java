@@ -20,21 +20,23 @@ public class Robot extends MovingElement {
 	private static final double ROBOT_MAX_VELOCITY = (double) GameProperties
 			.getDoubleValue("robot.max.velocity") * 100;
 
-	//FIXME: This multiplier is empiric.. need to do precise calculations to know the real force of the robot
+	// FIXME: This multiplier is empiric.. need to do precise calculations to
+	// know the real force of the robot
 	private static final double ROBOT_MAX_FORCE = (double) GameProperties
-	.getDoubleValue("robot.max.power") * 10;
-	
+			.getDoubleValue("robot.max.power") * 10;
+
 	private static final double SPOT_SIZE = 2.5;
 	private double radius;
 	private Vector front;
 	private String id;
 
 	/**
-	 * This is the Velocity to be achieved when a setVelocity command is received. 
-	 * The robot will put maximum force towards it in a way the delay will be minimal.
+	 * This is the Velocity to be achieved when a setVelocity command is
+	 * received. The robot will put maximum force towards it in a way the delay
+	 * will be minimal.
 	 */
 	private Vector targetVelocity = new Vector(0, 0);
-	
+
 	// dribbler and kicker
 	private boolean dribbling;
 	private boolean kicking;
@@ -388,7 +390,7 @@ public class Robot extends MovingElement {
 			Point projection = w.perpendicularProjection(ball.position);
 			Point p1 = new Point(w.getX0(), w.getY0());
 			Point p2 = new Point(w.getX1(), w.getY1());
-			double dp1 = projection.distanceFrom(p1); 
+			double dp1 = projection.distanceFrom(p1);
 			double dp2 = projection.distanceFrom(p2);
 			double len = p2.distanceFrom(p1);
 			if (dp1 < len && dp2 < len) {
@@ -397,8 +399,7 @@ public class Robot extends MovingElement {
 				if (distanceFromBall < 5) {
 					Vector direction = new Vector(ball.position, projection);
 					direction = direction.normalize().multiply(10);
-					ball.setVelocity(ball.velocity.sum(direction));
-					System.out.println("Dribbling");
+					//For some reason it works better withot this...ball.setVelocity(ball.velocity.sum(direction));
 				}
 			}
 
@@ -414,16 +415,16 @@ public class Robot extends MovingElement {
 		if (isKicking()) {
 			Point kickerPosition1 = kickerPosition1();
 			Point kickerPosition2 = kickerPosition2();
-			Wall w = new Wall(kickerPosition1.getX(), kickerPosition1
-					.getY(), kickerPosition2.getX(),
-					kickerPosition2.getY(), CollisionSide.NORMAL);
+			Wall w = new Wall(kickerPosition1.getX(), kickerPosition1.getY(),
+					kickerPosition2.getX(), kickerPosition2.getY(),
+					CollisionSide.NORMAL);
 
 			// Verify the ball is within the bounds of the dribbler
 			// Verify the ball is within the bounds of the dribbler
 			Point projection = w.perpendicularProjection(ball.position);
 			Point p1 = new Point(w.getX0(), w.getY0());
 			Point p2 = new Point(w.getX1(), w.getY1());
-			double dp1 = projection.distanceFrom(p1); 
+			double dp1 = projection.distanceFrom(p1);
 			double dp2 = projection.distanceFrom(p2);
 			double len = p2.distanceFrom(p1);
 			if (dp1 < len && dp2 < len) {
@@ -442,23 +443,29 @@ public class Robot extends MovingElement {
 	}
 
 	/**
-	 * This is the robot specific calculation for the position. It is different because it needs to handle 
-	 * the robot commands for velocity. The key variable here is the targetVelocity.
+	 * This is the robot specific calculation for the position. It is different
+	 * because it needs to handle the robot commands for velocity. The key
+	 * variable here is the targetVelocity.
 	 */
 	@Override
 	public void calculatePosition(double timeElapsed) {
-		
-		//Initializes force to 0
+
+		// Initializes force to 0
 		force = new Vector(0, 0);
-		
-		// If the desired velocity is still not achieved, increase the motor power. 
-		// The inertia of previous commands will be dissipated thru the friction force. 
-		if(velocity.getX() > targetVelocity.getX()) force.setX(-ROBOT_MAX_FORCE);
-		if(velocity.getX() < targetVelocity.getX()) force.setX(ROBOT_MAX_FORCE);
-		if(velocity.getY() > targetVelocity.getY()) force.setY(-ROBOT_MAX_FORCE);
-		if(velocity.getY() < targetVelocity.getY()) force.setY(ROBOT_MAX_FORCE);
-		
+
+			// If the desired velocity is still not achieved, increase the motor
+		// power.
+		// The inertia of previous commands will be dissipated thru the friction
+		// force.
+		if (velocity.getX() > targetVelocity.getX())
+			force.setX(-ROBOT_MAX_FORCE);
+		if (velocity.getX() < targetVelocity.getX())
+			force.setX(ROBOT_MAX_FORCE);
+		if (velocity.getY() > targetVelocity.getY())
+			force.setY(-ROBOT_MAX_FORCE);
+		if (velocity.getY() < targetVelocity.getY())
+			force.setY(ROBOT_MAX_FORCE);
+
 		super.calculatePosition(timeElapsed);
 	}
-	
 }

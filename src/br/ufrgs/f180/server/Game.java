@@ -39,7 +39,7 @@ public class Game {
 	private String nameTeamB;
 	private int scoreTeamA;
 	private int scoreTeamB;
-	private long elapsedTime;
+	private double elapsedTime;
 
 	protected Game() {
 	};
@@ -112,7 +112,7 @@ public class Game {
 			if (gameRunning) {
 				timeInterval = d;
 			}
-			elapsedTime += timeInterval * 1000;
+			elapsedTime += timeInterval * 1000d;
 			mainWindow.getField().updateElementsState(timeInterval);
 
 			ScoredGoal s = goalScored();
@@ -196,7 +196,7 @@ public class Game {
 	}
 
 	public long getElapsedTime() {
-		return elapsedTime;
+		return (long)elapsedTime;
 	}
 
 	public void setElapsedTime(long elapsedTime) {

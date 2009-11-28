@@ -13,7 +13,7 @@
 	<target name="compile.commons">
 		<delete dir="${basedir}/dist" failonerror="false"/>
 		<mkdir dir="${basedir}/dist" />
-		<javac srcdir="${basedir}/commons" destdir="${basedir}/dist" classpathref="classpath">
+		<javac debug="true" srcdir="${basedir}/commons" destdir="${basedir}/dist" classpathref="classpath">
 			<include name="**/*.java" />
 		</javac>
 		<copy todir="${basedir}/dist">

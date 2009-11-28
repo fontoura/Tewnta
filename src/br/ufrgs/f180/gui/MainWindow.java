@@ -22,6 +22,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +32,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -57,6 +60,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private static final Display display = Display.getDefault();
 
 	private Menu menu1;
+	private Label label1;
+	private Scale scaleTimeSpeed;
 	private Button buttonName;
 	private Group groupPlayers;
 	private Group groupGame;
@@ -94,6 +99,11 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private Server server;
 	private GameField field;
 
+	/**
+	 * Tells the engine how many real time millis represent one millisecond in the simulation.
+	 */
+	private double elapsedTimePerCycle = 1d;
+	
 	{
 		// Register as a resource user - SWTResourceManager will
 		// handle the obtaining and disposing of resources
@@ -140,9 +150,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				groupPlayers.setLayout(null);
 				FormData groupPlayersLData = new FormData();
 				groupPlayersLData.width = 148;
-				groupPlayersLData.height = 213;
-				groupPlayersLData.left = new FormAttachment(0, 1000, 0);
-				groupPlayersLData.top = new FormAttachment(0, 1000, 208);
+				groupPlayersLData.height = 173;
+				groupPlayersLData.left =  new FormAttachment(0, 1000, 0);
+				groupPlayersLData.top =  new FormAttachment(0, 1000, 248);
 				groupPlayers.setLayoutData(groupPlayersLData);
 				groupPlayers.setText("Players");
 				{
@@ -231,9 +241,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				groupCommands.setLayout(null);
 				FormData groupCommandsLData = new FormData();
 				groupCommandsLData.width = 148;
-				groupCommandsLData.height = 64;
-				groupCommandsLData.left = new FormAttachment(0, 1000, 0);
-				groupCommandsLData.top = new FormAttachment(0, 1000, 87);
+				groupCommandsLData.height = 104;
+				groupCommandsLData.left =  new FormAttachment(0, 1000, 0);
+				groupCommandsLData.top =  new FormAttachment(0, 1000, 87);
 				groupCommands.setLayoutData(groupCommandsLData);
 				groupCommands.setText("Commands");
 				{
@@ -254,7 +264,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 					buttonResetGame = new Button(groupCommands, SWT.PUSH
 							| SWT.CENTER);
 					buttonResetGame.setText("Reset");
-					buttonResetGame.setBounds(8, 46, 40, 23);
+					buttonResetGame.setBounds(95, 18, 40, 23);
 					buttonResetGame
 							.addSelectionListener(new SelectionAdapter() {
 								public void widgetSelected(SelectionEvent evt) {
@@ -265,7 +275,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				{
 					buttonStartGame = new Button(groupCommands, SWT.PUSH
 							| SWT.CENTER);
-					buttonStartGame.setBounds(60, 46, 41, 23);
+					buttonStartGame.setBounds(95, 47, 41, 23);
 					buttonStartGame.setText("Play");
 					buttonStartGame
 							.addSelectionListener(new SelectionAdapter() {
@@ -274,6 +284,22 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 								}
 							});
 				}
+				{
+					scaleTimeSpeed = new Scale(groupCommands, SWT.NONE);
+					scaleTimeSpeed.setBounds(12, 78, 60, 30);
+					scaleTimeSpeed.setSelection(100);
+					scaleTimeSpeed.setMinimum(1);
+					scaleTimeSpeed.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent evt) {
+							scaleTimeSpeedWidgetSelected(evt);
+						}
+					});
+				}
+				{
+					label1 = new Label(groupCommands, SWT.NONE);
+					label1.setText("Time Speed:");
+					label1.setBounds(12, 64, 60, 16);
+				}
 			}
 			{
 				groupDisplayOptions = new Group(this, SWT.NONE);
@@ -281,8 +307,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				FormData groupDisplayOptionsLData = new FormData();
 				groupDisplayOptionsLData.width = 148;
 				groupDisplayOptionsLData.height = 25;
-				groupDisplayOptionsLData.left = new FormAttachment(0, 1000, 0);
-				groupDisplayOptionsLData.top = new FormAttachment(0, 1000, 167);
+				groupDisplayOptionsLData.left =  new FormAttachment(0, 1000, 0);
+				groupDisplayOptionsLData.top =  new FormAttachment(0, 1000, 207);
 				groupDisplayOptions.setLayoutData(groupDisplayOptionsLData);
 				groupDisplayOptions.setText("Display");
 				{
@@ -485,8 +511,17 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		System.exit(0);
 	}
 
+	/**
+	 * Update game state by increasing game time with the provided interval.
+	 * The interval is fixed as to control the thread activity and keep it real time. 
+	 * But the game state will be updated according to the 
+	 * @param interval
+	 */
 	public void gameLoop(double interval) {
-		Game.getInstance().updateState(interval);
+		
+		//calculates the time elapsed in the simulation
+		double intervalInSimulation = interval * elapsedTimePerCycle;
+		Game.getInstance().updateState(intervalInSimulation);
 	}
 
 	public void repaintLoop() {
@@ -806,5 +841,11 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 
 	private void FootballFieldMouseMove(MouseEvent evt) {
 		field.setMousePosition(evt.x, evt.y);
+	}
+	
+	private void scaleTimeSpeedWidgetSelected(SelectionEvent evt) {
+		System.out.println("scaleTimeSpeed.widgetSelected, event="+evt);
+		double value = scaleTimeSpeed.getSelection();
+		elapsedTimePerCycle = 0.01 * value;
 	}
 }
