@@ -2,6 +2,8 @@ package br.ufrgs.f180.server;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import br.ufrgs.f180.api.model.BallInformation;
 import br.ufrgs.f180.api.model.RobotInformation;
 import br.ufrgs.f180.elements.Ball;
@@ -18,6 +20,8 @@ import br.ufrgs.f180.resources.GameProperties;
  * 
  */
 public class Game {
+
+	private static Logger logger = Logger.getLogger(Game.class);
 
 	private static Game instance = null;
 
@@ -118,13 +122,13 @@ public class Game {
 			ScoredGoal s = goalScored();
 			switch (s) {
 			case SCORED_LEFT:
-				System.out.println("Goal Team A");
+				logger.debug("Goal Team A");
 				gameRunning = false;
 				setUpBall();
 				scoreTeamB++;
 				break;
 			case SCORED_RIGHT:
-				System.out.println("Goal Team B");
+				logger.debug("Goal Team B");
 				gameRunning = false;
 				setUpBall();
 				scoreTeamA++;
@@ -152,7 +156,7 @@ public class Game {
 									GameProperties
 											.getDoubleValue("ball.radius") * 100d));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("ERROR: ", e);;
 		}
 	}
 

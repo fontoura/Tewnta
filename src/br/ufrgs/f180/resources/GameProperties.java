@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 /**
  * This class is responsible for loading the physical parameters of the simulation.
  * 
@@ -12,6 +14,8 @@ import java.util.Properties;
  *
  */
 public class GameProperties extends Properties {
+	private static Logger logger = Logger.getLogger(GameProperties.class);
+	
 	/**
 	 * 
 	 */
@@ -23,9 +27,9 @@ public class GameProperties extends Properties {
 			InputStream f = ClassLoader.getSystemResourceAsStream("game.properties");
 			load(f);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("ERROR: ", e);;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("ERROR: ", e);;
 		}
 	}
 	

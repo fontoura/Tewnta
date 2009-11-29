@@ -1,5 +1,7 @@
 package br.ufrgs.f180.math;
 
+import org.apache.log4j.Logger;
+
 /**
  * Auxiliary functions for every mean.
  * 
@@ -7,6 +9,8 @@ package br.ufrgs.f180.math;
  * 
  */
 public class MathUtils {
+
+	private static Logger logger = Logger.getLogger(MathUtils.class);
 
 	/**
 	 * Makes a three's rule to normalize a value in a 0..1 interval
@@ -33,8 +37,10 @@ public class MathUtils {
 	 *            highest saturation point. Values above this will return 1
 	 * @param value
 	 * 
-	 * @param start beginning of the normalization interval
-	 * @param end ending of the normalization interval
+	 * @param start
+	 *            beginning of the normalization interval
+	 * @param end
+	 *            ending of the normalization interval
 	 * 
 	 * @return a double value between start and end
 	 * @throws Exception
@@ -59,14 +65,41 @@ public class MathUtils {
 		return y + start;
 	}
 
-	public static void main(String[] args) throws Exception {
-		System.out.println("0..1  " + normalize(0, 1, 0.5, 0, 1));
-		System.out.println("-1..1  " + normalize(0, 1, 0.5, -1, 1));
-		System.out.println("1..3  " + normalize(0, 1, 0.5, 1, 3));
+	/**
+	 * Returns difference between two angles in Radians. It doesn't make
+	 * distinction between clockwise or counterclockwise. In a way the smaller
+	 * absolute value will be returned.
+	 * 
+	 * @param angle1
+	 * @param angle2
+	 * @return
+	 */
+	public static double subtractRadians(double angle1, double angle2) {
 
-		System.out.println("0..1  " + normalize(1, 2, 1.5, 0, 1));
-		System.out.println("-1..1  " + normalize(1, 2, 1.5, -1, 1));
-		System.out.println("1..3  " + normalize(1, 2, 1.5, 1, 3));
+		double nAngle1 = angle1 % (Math.PI * 2.0);
+		double nAngle2 = angle2 % (Math.PI * 2.0);
+		double diff1 = nAngle1 - nAngle2;
+		double diff2 = diff1 > 0 ? diff1 - (Math.PI * 2.0) : diff1
+				+ (Math.PI * 2.0);
+
+		// logger.debug("  Rotation ");
+		// logger.debug("    Angle 1: " + nAngle1);
+		// logger.debug("    Angle 2: " + nAngle2);
+		// logger.debug("    Rotation +: " + diff1);
+		// logger.debug("    Rotation -: " + diff2);
+
+		return Math.abs(diff1) < Math.abs(diff2) ? diff1 : diff2;
+
+	}
+
+	public static void main(String[] args) throws Exception {
+		logger.debug("0..1  " + normalize(0, 1, 0.5, 0, 1));
+		logger.debug("-1..1  " + normalize(0, 1, 0.5, -1, 1));
+		logger.debug("1..3  " + normalize(0, 1, 0.5, 1, 3));
+
+		logger.debug("0..1  " + normalize(1, 2, 1.5, 0, 1));
+		logger.debug("-1..1  " + normalize(1, 2, 1.5, -1, 1));
+		logger.debug("1..3  " + normalize(1, 2, 1.5, 1, 3));
 
 	}
 }

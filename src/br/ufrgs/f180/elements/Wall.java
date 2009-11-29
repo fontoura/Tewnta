@@ -1,5 +1,6 @@
 package br.ufrgs.f180.elements;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
@@ -9,6 +10,8 @@ import com.cloudgarden.resource.SWTResourceManager;
 
 
 public class Wall implements VisualElement {
+
+	private static Logger logger = Logger.getLogger(VisualElement.class);
 
 	public enum CollisionSide{
 		NORMAL,
@@ -197,9 +200,9 @@ public class Wall implements VisualElement {
 		Wall n = new Wall(0, 10, 100, 10, CollisionSide.BOTH);
 		Point pt = new Point(5.77, 0);
 		Point p = n.perpendicularProjection(pt);
-		System.out.println("Distance: " + n.distanceFrom(pt));
-		System.out.println("Projection: x = " + p.getX());
-		System.out.println("Projection: y = " + p.getY());
+		logger.debug("Distance: " + n.distanceFrom(pt));
+		logger.debug("Projection: x = " + p.getX());
+		logger.debug("Projection: y = " + p.getY());
 		
 	}
 }

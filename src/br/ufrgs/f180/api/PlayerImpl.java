@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.jws.WebService;
 
+import org.apache.log4j.Logger;
+
 import br.ufrgs.f180.api.model.BallInformation;
 import br.ufrgs.f180.api.model.RobotInformation;
 import br.ufrgs.f180.server.Game;
@@ -19,9 +21,11 @@ import br.ufrgs.f180.server.Game;
 @WebService(endpointInterface = "br.ufrgs.f180.api.Player", serviceName = "Player")
 public class PlayerImpl implements Player {
 
+	private static Logger logger = Logger.getLogger(PlayerImpl.class);
+
 	@Override
 	public String echo(String msg) {
-		System.out.println("echo: " + msg);
+		logger.debug("echo: " + msg);
 		return msg;
 	}
 

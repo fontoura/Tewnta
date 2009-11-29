@@ -6,19 +6,23 @@ import java.util.Random;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
+import org.apache.log4j.Logger;
+
 import br.ufrgs.f180.api.Player;
 
 public class DemoTeam {
+	private static Logger logger = Logger.getLogger(DemoTeam.class);
+	
 	static Player client;
 	public static void main(String[] args) throws Exception {
-		System.out.println("Iniciando simulação");
-		System.out.println("Conectando com servidor");
+		logger.debug("Iniciando simulação");
+		logger.debug("Conectando com servidor");
 		URL wsdlURL = new URL("http://localhost:9000/player?wsdl");
 		QName SERVICE_NAME = new QName("http://api.f180.ufrgs.br/", "Player");
 		Service service = Service.create(wsdlURL, SERVICE_NAME);
 		client = service.getPort(Player.class);
 		
-		System.out.println("Definindo time A");
+		logger.debug("Definindo time A");
 		String teamA = client.login("Grêmio");
 		client.setPlayer(teamA, "PlayerA1", new Double(120), new Double(120));
 		client.setPlayer(teamA, "PlayerA2", new Double(230), new Double(100));
@@ -26,7 +30,7 @@ public class DemoTeam {
 		client.setPlayer(teamA, "PlayerA4", new Double(230), new Double(300));
 		client.setPlayer(teamA, "PlayerA5", new Double(40), new Double(200));
 
-		System.out.println("Definindo time B");
+		logger.debug("Definindo time B");
 		String teamB = client.login("Inter");
 		client.setPlayer(teamB, "PlayerB1", new Double(320), new Double(120));
 		client.setPlayer(teamB, "PlayerB2", new Double(430), new Double(100));
@@ -38,7 +42,7 @@ public class DemoTeam {
 	
 	private static void dance() throws Exception{
 
-		System.out.println("Passando forças aos jogadores");
+		logger.debug("Passando forças aos jogadores");
 		
 //		int data = 0;
 //		while(data != 'q'){
@@ -68,36 +72,36 @@ public class DemoTeam {
 			int x = r.nextInt(504);
 			int y = r.nextInt(504);
 			int rot = r.nextInt(50);
-			System.out.println("Força PlayerA1: x " + (x - 252) + ", y " + (y - 252) + " Rotação: " + (rot - 25));
+			logger.debug("Força PlayerA1: x " + (x - 252) + ", y " + (y - 252) + " Rotação: " + (rot - 25));
 			client.setPlayerForce("PlayerA1", new Double(x - 252), new Double(y - 252));
 			client.setPlayerRotation("PlayerA1", new Double(rot - 25));
 			x = r.nextInt(504);
 			y = r.nextInt(504);
 			rot = r.nextInt(50);
-			System.out.println("Força PlayerA2: x " + (x - 252) + ", y " + (y - 252) + " Rotação: " + (rot - 25));
+			logger.debug("Força PlayerA2: x " + (x - 252) + ", y " + (y - 252) + " Rotação: " + (rot - 25));
 			client.setPlayerForce("PlayerA2", new Double(x - 252), new Double(y - 252));
 			client.setPlayerRotation("PlayerA2", new Double(rot - 25));
 			x = r.nextInt(504);
 			y = r.nextInt(504);
-			System.out.println("Força PlayerA3: x " + (x - 252) + ", y " + (y - 252) + " Rotação: " + (rot - 25));
+			logger.debug("Força PlayerA3: x " + (x - 252) + ", y " + (y - 252) + " Rotação: " + (rot - 25));
 			client.setPlayerForce("PlayerA3", new Double(x - 252), new Double(y - 252));
 			client.setPlayerRotation("PlayerA3", new Double(rot - 25));
 			x = r.nextInt(504);
 			y = r.nextInt(504);
-			System.out.println("Força PlayerB1: x " + (x - 252) + ", y " + (y - 252));
+			logger.debug("Força PlayerB1: x " + (x - 252) + ", y " + (y - 252));
 			client.setPlayerForce("PlayerB1", new Double(x - 252), new Double(y - 252));
 			x = r.nextInt(504);
 			y = r.nextInt(504);
-			System.out.println("Força PlayerB2: x " + (x - 252) + ", y " + (y - 252));
+			logger.debug("Força PlayerB2: x " + (x - 252) + ", y " + (y - 252));
 			client.setPlayerForce("PlayerB2", new Double(x - 252), new Double(y - 252));
 			x = r.nextInt(504);
 			y = r.nextInt(504);
-			System.out.println("Força PlayerB3: x " + (x - 252) + ", y " + (y - 252));
+			logger.debug("Força PlayerB3: x " + (x - 252) + ", y " + (y - 252));
 			client.setPlayerForce("PlayerB3", new Double(x - 252), new Double(y - 252));
 			Thread.sleep(2000);
 		}
 		
-		System.out.println("Programa encerrado.");
+		logger.debug("Programa encerrado.");
 		
 	}
 }

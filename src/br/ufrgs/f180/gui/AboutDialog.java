@@ -1,7 +1,8 @@
 package br.ufrgs.f180.gui;
-import com.cloudgarden.resource.SWTResourceManager;
-
-import org.eclipse.swt.layout.FillLayout;
+import org.apache.log4j.Logger;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -11,9 +12,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+
+import com.cloudgarden.resource.SWTResourceManager;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -28,6 +28,8 @@ import org.eclipse.swt.events.SelectionEvent;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
+
+	private static Logger logger = Logger.getLogger(AboutDialog.class);
 
 	private Shell dialogShell;
 	private Label label1;
@@ -48,7 +50,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 			AboutDialog inst = new AboutDialog(shell, SWT.NULL);
 			inst.open();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("ERROR: ", e);;
 		}
 	}
 
@@ -85,7 +87,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 				button1.setText("OK");
 				button1.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent evt) {
-						System.out.println("button1.widgetSelected, event="+evt);
+						logger.debug("button1.widgetSelected, event="+evt);
 						dialogShell.dispose();
 					}
 				});
@@ -152,7 +154,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 					display.sleep();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("ERROR: ", e);;
 		}
 	}
 	

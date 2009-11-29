@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -22,8 +23,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -58,6 +57,7 @@ import com.cloudgarden.resource.SWTResourceManager;
  */
 public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private static final Display display = Display.getDefault();
+	private static Logger logger = Logger.getLogger(MainWindow.class);
 
 	private Menu menu1;
 	private Label label1;
@@ -127,7 +127,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			ToggleServer.setText("Stop Server");
 			ToggleServer.setSelection(true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("ERROR: ", e);;
 			ToggleServer.setSelection(false);
 		}
 
@@ -459,7 +459,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			}
 			this.layout();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("ERROR: ", e);;
 		}
 	}
 
@@ -571,7 +571,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void ToggleServerWidgetSelected(SelectionEvent evt) {
-		System.out.println("ToggleServer.widgetSelected, event=" + evt);
+		logger.debug("ToggleServer.widgetSelected, event=" + evt);
 		if (ToggleServer.getSelection()) {
 			try {
 				if (!server.isStarted()) {
@@ -579,7 +579,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				}
 				ToggleServer.setText("Stop Server");
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("ERROR: ", e);;
 				ToggleServer.setSelection(false);
 			}
 		} else {
@@ -589,7 +589,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				}
 				ToggleServer.setText("Start Server");
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("ERROR: ", e);;
 				ToggleServer.setSelection(true);
 			}
 		}
@@ -632,7 +632,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 								"Cannot add element. Configure the field first");
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("ERROR: ", e);;
 				}
 			}
 		});
@@ -679,12 +679,12 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void listPlayersWidgetSelected(SelectionEvent evt) {
-		System.out.println("listPlayers.widgetSelected, event=" + evt);
+		logger.debug("listPlayers.widgetSelected, event=" + evt);
 		updateSelectedPlayer();
 	}
 
 	private void buttonStartGameWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonStartGame.widgetSelected, event=" + evt);
+		logger.debug("buttonStartGame.widgetSelected, event=" + evt);
 		if (Game.getInstance().getGameRunning()) {
 			Game.getInstance().setGameRunning(false);
 		} else {
@@ -693,7 +693,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void buttonResetGameWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonResetGame.widgetSelected, event=" + evt);
+		logger.debug("buttonResetGame.widgetSelected, event=" + evt);
 		Game.getInstance().resetGame();
 	}
 
@@ -714,7 +714,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 						MovingElement element = e.getValue();
 						if (element instanceof Robot) {
 							if (team.equals(((Robot) element).getTeam())) {
-								System.out.println("Removing: " + e.getKey());
+								logger.debug("Removing: " + e.getKey());
 								toRemove.add(e.getKey());
 							}
 						}
@@ -725,7 +725,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 					}
 					invalidPlayers = true;
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("ERROR: ", e);;
 				}
 			}
 		});
@@ -738,7 +738,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			MovingElement element = e.getValue();
 			if (element instanceof Robot) {
 				if (team.equals(((Robot) element).getTeam())) {
-					System.out.println("Listing: " + e.getKey());
+					logger.debug("Listing: " + e.getKey());
 					robots.add(asRobotInformation(element));
 				}
 			}
@@ -759,12 +759,12 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void thisWidgetDisposed(DisposeEvent evt) {
-		System.out.println("this.widgetDisposed, event=" + evt);
+		logger.debug("this.widgetDisposed, event=" + evt);
 		if (server != null && server.isStarted()) {
 			try {
 				server.stopServer();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("ERROR: ", e);;
 			}
 		}
 	}
@@ -780,7 +780,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void FootballFieldControlResized(ControlEvent evt) {
-		System.out.println("FootballField.controlResized, event=" + evt);
+		logger.debug("FootballField.controlResized, event=" + evt);
 		if (getField() != null)
 			getField().updateProportions(FootballField);
 		if (FootballField != null)
@@ -788,7 +788,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void buttonForceWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonForce.widgetSelected, event=" + evt);
+		logger.debug("buttonForce.widgetSelected, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
@@ -799,7 +799,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void buttonNameWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonName.widgetSelected, event=" + evt);
+		logger.debug("buttonName.widgetSelected, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
@@ -810,7 +810,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void buttonMarksWidgetSelected(SelectionEvent evt) {
-		System.out.println("buttonMarks.widgetSelected, event=" + evt);
+		logger.debug("buttonMarks.widgetSelected, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
@@ -821,7 +821,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void FootballFieldMouseDown(MouseEvent evt) {
-		System.out.println("FootballField.mouseDown, event=" + evt);
+		logger.debug("FootballField.mouseDown, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
@@ -831,7 +831,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 
 	private void FootballFieldMouseUp(MouseEvent evt) {
-		System.out.println("FootballField.mouseUp, event=" + evt);
+		logger.debug("FootballField.mouseUp, event=" + evt);
 		Map<String, MovingElement> map = getField().getElements();
 		for (Entry<String, MovingElement> e : map.entrySet()) {
 			MovingElement element = e.getValue();
@@ -844,7 +844,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	}
 	
 	private void scaleTimeSpeedWidgetSelected(SelectionEvent evt) {
-		System.out.println("scaleTimeSpeed.widgetSelected, event="+evt);
+		logger.debug("scaleTimeSpeed.widgetSelected, event="+evt);
 		double value = scaleTimeSpeed.getSelection();
 		elapsedTimePerCycle = 0.01 * value;
 	}

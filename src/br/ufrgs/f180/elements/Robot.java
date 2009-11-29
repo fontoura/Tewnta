@@ -1,5 +1,6 @@
 package br.ufrgs.f180.elements;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
@@ -16,6 +17,7 @@ import com.cloudgarden.resource.SWTResourceManager;
  * 
  */
 public class Robot extends MovingElement {
+	private static Logger logger = Logger.getLogger(Robot.class);
 
 	private static final double ROBOT_MAX_VELOCITY = (double) GameProperties
 			.getDoubleValue("robot.max.velocity") * 100;
@@ -398,8 +400,9 @@ public class Robot extends MovingElement {
 						.module();
 				if (distanceFromBall < 5) {
 					Vector direction = new Vector(ball.position, projection);
-					direction = direction.normalize().multiply(10);
-					//For some reason it works better withot this...ball.setVelocity(ball.velocity.sum(direction));
+					direction = direction.normalize();
+					//For some reason it works better withot this...
+					ball.setVelocity(ball.getVelocity().multiply(0.85));
 				}
 			}
 
@@ -434,7 +437,7 @@ public class Robot extends MovingElement {
 					Vector direction = new Vector(projection, ball.position);
 					direction = direction.normalize().multiply(150);
 					ball.setVelocity(ball.velocity.sum(direction));
-					System.out.println("Kicking");
+					logger.debug("Kicking");
 				}
 			}
 

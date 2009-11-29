@@ -2,12 +2,14 @@ package br.ufrgs.f180.elements;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.graphics.GC;
 
 import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
 
 public abstract class MovingElement implements VisualElement {
+	private static Logger logger = Logger.getLogger(MovingElement.class);
 
 	protected GameField field;
 	protected Point position = new Point();
@@ -305,7 +307,7 @@ public abstract class MovingElement implements VisualElement {
 	public synchronized void drag() {
 		if(Math.abs(field.getMousePosition().getX() - this.getPosition().getX()) <= this.getRadius()){
 			if(Math.abs(field.getMousePosition().getY() - this.getPosition().getY()) <= this.getRadius()){
-				System.out.println("Dragging.");
+				logger.debug("Dragging.");
 				velocity = new Vector(0, 0);
 				force = new Vector(0, 0);
 				dragging = true;
@@ -322,7 +324,7 @@ public abstract class MovingElement implements VisualElement {
 	 */
 	public synchronized void drop() {
 		if(isDragging()) {
-			System.out.println("Dropping");
+			logger.debug("Dropping");
 		}
 		dragging = false;
 	}
@@ -334,7 +336,7 @@ public abstract class MovingElement implements VisualElement {
 		selected = false;
 		if(Math.abs(field.getMousePosition().getX() - this.getPosition().getX()) <= this.getRadius()){
 			if(Math.abs(field.getMousePosition().getY() - this.getPosition().getY()) <= this.getRadius()){
-				System.out.println("Selected.");
+				logger.debug("Selected.");
 				selected = true;
 			}
 		}

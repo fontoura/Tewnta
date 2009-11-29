@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
@@ -33,6 +34,8 @@ import com.cloudgarden.resource.SWTResourceManager;
  *
  */
 public class GameField implements VisualElement {
+	private static Logger logger = Logger.getLogger(GameField.class);
+
 	/**
 	 * Field physical properties. Mostly read from the game properties resource file.
 	 */
@@ -132,7 +135,7 @@ public class GameField implements VisualElement {
 			addWall(new Wall(getRightBound(), getGoalDown(), getRightBound() + GOAL_DEPTH, getGoalDown(), CollisionSide.BOTH));
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("ERROR: ", e);;
 		}
 	}
 
