@@ -1,4 +1,5 @@
 package br.ufrgs.f180.math;
+
 /**
  *   This folder contains libraries used across programs.
  *  
