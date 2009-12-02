@@ -10,7 +10,7 @@ import br.ufrgs.f180.math.Vector;
 import com.cloudgarden.resource.SWTResourceManager;
 
 public class Ball extends MovingElement {
-	public double radius;
+	private double radius;
 	
 	public Ball(Point position){
 		this.setMass(1);
@@ -65,5 +65,4 @@ public class Ball extends MovingElement {
 	public void setRadius(double radius) {
 		this.radius = radius;
 	}
-	
 }

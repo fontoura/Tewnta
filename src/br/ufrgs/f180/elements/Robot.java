@@ -351,12 +351,11 @@ public class Robot extends MovingElement {
 		this.displayName = displayName;
 	}
 
-	@Override
-	public void setVelocity(Vector velocity) {
-		if (velocity.module() > ROBOT_MAX_VELOCITY) {
-			velocity = velocity.normalize().multiply(ROBOT_MAX_VELOCITY);
+	public void setTargetVelocity(Vector targetVelocity) {
+		if (targetVelocity.module() > ROBOT_MAX_VELOCITY) {
+			targetVelocity = targetVelocity.normalize().multiply(ROBOT_MAX_VELOCITY);
 		}
-		targetVelocity = velocity;
+		this.targetVelocity = targetVelocity;
 	}
 
 	public void setDribbling(boolean dribbling) {
@@ -398,12 +397,15 @@ public class Robot extends MovingElement {
 			if (dp1 < len && dp2 < len) {
 				double distanceFromBall = projection.subtract(ball.position)
 						.module();
-				if (distanceFromBall < 5) {
+				
+				//Set a spin effect to the ball
+				if (distanceFromBall > ball.getRadius() + 0.5 && distanceFromBall < ball.getRadius() + 3) {
 					Vector direction = new Vector(ball.position, projection);
-					direction = direction.normalize();
-					//For some reason it works better withot this...
-					ball.setVelocity(ball.getVelocity().multiply(0.85));
-				}
+					direction = direction.normalize().multiply(7d);
+					//ball.setVelocity(ball.getVelocity().multiply(0.85));
+					ball.setVelocity(ball.velocity.sum(direction));
+					
+				}				
 			}
 
 		}
@@ -456,7 +458,7 @@ public class Robot extends MovingElement {
 		// Initializes force to 0
 		force = new Vector(0, 0);
 
-			// If the desired velocity is still not achieved, increase the motor
+		// If the desired velocity is still not achieved, increase the motor
 		// power.
 		// The inertia of previous commands will be dissipated thru the friction
 		// force.

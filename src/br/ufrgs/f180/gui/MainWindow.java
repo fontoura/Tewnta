@@ -158,7 +158,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				{
 					PlayerDetails = new Text(groupPlayers, SWT.MULTI | SWT.WRAP);
 					PlayerDetails.setEditable(false);
-					PlayerDetails.setBounds(12, 36, 132, 177);
+					PlayerDetails.setBounds(12, 36, 132, 141);
 				}
 				{
 					DetailsLabel = new Label(groupPlayers, SWT.NONE);
@@ -655,32 +655,21 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			details.append("Team: ");
 			details.append(Game.getInstance().getTeamName(selected.getTeam()));
 			details.append("\n");
-			details.append("Velocity:\n");
-			details.append("  x:");
-			details
-					.append(String
-							.format("%.2f", selected.getVelocity().getX()));
+			details.append("Name: ");
+			details.append(selected.getId());
 			details.append("\n");
-			details.append("  y:");
-			details
-					.append(String
-							.format("%.2f", selected.getVelocity().getY()));
+			details.append("Position:\n");
+			details.append(selected.getPosition().toString());
+			details.append("\n");
+			details.append("Velocity:\n");
+			details.append(selected.getVelocity().toString());
 			details.append("\n");
 			details.append("Force:\n");
-			details.append("  x:");
-			details.append(String.format("%.2f", selected.getForce().getX()));
-			details.append("\n");
-			details.append("  y:");
-			details.append(String.format("%.2f", selected.getForce().getY()));
+			details.append(selected.getForce().toString());
 			PlayerDetails.setText(details.toString());
 		} else {
 			PlayerDetails.setText("");
 		}
-	}
-
-	private void listPlayersWidgetSelected(SelectionEvent evt) {
-		logger.debug("listPlayers.widgetSelected, event=" + evt);
-		updateSelectedPlayer();
 	}
 
 	private void buttonStartGameWidgetSelected(SelectionEvent evt) {
@@ -837,6 +826,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			MovingElement element = e.getValue();
 			element.drop();
 		}
+		updateSelectedPlayer();
 	}
 
 	private void FootballFieldMouseMove(MouseEvent evt) {

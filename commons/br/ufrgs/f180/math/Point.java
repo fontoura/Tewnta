@@ -61,4 +61,9 @@ public class Point {
 	public double distanceFrom(Point point) {
 		return point.subtract(this).module();
 	}
+	
+	@Override
+	public String toString() {
+		return "(" + String.format("%.1f", x) + ", " + String.format("%.1f", y) + ")";
+	}
 }

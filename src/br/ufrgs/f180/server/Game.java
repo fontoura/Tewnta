@@ -274,7 +274,7 @@ public class Game {
 		ball.setAngle(b.getAngle());
 		ball.setPosition(b.getPosition());
 		ball.setVelocity(b.getVelocity());
-		ball.setRadius(b.radius);
+		ball.setRadius(b.getRadius());
 		return ball;
 	}
 
@@ -307,7 +307,7 @@ public class Game {
 		if (mainWindow.getField() != null) {
 			Robot r = (Robot) mainWindow.getField().getElement(id);
 			r.setForce(new Vector(0, 0));
-			r.setVelocity(new Vector(x, y));
+			r.setTargetVelocity(new Vector(x, y));
 		} else {
 			throw new Exception(
 					"Cannot get element. Configure the mainWindow.getField() first");

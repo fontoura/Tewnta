@@ -72,7 +72,7 @@ public abstract class MovingElement implements VisualElement {
 		return velocity;
 	}
 
-	public void setVelocity(Vector velocity) {
+	protected void setVelocity(Vector velocity) {
 		this.velocity = velocity;
 	}
 
