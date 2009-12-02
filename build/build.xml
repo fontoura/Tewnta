@@ -39,7 +39,7 @@
 		<mkdir dir="${basedir}/dist" />
 
 		<path id="classpath.with.commons">
-			<pathelement path="${classpath}"/>
+			<path refid="classpath" />
 			<pathelement path="${tewntaCommons.jar.path}"/>
 		</path>
 
