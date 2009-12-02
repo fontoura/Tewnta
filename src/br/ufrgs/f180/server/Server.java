@@ -1,5 +1,7 @@
 package br.ufrgs.f180.server;
 
+import java.net.InetAddress;
+
 import javax.xml.ws.Endpoint;
 
 import org.apache.log4j.Logger;
@@ -9,16 +11,22 @@ import br.ufrgs.f180.api.PlayerImpl;
 public class Server {
 	private static Logger logger = Logger.getLogger(Server.class);
 
-	private static final String ADDRESS = "http://localhost:9000/player";
+	private static final String PROTOCOL = "http://";
+	private static final String PORT = ":9000";
+	private static final String SERVICE = "/player";
+	
 	private Endpoint endpoint;
 	private PlayerImpl implementor;
 	
 	public void startServer() throws Exception {
 		// START SNIPPET: publish
 		logger.debug("Starting Server");
+		
+		String ip = InetAddress.getLocalHost().getHostAddress();
+		
 		implementor = new PlayerImpl();
 		endpoint = Endpoint.create(implementor);
-		endpoint.publish(ADDRESS);
+		endpoint.publish(PROTOCOL + ip + PORT + SERVICE);
 		// END SNIPPET: publish
 	}
 

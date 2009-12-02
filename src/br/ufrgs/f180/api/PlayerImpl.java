@@ -18,7 +18,7 @@ import br.ufrgs.f180.server.Game;
  * @author Gabriel Detoni
  *
  */
-@WebService(endpointInterface = "br.ufrgs.f180.api.Player", serviceName = "Player")
+@WebService(endpointInterface = "br.ufrgs.f180.api.Player", serviceName = "Player" )
 public class PlayerImpl implements Player {
 
 	private static Logger logger = Logger.getLogger(PlayerImpl.class);
