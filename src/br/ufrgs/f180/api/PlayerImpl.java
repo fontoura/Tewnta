@@ -7,7 +7,9 @@ import javax.jws.WebService;
 import org.apache.log4j.Logger;
 
 import br.ufrgs.f180.api.model.BallInformation;
+import br.ufrgs.f180.api.model.GameInformation;
 import br.ufrgs.f180.api.model.RobotInformation;
+import br.ufrgs.f180.elements.Robot.Team;
 import br.ufrgs.f180.server.Game;
 
 /**
@@ -96,6 +98,15 @@ public class PlayerImpl implements Player {
 	@Override
 	public List<RobotInformation> getRobotsFromOpponentTeam(String teamId) throws Exception {
 		return Game.getInstance().getRobotsFromOpponentTeam(teamId);
+	}
+
+	@Override
+	public GameInformation getGameInformation() throws Exception {
+		GameInformation gi = new GameInformation();
+		gi.setTeamA(Game.getInstance().getRobotsFromTeam(Team.A.toString()));
+		gi.setTeamB(Game.getInstance().getRobotsFromTeam(Team.B.toString()));
+		gi.setBall(Game.getInstance().getBallInformation());
+		return gi;
 	}
 
 }
