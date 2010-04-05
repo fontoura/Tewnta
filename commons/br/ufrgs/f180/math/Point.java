@@ -10,8 +10,8 @@ public class Point {
 	}
 	
 	public Point(Point p){
-		this.x = Double.isNaN(p.getX()) ? 0 : x;
-		this.y = Double.isNaN(p.getY()) ? 0 : y;
+		this.x = Double.isNaN(p.getX()) ? 0 : p.getX();
+		this.y = Double.isNaN(p.getY()) ? 0 : p.getY();
 	}
 	
 	public Point(double x, double y){
