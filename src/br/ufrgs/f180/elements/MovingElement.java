@@ -125,7 +125,7 @@ public abstract class MovingElement implements VisualElement {
 		position.setX(position.getX() + velocity.getX() * timeElapsed);
 		position.setY(position.getY() + velocity.getY() * timeElapsed);
 		
-		//Calculate the new angle
+		//Calculate the new angle. Assure it is between 0 and 2 PI by discounting the full circles
 		rotationVelocity = rotationVelocity + getRotationAcceleration() * timeElapsed;
 		angle = angle + rotationVelocity * timeElapsed ;
 		double circles = (int)(angle / (2 * Math.PI));

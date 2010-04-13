@@ -324,6 +324,10 @@ public class Game {
 	 */
 	public void setPlayerRotationVelocity(String id, Double velocity)
 			throws Exception {
+		if(velocity.isNaN()){
+			throw new Exception(
+			"Cannot set velocity of " + id + " to NaN.");
+		}
 		if (mainWindow.getField() != null) {
 			Robot r = (Robot) mainWindow.getField().getElement(id);
 			r.setRotationForce(0d);

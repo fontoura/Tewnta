@@ -96,7 +96,12 @@ public class Vector extends Point implements Cloneable{
 		return new Vector(p.getX() + x, p.getY() + y);
 	}
 	
+	/**
+	 * Returns the angle of a vector.
+	 * @return
+	 */
 	public double getAngle(){
+		
 		double angle = Math.acos(getCosDirection());
 		if(getSinDirection() < 0) {
 				angle = 2 * Math.PI - angle;

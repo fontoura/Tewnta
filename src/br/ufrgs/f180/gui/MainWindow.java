@@ -661,6 +661,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			details.append("Position:\n");
 			details.append(selected.getPosition().toString());
 			details.append("\n");
+			details.append("Angle:\n");
+			details.append(String.valueOf(selected.getAngle()));
+			details.append("\n");
 			details.append("Velocity:\n");
 			details.append(selected.getVelocity().toString());
 			details.append("\n");
