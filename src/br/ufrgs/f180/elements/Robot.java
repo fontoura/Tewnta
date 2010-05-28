@@ -437,7 +437,7 @@ public class Robot extends MovingElement {
 						.module();
 				if (distanceFromBall < 5) {
 					Vector direction = new Vector(projection, ball.position);
-					direction = direction.normalize().multiply(150);
+					direction = direction.normalize().multiply(300);
 					ball.setVelocity(ball.velocity.sum(direction));
 					logger.debug("Kicking");
 				}

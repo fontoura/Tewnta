@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
+import br.ufrgs.f180.math.Line;
 import br.ufrgs.f180.math.Point;
 
 import com.cloudgarden.resource.SWTResourceManager;
@@ -111,88 +112,10 @@ public class Wall implements VisualElement {
 	 * @return
 	 */
 	public double distanceFrom(Point point) {
-		return distanceFrom(point.getX(), point.getY());
+		Line l = new Line(new Point(x0, y0), new Point(x1, y1));
+		return l.distanceFrom(point);
 	}
 	
-	/**
-	 * Calculates the 2D distance between a point and a line
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-	public double distanceFrom(double x, double y) {
-		double p1 = (findLinearInterpolationCoheficientA() * x) + (findLinearInterpolationCoheficientB() * y) + findLinearInterpolationCoheficientC();
-		double p2 = Math.pow(findLinearInterpolationCoheficientA(), 2) + Math.pow(findLinearInterpolationCoheficientB(), 2);
-		double p3 = Math.abs(p1) / Math.sqrt(p2);
-		return p3;
-	}
-	
-	/**
-	 * Linear interpolation to ax + by + c = 0
-     * a = (y1 - y0) / (x1 - x0)
-     * b = 1
-     * c = y0 - (a * x0)
-	 * @return a
-	 */
-	private double findLinearInterpolationCoheficientA(){
-		return (this.y1 - this.y0) / (this.x1 - this.x0);	
-	}
-
-	/**
-	 * Linear interpolation to ax + by = c
-     * a = (y1 - y0) / (x1 - x0)
-     * b = 1
-     * c = y0 - (a * x0)
-	 * @return b
-	 */
-	private double findLinearInterpolationCoheficientB(){
-		return 1;	
-	}
-
-	/**
-	 * Linear interpolation to ax + by = c
-     * a = (y1 - y0) / (x1 - x0)
-     * b = 1
-     * c = y0 - (a * x0)
-	 * @return c
-	 */
-	private double findLinearInterpolationCoheficientC(){
-		return y0 - (findLinearInterpolationCoheficientA() * this.x0);	
-	}
-
-	/**
-	 * Return the position where a perpendicular line from the position passed will intersect the wall
-	 */
-	public Point perpendicularProjection(Point position) {
-		//Equation for the wall
-		double a0 = findLinearInterpolationCoheficientA();
-		double b0 = findLinearInterpolationCoheficientB(); 
-		double c0 = findLinearInterpolationCoheficientC();
-		
-		//Equation for the perpendicular point
-		double a1 = -1.0 / findLinearInterpolationCoheficientA();
-		double b1 = 1; 
-		double c1 = position.getY() - (a1 * position.getX()) ;
-		
-		double x;
-		double y;
-		
-		//Check for infinite tangent
-		if(a0 == 0){ //horizontal line
-			x = position.getX();
-			y = this.y0;
-		}
-		else if(a0 == Double.NEGATIVE_INFINITY || a0 == Double.POSITIVE_INFINITY){ //Vertical line
-			x = this.x0;
-			y = position.getY();
-		}
-		else{
-			//Normal line
-			x = (-(-c1/b1)+(-c0/b0)) / ((-a1/b1)-(-a0/b0));
-			y = (a1 * x + c1) / b1;
-		}
-		return new Point(x, y);
-	}
 	
 	public static void main(String[] args) {
 //		Wall n = new Wall(0, 0, 4.33, 2.5, CollisionSide.BOTH);
@@ -204,5 +127,10 @@ public class Wall implements VisualElement {
 		logger.debug("Projection: x = " + p.getX());
 		logger.debug("Projection: y = " + p.getY());
 		
+	}
+
+	public Point perpendicularProjection(Point pt) {
+		Line l = new Line(new Point(x0, y0), new Point(x1, y1));
+		return l.perpendicularProjection(pt);
 	}
 }
