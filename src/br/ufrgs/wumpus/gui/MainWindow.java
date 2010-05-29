@@ -372,8 +372,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		final MainWindow inst = new MainWindow(shell, SWT.NULL);
 		Point size = inst.getSize();
 		shell.setLayout(new FillLayout());
-		shell.setText("Tewnta Robocup F-180 Simulator");
-		shell.setImage(SWTResourceManager.getImage("icon.bmp"));
+		shell.setText("Hunt the Wumpus");
+		shell.setImage(SWTResourceManager.getImage("br/ufrgs/wumpus/icon.bmp"));
 		shell.layout();
 		if (size.x == 0 && size.y == 0) {
 			inst.pack();
