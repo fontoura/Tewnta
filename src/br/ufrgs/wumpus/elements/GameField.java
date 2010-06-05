@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Canvas;
 
 import br.ufrgs.f180.elements.MovingElement;
 import br.ufrgs.f180.math.Point;
+import br.ufrgs.wumpus.api.model.GameOverException;
 
 import com.cloudgarden.resource.SWTResourceManager;
 
@@ -367,6 +368,25 @@ public class GameField implements VisualElement {
 		return mousePosition;
 	}
 
+	/**
+	 * Used by the external API only
+	 * @return
+	 */
+	public CellPerception getCellPerception() throws GameOverException {
+		for (int i = 0; i < FIELD_SIZE; i++) {
+			for (int j = 0; j < FIELD_SIZE; j++) {
+				Cell c = getCell(i, j);
+				if (c.isWarrior()) {
+					if (c.isWumpus() || c.isPit()) {
+						throw new GameOverException(c.isWumpus(), c.isPit());
+					}
+					return getCellPerception(i, j);
+				}
+			}
+		}
+		return null;
+	}
+
 	public CellPerception getCellPerception(int i, int j) {
 		CellPerception p = new CellPerception();
 		for (int l = -1; l <= 1; l++) {
@@ -446,7 +466,6 @@ public class GameField implements VisualElement {
 				}
 			}
 		}
-
 	}
 
 	public void rotateWarriorLeft() {

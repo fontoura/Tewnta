@@ -3,6 +3,7 @@ package br.ufrgs.wumpus.server;
 import org.apache.log4j.Logger;
 
 import br.ufrgs.wumpus.api.model.CellInformation;
+import br.ufrgs.wumpus.api.model.GameOverException;
 import br.ufrgs.wumpus.elements.CellPerception;
 import br.ufrgs.wumpus.elements.GameField;
 import br.ufrgs.wumpus.gui.MainWindow;
@@ -106,9 +107,9 @@ public class Game {
 		mainWindow.getField().moveWarriorForward();
 	}
 
-	public CellPerception readCellInformation(int x, int y) {
+	public CellPerception readCellInformation() throws GameOverException {
 		if (mainWindow.getField() != null) {
-			CellPerception p = mainWindow.getField().getCellPerception(x, y);
+			CellPerception p = mainWindow.getField().getCellPerception();
 			return p;
 		}
 		return null;

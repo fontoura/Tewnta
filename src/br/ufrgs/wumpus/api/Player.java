@@ -3,6 +3,7 @@ package br.ufrgs.wumpus.api;
 import javax.jws.WebService;
 
 import br.ufrgs.wumpus.api.model.CellInformation;
+import br.ufrgs.wumpus.api.model.GameOverException;
 
 /**
  * This is the main API provided to players to connect and communicate with the
@@ -47,7 +48,8 @@ public interface Player {
 	 * Reads the information from a given cell.
 	 * 
 	 * @return
+	 * @throws GameOverException 
 	 */
-	public CellInformation readCellInformation(int x, int y);
+	public CellInformation readCellInformation() throws GameOverException;
 
 }

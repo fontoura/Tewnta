@@ -1,5 +1,7 @@
 package br.ufrgs.wumpus.api.model;
 
+import java.io.Serializable;
+
 
 /**
  * API abstraction of the CellPerception object.
@@ -7,19 +9,20 @@ package br.ufrgs.wumpus.api.model;
  * @author Gabriel
  *
  */
-public class CellInformation {
-	private boolean smell;
+public class CellInformation implements Serializable{
+	private static final long serialVersionUID = -8019702689096203165L;
+	private boolean stink;
 	private boolean shine;
-	private boolean freshAir;
+	private boolean breeze;
 	private boolean roar;
 	private boolean impact;
 
-	public boolean isSmell() {
-		return smell;
+	public boolean isStink() {
+		return stink;
 	}
 
-	public void setSmell(boolean smell) {
-		this.smell = smell;
+	public void setStink(boolean stink) {
+		this.stink = stink;
 	}
 
 	public boolean isShine() {
@@ -30,12 +33,12 @@ public class CellInformation {
 		this.shine = shine;
 	}
 
-	public boolean isFreshAir() {
-		return freshAir;
+	public boolean isBreeze() {
+		return breeze;
 	}
 
-	public void setFreshAir(boolean freshAir) {
-		this.freshAir = freshAir;
+	public void setBreeze(boolean breeze) {
+		this.breeze = breeze;
 	}
 
 	public boolean isRoar() {

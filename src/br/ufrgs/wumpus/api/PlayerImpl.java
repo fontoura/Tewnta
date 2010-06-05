@@ -5,6 +5,7 @@ import javax.jws.WebService;
 import org.apache.log4j.Logger;
 
 import br.ufrgs.wumpus.api.model.CellInformation;
+import br.ufrgs.wumpus.api.model.GameOverException;
 import br.ufrgs.wumpus.elements.CellPerception;
 import br.ufrgs.wumpus.server.Game;
 
@@ -47,15 +48,15 @@ public class PlayerImpl implements Player {
 	}
 
 	@Override
-	public CellInformation readCellInformation(int x, int y) {
+	public CellInformation readCellInformation() throws GameOverException {
 
-		CellPerception p = Game.getInstance().readCellInformation(x, y);
+		CellPerception p = Game.getInstance().readCellInformation();
 		CellInformation i = new CellInformation();
-		i.setFreshAir(p.isFreshAir());
+		i.setBreeze(p.isFreshAir());
 		i.setImpact(p.isImpact());
 		i.setRoar(p.isRoar());
 		i.setShine(p.isShine());
-		i.setSmell(p.isSmell());
+		i.setStink(p.isSmell());
 		return i;
 	}
 
