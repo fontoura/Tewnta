@@ -338,10 +338,10 @@ public class Game {
 		}
 	}
 
-	public void setPlayerKick(String id, Boolean kick) throws Exception {
+	public void setPlayerKick(String id, Double strength) throws Exception {
 		if (mainWindow.getField() != null) {
 			Robot r = (Robot) mainWindow.getField().getElement(id);
-			r.setKicking(kick);
+			r.setKicking(strength);
 		} else {
 			throw new Exception(
 					"Cannot get element. Configure the mainWindow.getField() first");

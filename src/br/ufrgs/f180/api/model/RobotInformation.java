@@ -4,7 +4,7 @@ public class RobotInformation extends ElementInformation {
 	protected String id;
 	// dribbler and kicker
 	protected Boolean dribbling;
-	protected Boolean kicking;
+	protected Double kicking;
 
 	public Boolean getDribbling() {
 		return dribbling;
@@ -14,11 +14,11 @@ public class RobotInformation extends ElementInformation {
 		this.dribbling = dribbling;
 	}
 
-	public Boolean getKicking() {
+	public Double getKicking() {
 		return kicking;
 	}
 
-	public void setKicking(Boolean kicking) {
+	public void setKicking(Double kicking) {
 		this.kicking = kicking;
 	}
 

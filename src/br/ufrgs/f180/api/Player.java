@@ -167,11 +167,11 @@ public interface Player {
 	 * Turn kick on or off
 	 * 
 	 * @param id
-	 * @param kick
-	 *            state of the kicker. True means ON.
+	 * @param strength
+	 *            the strength of the kick.
 	 * @throws Exception
 	 */
-	void setPlayerKick(String id, Boolean kick) throws Exception;
+	void setPlayerKick(String id, Double strength) throws Exception;
 
 	/**
 	 * Turn dribbler on or off

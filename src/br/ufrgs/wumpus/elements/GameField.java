@@ -29,7 +29,7 @@ import com.cloudgarden.resource.SWTResourceManager;
 public class GameField implements VisualElement {
 	private static Logger logger = Logger.getLogger(GameField.class);
 
-	public static final int FIELD_SIZE = 12;
+	public static final int FIELD_SIZE = 8;
 
 	private Cell[][] cells;
 
@@ -115,7 +115,7 @@ public class GameField implements VisualElement {
 				}
 			}
 
-			for (int i = 0; i < (FIELD_SIZE * FIELD_SIZE / 4); i++) {
+			for (int i = 0; i < (FIELD_SIZE * FIELD_SIZE / 8); i++) {
 				addPit();
 			}
 			addWumpus();

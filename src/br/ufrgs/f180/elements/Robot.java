@@ -41,7 +41,7 @@ public class Robot extends MovingElement {
 
 	// dribbler and kicker
 	private boolean dribbling;
-	private boolean kicking;
+	private double kicking;
 
 	/**
 	 * True means the force will be displayed as an arrow inside the robot
@@ -169,7 +169,7 @@ public class Robot extends MovingElement {
 	 * @param gc
 	 */
 	private void drawKicker(GC gc) {
-		if (isKicking()) {
+		if (getKicking() > 0) {
 			Point kickerPosition1 = kickerPosition1();
 			Point kickerPosition2 = kickerPosition2();
 
@@ -366,11 +366,12 @@ public class Robot extends MovingElement {
 		return dribbling;
 	}
 
-	public void setKicking(boolean kicking) {
-		this.kicking = kicking;
+	public void setKicking(double strength) {
+		this.kicking = strength <= 1d ? strength : 1d;
+		this.kicking = kicking >= 0d ? kicking : 0d;  
 	}
 
-	public boolean isKicking() {
+	public double getKicking() {
 		return kicking;
 	}
 
@@ -417,7 +418,7 @@ public class Robot extends MovingElement {
 	 * @param movingElement
 	 */
 	public void kickBall(Ball ball) {
-		if (isKicking()) {
+		if (getKicking() > 0) {
 			Point kickerPosition1 = kickerPosition1();
 			Point kickerPosition2 = kickerPosition2();
 			Wall w = new Wall(kickerPosition1.getX(), kickerPosition1.getY(),
@@ -437,13 +438,13 @@ public class Robot extends MovingElement {
 						.module();
 				if (distanceFromBall < 5) {
 					Vector direction = new Vector(projection, ball.position);
-					direction = direction.normalize().multiply(300);
+					direction = direction.normalize().multiply(GameProperties.getIntValue("robot.kicker.velocity.max") * 100d * getKicking());
 					ball.setVelocity(ball.velocity.sum(direction));
 					logger.debug("Kicking");
 				}
 			}
 
-			kicking = false;
+			kicking = 0d;
 		}
 	}
 

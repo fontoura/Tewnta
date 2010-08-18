@@ -85,9 +85,9 @@ public class PlayerImpl implements Player {
 	}
 
 	@Override
-	public void setPlayerKick(String id, Boolean kick)
+	public void setPlayerKick(String id, Double strength)
 			throws Exception {
-		Game.getInstance().setPlayerKick(id, kick);		
+		Game.getInstance().setPlayerKick(id, strength);		
 	}
 
 	@Override

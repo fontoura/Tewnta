@@ -746,7 +746,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 		r.setVelocity(element.getVelocity());
 		r.setRadius(element.getRadius());
 		r.setDribbling(((Robot) element).isDribbling());
-		r.setKicking(((Robot) element).isKicking());
+		r.setKicking(((Robot) element).getKicking());
 		return r;
 	}
 
