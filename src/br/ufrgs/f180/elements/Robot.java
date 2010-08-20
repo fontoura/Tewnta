@@ -5,6 +5,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
 import br.ufrgs.f180.elements.Wall.CollisionSide;
+import br.ufrgs.f180.math.MathUtils;
 import br.ufrgs.f180.math.Point;
 import br.ufrgs.f180.math.Vector;
 import br.ufrgs.f180.resources.GameProperties;
@@ -26,6 +27,9 @@ public class Robot extends MovingElement {
 	// know the real force of the robot
 	private static final double ROBOT_MAX_FORCE = (double) GameProperties
 			.getDoubleValue("robot.max.power") * 10;
+
+	private static final double ROBOT_DRIBBLER_SPIN_FORCE = (double) GameProperties
+	.getDoubleValue("robot.dribbler.spin.force") * 10;
 
 	private static final double SPOT_SIZE = 2.5;
 	private double radius;
@@ -398,14 +402,20 @@ public class Robot extends MovingElement {
 			if (dp1 < len && dp2 < len) {
 				double distanceFromBall = projection.subtract(ball.position)
 						.module();
-				
+				distanceFromBall -= ball.getRadius();
 				//Set a spin effect to the ball
-				if (distanceFromBall > ball.getRadius() + 0.5 && distanceFromBall < ball.getRadius() + 3) {
+				if (distanceFromBall > 0.8 && distanceFromBall < 3) {
 					Vector direction = new Vector(ball.position, projection);
-					direction = direction.normalize().multiply(7d);
-					//ball.setVelocity(ball.getVelocity().multiply(0.85));
-					ball.setVelocity(ball.velocity.sum(direction));
-					
+					double spinForce = 0d;
+					try {
+						//If the ball is in contact with the robot it will just spin in false.
+						//On the other hand, if it is far, it will speed up in the direction of the robot.
+						spinForce = MathUtils.normalize(.8, 3, distanceFromBall);
+					} catch (Exception e) {
+						logger.error(e);
+					}
+					direction = direction.normalize().multiply(7d * spinForce);
+					ball.getVelocity().sum(direction);
 				}				
 			}
 
