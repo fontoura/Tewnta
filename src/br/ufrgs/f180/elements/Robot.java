@@ -28,9 +28,6 @@ public class Robot extends MovingElement {
 	private static final double ROBOT_MAX_FORCE = (double) GameProperties
 			.getDoubleValue("robot.max.power") * 10;
 
-	private static final double ROBOT_DRIBBLER_SPIN_FORCE = (double) GameProperties
-	.getDoubleValue("robot.dribbler.spin.force") * 10;
-
 	private static final double SPOT_SIZE = 2.5;
 	private double radius;
 	private Vector front;
@@ -385,7 +382,7 @@ public class Robot extends MovingElement {
 	 * @param movingElement
 	 */
 	public void dribbleBall(Ball ball) {
-		if (isDribbling()) {
+		if (isDribbling() && getKicking() == 0d) {
 			Point dribblerPosition1 = dribblerPosition1();
 			Point dribblerPosition2 = dribblerPosition2();
 			Wall w = new Wall(dribblerPosition1.getX(), dribblerPosition1
