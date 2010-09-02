@@ -60,6 +60,9 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 	private static Logger logger = Logger.getLogger(MainWindow.class);
 
 	private Menu menu1;
+	private Menu menu2;
+	private MenuItem trailMenuItem;
+	private MenuItem viewMenuItem;
 	private Label label1;
 	private Scale scaleTimeSpeed;
 	private Button buttonName;
@@ -352,7 +355,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				}
 			});
 			{
-				FootballField = new Canvas(this, SWT.DOUBLE_BUFFERED
+				FootballField = new Canvas(this, SWT.NO_REDRAW_RESIZE
 						| SWT.NO_BACKGROUND);
 				FormData FootballFieldLData = new FormData();
 				FootballFieldLData.width = 506;
@@ -387,13 +390,6 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				});
 				FootballField.addPaintListener(new PaintListener() {
 					public void paintControl(PaintEvent evt) {
-
-						// Draw the background
-						evt.gc.setForeground(evt.gc.getForeground());
-						evt.gc.setBackground(evt.gc.getBackground());
-						evt.gc.fillRectangle(((Canvas) evt.getSource())
-								.getClientArea());
-
 						if (getField() != null)
 							getField().draw(evt.gc);
 
@@ -424,6 +420,24 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 									});
 						}
 						fileMenuItem.setMenu(fileMenu);
+					}
+				}
+				{
+					viewMenuItem = new MenuItem(menu1, SWT.CASCADE);
+					viewMenuItem.setText("View");
+					{
+						menu2 = new Menu(viewMenuItem);
+						viewMenuItem.setMenu(menu2);
+						{
+							trailMenuItem = new MenuItem(menu2, SWT.PUSH);
+							trailMenuItem.setText("Trail Analysis View");
+							trailMenuItem.addSelectionListener(new SelectionAdapter() {
+								public void widgetSelected(SelectionEvent evt) {
+									logger.debug("trailMenuItem.widgetSelected, event="+evt);
+									TrailAnalyserWidget.showGUI(field);
+								}
+							});
+						}
 					}
 				}
 				{
@@ -759,6 +773,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				logger.error("ERROR: ", e);;
 			}
 		}
+		//cleanup unused resources
+		if(field != null) field.dispose();
 	}
 
 	public RobotInformation getPlayerInformation(String playerId) {
@@ -773,8 +789,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 
 	private void FootballFieldControlResized(ControlEvent evt) {
 		logger.debug("FootballField.controlResized, event=" + evt);
-		if (getField() != null)
-			getField().updateProportions(FootballField);
+//		if (getField() != null)
+//			getField().updateProportions(FootballField);
 		if (FootballField != null)
 			FootballField.redraw();
 	}

@@ -110,7 +110,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 				label3LData.left =  new FormAttachment(0, 1000, 88);
 				label3LData.top =  new FormAttachment(0, 1000, 113);
 				label3.setLayoutData(label3LData);
-				label3.setText("© Tewnta team, April 2009");
+				label3.setText("© Tewnta team, April 2010");
 			}
 			{
 				label2 = new Label(dialogShell, SWT.NONE);
@@ -120,7 +120,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 				label2LData.left =  new FormAttachment(0, 1000, 88);
 				label2LData.top =  new FormAttachment(0, 1000, 53);
 				label2.setLayoutData(label2LData);
-				label2.setText("Simulator for the Robocup F180 league");
+				label2.setText("Hunt the Wumpus Testbed.");
 			}
 			{
 				FormData composite1LData = new FormData();
@@ -138,13 +138,13 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 			{
 				label1 = new Label(dialogShell, SWT.NONE);
 				FormData label1LData = new FormData();
-				label1LData.width = 90;
+				label1LData.width = 187;
 				label1LData.height = 31;
 				label1LData.left =  new FormAttachment(0, 1000, 88);
 				label1LData.top =  new FormAttachment(0, 1000, 23);
 				label1.setLayoutData(label1LData);
-				label1.setText("Tewnta");
-				label1.setFont(SWTResourceManager.getFont("Arial", 18, 1, false, false));
+				label1.setText("Tewnta Wumpus");
+				label1.setFont(SWTResourceManager.getFont("Arial", 16, 1, false, false));
 			}
 			dialogShell.setLocation(getParent().toDisplay(100, 100));
 			dialogShell.open();

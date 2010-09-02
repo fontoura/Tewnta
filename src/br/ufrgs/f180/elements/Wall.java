@@ -40,7 +40,7 @@ public class Wall implements VisualElement {
 		Color old = gc.getForeground();
 		Color c = SWTResourceManager.getColor(250, 250, 0);
 		gc.setForeground(c);
-		gc.drawLine(realx(x0), realy(y0), realx(x1), realy(y1));
+		gc.drawLine((int)(x0), (int)(y0), (int)(x1), (int)(y1));
 		
 //		//Demonstration of the collision calculations
 //		Wall n = this;
@@ -55,26 +55,6 @@ public class Wall implements VisualElement {
 		
 		gc.setForeground(old);
 		
-	}
-
-	@Override
-	public int scalex(double x) {
-		return field.scalex(x);
-	}
-
-	@Override
-	public int scaley(double y) {
-		return field.scaley(y);
-	}
-
-	@Override
-	public int realx(double x) {
-		return field.realx(x);
-	}
-
-	@Override
-	public int realy(double y) {
-		return field.realy(y);
 	}
 
 	public double getY0() {
