@@ -3,15 +3,19 @@ package br.ufrgs.f180.gui;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
@@ -19,11 +23,15 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import br.ufrgs.f180.elements.GameField;
 import br.ufrgs.f180.elements.MovingElement;
@@ -40,8 +48,8 @@ import com.cloudgarden.resource.SWTResourceManager;
  * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
-public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite
-		{
+public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite {
+	private static Logger logger = Logger.getLogger(TrailAnalyserWidget.class);
 
 	{
 		// Register as a resource user - SWTResourceManager will
@@ -57,9 +65,9 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite
 	 * Instance of the game field that whose trail will be plotted
 	 */
 	private GameField fieldInstance;
-	
+
 	/**
-	 * Image where the graphic is drawn into 
+	 * Image where the graphic is drawn into
 	 */
 	private Image paintImage;
 
@@ -68,6 +76,15 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite
 	 */
 	private double width;
 	private double height;
+	private Label label1;
+	private Button buttonSnapshot;
+	private Button buttonCleanup;
+	private Text textInterval;
+
+	/**
+	 * The interval between screen updates
+	 */
+	private int updateInterval = 500;
 
 	/**
 	 * Auto-generated main method to display this
@@ -96,14 +113,18 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite
 
 		// Prevent Jigloo mess
 		// $hide>>$
-		//set up the scale
+		// set up the scale
 		inst.fieldInstance = fieldInstance;
 		inst.updateProportions(fieldInstance);
-		inst.paintImage = new Image(display, (int)inst.width, (int)inst.height);
+		inst.paintImage = new Image(display, (int) inst.width,
+				(int) inst.height);
+		inst.cleanup();
 		// $hide<<$
-		
+
 		Point size = inst.getSize();
 		shell.setLayout(new FillLayout());
+		shell.setImage(SWTResourceManager.getImage("icon.bmp"));
+		shell.setText("Trail Analyser");
 		shell.layout();
 		if (size.x == 0 && size.y == 0) {
 			inst.pack();
@@ -139,7 +160,11 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite
 	 * @return
 	 */
 	protected int getUpdateInterval() {
-		return 200;
+		return updateInterval;
+	}
+
+	private void setUpdateInterval(int updateInterval) {
+		this.updateInterval = updateInterval;
 	}
 
 	/**
@@ -156,22 +181,16 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite
 		// Prevent Jigloo mess
 		// $hide>>$
 
-		if(paintImage != null) {
+		if (paintImage != null) {
 			GC gc = new GC(paintImage);
 			Color c = SWTResourceManager.getColor(150, 150, 150);
 			gc.setForeground(c);
-
-			// Draw borders
-			gc.drawRectangle((int)fieldInstance.getLeftBound(),
-					(int)fieldInstance.getDownBound(), (int)fieldInstance
-							.getFieldWidth(), (int)fieldInstance
-							.getFieldHeight());
 
 			Map<String, MovingElement> elements = fieldInstance.getElements();
 			for (Entry<String, MovingElement> e : elements.entrySet()) {
 				drawMovingElement(gc, e.getValue());
 			}
-			gc.dispose(); 
+			gc.dispose();
 		}
 		// $hide<<$
 	}
@@ -228,15 +247,66 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite
 				group1 = new Group(this, SWT.NONE);
 				GridLayout group1Layout = new GridLayout();
 				group1Layout.makeColumnsEqualWidth = true;
+				group1Layout.numColumns = 10;
 				group1.setLayout(group1Layout);
 				FormData group1LData = new FormData();
 				group1LData.width = 861;
 				group1LData.height = 42;
-				group1LData.left =  new FormAttachment(0, 1000, 0);
-				group1LData.top =  new FormAttachment(0, 1000, 4);
-				group1LData.right =  new FormAttachment(1000, 1000, 0);
+				group1LData.left = new FormAttachment(0, 1000, 0);
+				group1LData.top = new FormAttachment(0, 1000, 4);
+				group1LData.right = new FormAttachment(1000, 1000, 0);
 				group1.setLayoutData(group1LData);
 				group1.setText("Options");
+				{
+					label1 = new Label(group1, SWT.NONE);
+					GridData label1LData = new GridData();
+					label1.setLayoutData(label1LData);
+					label1.setText("Interval (ms):");
+				}
+				{
+					textInterval = new Text(group1, SWT.NONE);
+					GridData textIntervalLData = new GridData();
+					textIntervalLData.widthHint = 36;
+					textIntervalLData.heightHint = 13;
+					textInterval.setLayoutData(textIntervalLData);
+					textInterval.setText("500");
+					textInterval.addModifyListener(new ModifyListener() {
+						public void modifyText(ModifyEvent evt) {
+							logger.debug("textInterval.modifyText, event="
+									+ evt);
+							int value = 500;
+							try {
+								value = Integer.valueOf(textInterval.getText());
+							} catch (Exception e) {
+								logger
+										.error(
+												"Problem converting value to integer: ",
+												e);
+							}
+							setUpdateInterval(value);
+							cleanup();
+						}
+					});
+				}
+				{
+					buttonCleanup = new Button(group1, SWT.PUSH | SWT.CENTER);
+					GridData buttonCleanupLData = new GridData();
+					buttonCleanup.setLayoutData(buttonCleanupLData);
+					buttonCleanup.setText("Cleanup");
+					buttonCleanup.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent evt) {
+							logger.debug("buttonCleanup.widgetSelected, event="
+									+ evt);
+							cleanup();
+						}
+					});
+				}
+				{
+					buttonSnapshot = new Button(group1, SWT.PUSH | SWT.CENTER);
+					GridData buttonSnapshotLData = new GridData();
+					buttonSnapshot.setLayoutData(buttonSnapshotLData);
+					buttonSnapshot.setText("Save Snapshot");
+				}
 			}
 			this.layout();
 			pack();
@@ -250,27 +320,30 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite
 		// Prevent Jigloo mess
 		// $hide>>$
 		Rectangle displayRect = canvasTrail.getClientArea();
-	    int imageWidth = displayRect.width;
-	    int imageHeight = displayRect.height;
+		int imageWidth = displayRect.width;
+		int imageHeight = displayRect.height;
 
-	    // Reflect around the y axis.
+		// Reflect around the y axis.
 		Transform transform = new Transform(gc.getDevice());
-        transform.setElements(1, 0, 0, -1, 0, imageHeight);
-        gc.setTransform(transform);
-	    gc.drawImage(paintImage, 0, 0, (int)width, (int)height, 0, 0, imageWidth, imageHeight);
+		transform.setElements(1, 0, 0, -1, 0, imageHeight);
+		gc.setTransform(transform);
+		gc.drawImage(paintImage, 0, 0, (int) width, (int) height, 0, 0,
+				imageWidth, imageHeight);
 		transform.dispose();
 
 		// $hide<<$
 	}
 
-	
 	private void drawMovingElement(GC gc, MovingElement e) {
-		Color old = gc.getForeground();
-		Color c = SWTResourceManager.getColor(255, 128, 0);
-		gc.setBackground(c);
-		double radius = 15d;
-		gc.fillOval((int)(e.getPosition().getX() - radius), (int)(e.getPosition().getY() - radius) , (int)(radius * 2), (int)(radius * 2) );
-		gc.setBackground(old);
+		Color c = SWTResourceManager.getColor(100, 28, 0);
+		gc.setForeground(c);
+		double radius = e.getRadius();
+		double x = e.getPosition().getX();
+		double y = e.getPosition().getY();
+		gc.drawLine((int) (x - radius), (int) (y), (int) (x + radius - 1),
+				(int) (y));
+		gc.drawLine((int) (x), (int) (y - radius), (int) (x),
+				(int) (y + radius - 1));
 	}
 
 	/**
@@ -289,4 +362,44 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite
 			this.height = 1;
 		}
 	}
+
+	/**
+	 * Cleans up the stage.
+	 */
+	private void cleanup() {
+		Display.getDefault().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				if (paintImage != null) {
+					GC gc = new GC(paintImage);
+					gc
+							.setBackground(SWTResourceManager.getColor(255,
+									255, 255));
+					gc.fillRectangle(paintImage.getBounds());
+					drawGrid(gc);
+					gc.dispose();
+				}
+			}
+
+		});
+	}
+
+	private void drawGrid(GC gc) {
+		gc.setForeground(SWTResourceManager.getColor(200, 200, 200));
+		gc.setLineStyle(SWT.LINE_DOT);
+		int h = paintImage.getBounds().height;
+		int w = paintImage.getBounds().width;
+		int gridSizeH = 5;
+		double gridLength = (h / gridSizeH);
+		int gridSizeW = w / (int) gridLength;
+		for (double i = 0; i <= gridSizeH; i++) {
+			gc.drawLine(0, (int) (i * gridLength), w, (int) (i * gridLength));
+		}
+		for (double i = 0; i <= gridSizeW; i++) {
+			gc.drawLine((int) (i * gridLength), 0, (int) (i * gridLength), h);
+		}
+		gc.setLineStyle(SWT.LINE_SOLID);
+	}
+
 }

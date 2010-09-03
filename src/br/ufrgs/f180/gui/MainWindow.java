@@ -356,7 +356,7 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 			});
 			{
 				FootballField = new Canvas(this, SWT.NO_REDRAW_RESIZE
-						| SWT.NO_BACKGROUND);
+						| SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
 				FormData FootballFieldLData = new FormData();
 				FootballFieldLData.width = 506;
 				FootballFieldLData.height = 435;
@@ -773,8 +773,6 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 				logger.error("ERROR: ", e);;
 			}
 		}
-		//cleanup unused resources
-		if(field != null) field.dispose();
 	}
 
 	public RobotInformation getPlayerInformation(String playerId) {
@@ -789,8 +787,8 @@ public class MainWindow extends org.eclipse.swt.widgets.Composite {
 
 	private void FootballFieldControlResized(ControlEvent evt) {
 		logger.debug("FootballField.controlResized, event=" + evt);
-//		if (getField() != null)
-//			getField().updateProportions(FootballField);
+		if (getField() != null)
+			getField().updateProportions(FootballField);
 		if (FootballField != null)
 			FootballField.redraw();
 	}

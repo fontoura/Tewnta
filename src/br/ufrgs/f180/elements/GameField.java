@@ -12,9 +12,6 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Canvas;
 
 import br.ufrgs.f180.elements.Wall.CollisionSide;
@@ -27,7 +24,7 @@ import com.cloudgarden.resource.SWTResourceManager;
 /**
  * This object merges the both physical simulation and visual representation of
  * the game field. There are methods responsible for visual display as well as
- * methods responsible for the physical phenomena that guides the simulation.
+ * methods responsible for the physical phenomenas that guides the simulation.
  * 
  * It is important to notice that visual representation of the logical field
  * uses the following notation: (x, y) = (0, 0): this means the left bottom of
@@ -88,15 +85,13 @@ public class GameField implements VisualElement {
 	 */
 	public static final String BALL_ELEMENT = "BALL";
 
+	private double scale_x;
+	private double scale_y;
 	private double width;
 	private double height;
-	private Canvas canvas;
 
-	/**
-	 * Image where the graphic is drawn into
-	 */
-	private Image paintImage;
-	GC paintImageGc;
+	private int canvasWidth;
+	private int canvasHeight;
 
 	/**
 	 * Keeps the mouse position within the field. Used for drag and drop
@@ -120,12 +115,23 @@ public class GameField implements VisualElement {
 	public GameField(Canvas canvas, double width, double height) {
 		this.width = width;
 		this.height = height;
-		this.canvas = canvas;
-		paintImage = new Image(canvas.getDisplay(), (int) width, (int) height);
-		paintImageGc = new GC(paintImage);
-
+		updateProportions(canvas);
 		createWalls();
 
+	}
+
+	/**
+	 * Window resizes require the scales to be adjusted. This method is
+	 * responsible for that.
+	 * 
+	 * @param canvas
+	 *            the container of this game field.
+	 */
+	public void updateProportions(Canvas canvas) {
+		this.canvasHeight = canvas.getBounds().height - 1;
+		this.canvasWidth = canvas.getBounds().width - 1;
+		this.scale_x = ((double) canvasWidth) / width;
+		this.scale_y = ((double) canvasHeight) / height;
 	}
 
 	/**
@@ -232,66 +238,42 @@ public class GameField implements VisualElement {
 	 */
 	@Override
 	public void draw(GC gc) {
-		updateImage();
-		// Prevent Jigloo mess
-		// $hide>>$
-		if (canvas != null) {
-			Rectangle displayRect = canvas.getClientArea();
-			int imageWidth = displayRect.width;
-			int imageHeight = displayRect.height;
 
-			// Reflect around the y axis.
-			Transform transform = new Transform(gc.getDevice());
-	        transform.setElements(1, 0, 0, -1, 0, imageHeight);
-	        gc.setTransform(transform);
-			gc.drawImage(paintImage, 0, 0, (int) width, (int) height, 0, 0,
-					imageWidth, imageHeight);
-			transform.dispose();
-		}
-		// $hide<<$
-	}
-
-	/**
-	 * Draws the elements into the buffer image
-	 */
-	private void updateImage() {
-
-		// Cleanup the previous image by draw the background
-		Color bg = SWTResourceManager.getColor(0, 50, 0);
-		paintImageGc.setBackground(bg);
-		paintImageGc.fillRectangle(paintImage
-				.getBounds());
-
+		// Draw the background
+		gc.fillRectangle(0, 0, canvasWidth, canvasHeight);
+		
+		Color old = gc.getForeground();
 		Color c = SWTResourceManager.getColor(150, 150, 150);
-		paintImageGc.setForeground(c);
+		gc.setForeground(c);
 		// Draw middle line and middle field
-		paintImageGc.drawLine((int) getCenterX(), (int) getDownBound(),
-				(int) (getCenterX()), (int) (getTopBound()));
-		paintImageGc.drawOval((int) (getCenterX() - FIELD_CENTERCIRCLE_RADIUS),
-				(int) (getCenterY() - FIELD_CENTERCIRCLE_RADIUS),
-				(int) (FIELD_CENTERCIRCLE_RADIUS * 2),
-				(int) (FIELD_CENTERCIRCLE_RADIUS * 2));
+		gc.drawLine(realx(getCenterX()), realy(getDownBound()),
+				realx(getCenterX()), realy(getTopBound()));
+		gc.drawOval(realx(getCenterX() - FIELD_CENTERCIRCLE_RADIUS),
+				realy(getCenterY() + FIELD_CENTERCIRCLE_RADIUS),
+				scalex(FIELD_CENTERCIRCLE_RADIUS * 2),
+				scaley(FIELD_CENTERCIRCLE_RADIUS * 2));
 
 		// Draw borders
-		paintImageGc.drawRectangle((int) (getLeftBound()), (int) (getDownBound()),
-				(int) (getFieldWidth()), (int) (getFieldHeight()));
+		gc.drawRectangle(realx(getLeftBound()), realy(getDownBound()),
+				scalex(getFieldWidth()), scaley(getFieldHeight()));
 
 		// Draw goal areas
-		paintImageGc.drawArc((int) (getLeftBound() - FIELD_GOALAREA_RADIUS),
-				(int) (getCenterY() - FIELD_GOALAREA_RADIUS),
-				(int) (FIELD_GOALAREA_RADIUS * 2),
-				(int) (FIELD_GOALAREA_RADIUS * 2), 270, 180);
-		paintImageGc.drawArc((int) (getRightBound() - FIELD_GOALAREA_RADIUS),
-				(int) (getCenterY() - FIELD_GOALAREA_RADIUS),
-				(int) (FIELD_GOALAREA_RADIUS * 2),
-				(int) (FIELD_GOALAREA_RADIUS * 2), 90, 180);
+		gc.drawArc(realx(getLeftBound() - FIELD_GOALAREA_RADIUS),
+				realy(getCenterY() + FIELD_GOALAREA_RADIUS),
+				scalex(FIELD_GOALAREA_RADIUS * 2),
+				scaley(FIELD_GOALAREA_RADIUS * 2), 270, 180);
+		gc.drawArc(realx(getRightBound() - FIELD_GOALAREA_RADIUS),
+				realy(getCenterY() + FIELD_GOALAREA_RADIUS),
+				scalex(FIELD_GOALAREA_RADIUS * 2),
+				scaley(FIELD_GOALAREA_RADIUS * 2), 90, 180);
 
 		for (Wall wall : walls) {
-			wall.draw(paintImageGc);
+			wall.draw(gc);
 		}
 		for (Entry<String, MovingElement> e : elements.entrySet()) {
-			e.getValue().draw(paintImageGc);
+			e.getValue().draw(gc);
 		}
+		gc.setForeground(old);
 	}
 
 	/**
@@ -347,7 +329,47 @@ public class GameField implements VisualElement {
 	 *         screen size.
 	 */
 	public double getFieldHeight() {
-		return getTopBound() - getDownBound();
+		return getDownBound() - getTopBound();
+	}
+
+	/**
+	 * @return the horizontal proportion of the field relative to the canvas
+	 *         where it is being drawn. This is used to draw elements correctly.
+	 */
+	@Override
+	public int scalex(double x) {
+		return (int) (x * scale_x);
+	}
+
+	/**
+	 * @return the vertical proportion of the field relative to the canvas where
+	 *         it is being drawn. This is used to draw elements correctly.
+	 */
+	@Override
+	public int scaley(double y) {
+		return (int) (y * scale_y);
+	}
+
+	/**
+	 * This method translates a logical position in the field to a real position
+	 * in the screen.
+	 * 
+	 * @return the screen position. This is used to draw elements correctly.
+	 */
+	@Override
+	public int realx(double x) {
+		return (int) (x * scale_x);
+	}
+
+	/**
+	 * This method translates a logical position in the field to a real position
+	 * in the screen.
+	 * 
+	 * @return the screen position. This is used to draw elements correctly.
+	 */
+	@Override
+	public int realy(double y) {
+		return canvasHeight - (int) (y * scale_y);
 	}
 
 	/**
@@ -444,13 +466,12 @@ public class GameField implements VisualElement {
 	 * @param y
 	 */
 	public void setMousePosition(int x, int y) {
-		Rectangle displayRect = canvas.getClientArea();
-		int cWidth = displayRect.width;
-		int cHeight = displayRect.height;
-		double scale_x = cWidth / width;
-		double scale_y = cHeight / height;
 		double xpos = x / scale_x;
-		double ypos = (cHeight - y) / scale_y;
+		double ypos = (canvasHeight - y) / scale_y;
+		// if(xpos <= getLeftBound()) xpos = getLeftBound();
+		// if(xpos >= getRightBound()) xpos = getRightBound();
+		// if(ypos <= getTopBound()) ypos = getTopBound();
+		// if(ypos >= getDownBound()) ypos = getDownBound();
 		this.mousePosition = new Point(xpos, ypos);
 	}
 
@@ -473,9 +494,5 @@ public class GameField implements VisualElement {
 	public void setHeight(double height) {
 		this.height = height;
 	}
-
-	public void dispose(){
-		paintImageGc.dispose();
-		paintImage.dispose();
-	}
+	
 }

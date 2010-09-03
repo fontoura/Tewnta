@@ -104,8 +104,8 @@ public class Robot extends MovingElement {
 		Color old = gc.getBackground();
 		Color backgroundColor = SWTResourceManager.getColor(0, 0, 0);
 		gc.setBackground(backgroundColor);
-		gc.fillOval((int)(position.getX() - radius), (int)(position.getY()
-				- radius), (int)(radius * 2), (int)(radius * 2));
+		gc.fillOval(realx(position.getX() - radius), realy(position.getY()
+				+ radius), scalex(radius * 2), scaley(radius * 2));
 		drawMarks(gc);
 		drawDribbler(gc);
 		drawKicker(gc);
@@ -145,10 +145,9 @@ public class Robot extends MovingElement {
 			Color old = gc.getForeground();
 			Color color = SWTResourceManager.getColor(255, 0, 0);
 			gc.setForeground(color);
-			
-			gc.drawLine((int)(dribblerPosition1.getX()),
-					(int)(dribblerPosition1.getY()), (int)(dribblerPosition2
-							.getX()), (int)(dribblerPosition2.getY()));
+			gc.drawLine(realx(dribblerPosition1.getX()),
+					realy(dribblerPosition1.getY()), realx(dribblerPosition2
+							.getX()), realy(dribblerPosition2.getY()));
 			gc.setForeground(old);
 		}
 	}
@@ -178,9 +177,9 @@ public class Robot extends MovingElement {
 			Color old = gc.getForeground();
 			Color color = SWTResourceManager.getColor(0, 0, 255);
 			gc.setForeground(color);
-			gc.drawLine((int)(kickerPosition1.getX()), (int)(kickerPosition1
-					.getY()), (int)(kickerPosition2.getX()),
-					(int)(kickerPosition2.getY()));
+			gc.drawLine(realx(kickerPosition1.getX()), realy(kickerPosition1
+					.getY()), realx(kickerPosition2.getX()),
+					realy(kickerPosition2.getY()));
 			gc.setForeground(old);
 		}
 	}
@@ -195,8 +194,8 @@ public class Robot extends MovingElement {
 			Color old = gc.getForeground();
 			Color color = SWTResourceManager.getColor(200, 200, 0);
 			gc.setForeground(color);
-			gc.drawOval((int)(position.getX() - radius), (int)(position.getY()
-					- radius), (int)(radius * 2), (int)(radius * 2));
+			gc.drawOval(realx(position.getX() - radius), realy(position.getY()
+					+ radius), scalex(radius * 2), scaley(radius * 2));
 			gc.setForeground(old);
 		}
 	}
@@ -210,7 +209,7 @@ public class Robot extends MovingElement {
 			Color old = gc.getForeground();
 			Color foregroundColor = SWTResourceManager.getColor(0, 255, 55);
 			gc.setForeground(foregroundColor);
-			gc.drawLine((int)(x1), (int)(y1), (int)(x2), (int)(y2));
+			gc.drawLine(realx(x1), realy(y1), realx(x2), realy(y2));
 			gc.setForeground(old);
 		}
 
@@ -218,8 +217,8 @@ public class Robot extends MovingElement {
 
 	private void drawName(GC gc) {
 		if (isDisplayName()) {
-			gc.drawString(getId(), (int)(getPosition().getX() - getRadius()),
-					(int)(getPosition().getY() + getRadius()), true);
+			gc.drawString(getId(), realx(getPosition().getX() - getRadius()),
+					realy(getPosition().getY() - getRadius()), true);
 		}
 	}
 
@@ -260,14 +259,34 @@ public class Robot extends MovingElement {
 	private void drawSpot(GC gc, Vector spotPositionAbsolute, Color color) {
 
 		// Rotate the spot to the actual angle
-		Vector spotPosition = spotPositionAbsolute.rotate(-this.angle);
+		Vector spotPosition = spotPositionAbsolute.rotate(this.angle);
 
 		Color old = gc.getBackground();
 		gc.setBackground(color);
-		gc.fillOval((int)(position.getX() + spotPosition.getX() - SPOT_SIZE),
-				(int)(position.getY() + spotPosition.getY() - SPOT_SIZE),
-				(int)(SPOT_SIZE * 2), (int)(SPOT_SIZE * 2));
+		gc.fillOval(realx(position.getX() + spotPosition.getX() - SPOT_SIZE),
+				realy(position.getY() - spotPosition.getY() + SPOT_SIZE),
+				scalex(SPOT_SIZE * 2), scaley(SPOT_SIZE * 2));
 		gc.setBackground(old);
+	}
+
+	@Override
+	public int scalex(double x) {
+		return field.scalex(x);
+	}
+
+	@Override
+	public int scaley(double y) {
+		return field.scaley(y);
+	}
+
+	@Override
+	public int realx(double x) {
+		return field.realx(x);
+	}
+
+	@Override
+	public int realy(double y) {
+		return field.realy(y);
 	}
 
 	@Override
