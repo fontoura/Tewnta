@@ -1,6 +1,8 @@
 package br.ufrgs.f180.gui;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -16,6 +18,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
@@ -80,6 +84,11 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite {
 	private Button buttonSnapshot;
 	private Button buttonCleanup;
 	private Text textInterval;
+
+	/**
+	 * The colors of each element whose trail is being analysed.
+	 */
+	private Map<String, Color> colors = new HashMap<String, Color>();
 
 	/**
 	 * The interval between screen updates
@@ -154,6 +163,22 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite {
 		}
 	}
 
+	private Color setupColor(String elementKey) {
+		if (!colors.containsKey(elementKey)) {
+			Random rn = new Random();
+			// Creates a color that never gets too bright as to contrast with
+			// the white background. For that reason only one component goes up
+			// to 255
+			int[] cc = new int[] { rn.nextInt(256), rn.nextInt(156),
+					rn.nextInt(56) };
+			int pc = rn.nextInt(3);
+			Color c = SWTResourceManager.getColor(cc[pc % cc.length],
+					cc[(pc + 1) % cc.length], cc[(pc + 2) % cc.length]);
+			colors.put(elementKey, c);
+		}
+		return colors.get(elementKey);
+	}
+
 	/**
 	 * The interval between updates. Configurable in the options GUI.
 	 * 
@@ -183,12 +208,10 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite {
 
 		if (paintImage != null) {
 			GC gc = new GC(paintImage);
-			Color c = SWTResourceManager.getColor(150, 150, 150);
-			gc.setForeground(c);
-
 			Map<String, MovingElement> elements = fieldInstance.getElements();
 			for (Entry<String, MovingElement> e : elements.entrySet()) {
-				drawMovingElement(gc, e.getValue());
+				Color c = setupColor(e.getKey());
+				drawMovingElement(gc, e.getValue(), c);
 			}
 			gc.dispose();
 		}
@@ -306,6 +329,42 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite {
 					GridData buttonSnapshotLData = new GridData();
 					buttonSnapshot.setLayoutData(buttonSnapshotLData);
 					buttonSnapshot.setText("Save Snapshot");
+					buttonSnapshot.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent evt) {
+							logger
+									.debug("buttonSnapshot.widgetSelected, event="
+											+ evt);
+
+							//Flip the image
+							Image buffer = new Image(Display.getDefault(),
+									paintImage.getBounds().width, paintImage
+											.getBounds().height);
+							GC gc = new GC(buffer);
+							Transform transform = new Transform(gc.getDevice());
+							transform.setElements(1, 0, 0, -1, 0, buffer
+									.getBounds().height);
+							gc.setTransform(transform);
+							gc.drawImage(paintImage, 0, 0, (int) width,
+									(int) height, 0, 0,
+									buffer.getBounds().width, buffer
+											.getBounds().height);
+
+							//Save it to a file
+							ImageLoader loader = new ImageLoader();
+							loader.data = new ImageData[] { buffer
+									.getImageData() };
+							try {
+								loader.save("snapshot.png", SWT.IMAGE_PNG);
+							} catch (Exception e) {
+								logger.error("Cannot save file: ", e);
+							}
+
+							//Release OS resources
+							transform.dispose();
+							gc.dispose();
+							buffer.dispose();
+						}
+					});
 				}
 			}
 			this.layout();
@@ -334,9 +393,8 @@ public class TrailAnalyserWidget extends org.eclipse.swt.widgets.Composite {
 		// $hide<<$
 	}
 
-	private void drawMovingElement(GC gc, MovingElement e) {
-		Color c = SWTResourceManager.getColor(100, 28, 0);
-		gc.setForeground(c);
+	private void drawMovingElement(GC gc, MovingElement e, Color color) {
+		gc.setForeground(color);
 		double radius = e.getRadius();
 		double x = e.getPosition().getX();
 		double y = e.getPosition().getY();
