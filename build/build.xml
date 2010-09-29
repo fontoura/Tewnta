@@ -1,8 +1,9 @@
 <project name="tewnta" default="jar" basedir="../">
-	
-	<property file="${basedir}/build/build.properties"/>
 
-	<property name="tewntaCommons.jar.path" value="${basedir}/artifacts/components/tewntaCommons.jar"/>
+	<property file="${basedir}/build/build.properties" />
+
+    <property name="tewnta.components.dest" value="${basedir}/artifacts/components" />
+	<property name="tewntaCommons.jar.path" value="${tewnta.components.dest}/tewntaCommons.jar" />
 
 	<path id="classpath">
 		<fileset dir="${basedir}/lib">
@@ -11,7 +12,7 @@
 	</path>
 
 	<target name="compile.commons">
-		<delete dir="${basedir}/dist" failonerror="false"/>
+		<delete dir="${basedir}/dist" failonerror="false" />
 		<mkdir dir="${basedir}/dist" />
 		<javac debug="true" srcdir="${basedir}/commons" destdir="${basedir}/dist" classpathref="classpath">
 			<include name="**/*.java" />
@@ -23,9 +24,9 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="jar.commons" depends="compile.commons">
-		<mkdir dir="${basedir}/artifacts/components"/>
+		<mkdir dir="${tewnta.components.dest}" />
 		<jar destfile="${tewntaCommons.jar.path}">
 			<fileset dir="${basedir}/dist">
 				<include name="**/*.*" />
@@ -33,14 +34,14 @@
 		</jar>
 		<delete dir="${basedir}/dist" />
 	</target>
-	
+
 	<target name="compile" depends="jar.commons">
-		<delete dir="${basedir}/dist" failonerror="false"/>
+		<delete dir="${basedir}/dist" failonerror="false" />
 		<mkdir dir="${basedir}/dist" />
 
 		<path id="classpath.with.commons">
 			<path refid="classpath" />
-			<pathelement path="${tewntaCommons.jar.path}"/>
+			<pathelement path="${tewntaCommons.jar.path}" />
 		</path>
 
 		<javac srcdir="${basedir}/src" destdir="${basedir}/dist" classpathref="classpath.with.commons">
@@ -53,35 +54,71 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="jar" depends="compile">
-		<mkdir dir="${basedir}/artifacts/components"/>
-		<jar destfile="${basedir}/artifacts/components/simulator.jar" manifest="${basedir}/MANIFEST.MF">
+		<mkdir dir="${tewnta.components.dest}" />
+		<jar destfile="${tewnta.components.dest}/simulator.jar" manifest="${basedir}/MANIFEST.MF">
 			<fileset dir="${basedir}/dist">
 				<include name="**/*.*" />
 			</fileset>
 		</jar>
-		<copy file="${basedir}/Readme.txt" todir="${basedir}/artifacts/components" />
-		<copy file="${basedir}/simulator.cmd" todir="${basedir}/artifacts/components" />
-		<copy file="${basedir}/demo.cmd" todir="${basedir}/artifacts/components" />
+		<copy file="${basedir}/Readme.txt" todir="${tewnta.components.dest}" />
+		<copy file="${basedir}/simulator-win.cmd" todir="${tewnta.components.dest}" />
+		<copy file="${basedir}/demo-win.cmd" todir="${tewnta.components.dest}" />
+        <copy file="${basedir}/simulator-linux.sh" todir="${tewnta.components.dest}" />
+        <copy file="${basedir}/demo-linux.sh" todir="${tewnta.components.dest}" />
 		<delete dir="${basedir}/dist" />
 	</target>
-    	
+
 	<target name="javadoc">
-	    <property environment="env"/>
+		<property environment="env" />
 		<path id="sources">
-			<dirset dir="${basedir}/src"/>
-			<dirset dir="${basedir}/commons"/>
+			<dirset dir="${basedir}/src" />
+			<dirset dir="${basedir}/commons" />
 		</path>
-		<javadoc executable="${env.JAVA_HOME}/bin/javadoc.exe" destdir="${basedir}/javadoc" sourcepathref="sources"/>
+		<javadoc executable="${env.JAVA_HOME}/bin/javadoc.exe" destdir="${basedir}/javadoc" sourcepathref="sources" />
 	</target>
-	
+
 	<target name="package" depends="jar">
-		<zip destfile="${basedir}/artifacts/tewnta_${release.version}_bin.zip">
-			<fileset dir="${basedir}/artifacts/components">
+		<delete file="${tewnta.components.dest}/lib/swt.jar" />
+		<copy file="${basedir}/platform/swt${platform.name}.jar" tofile="${tewnta.components.dest}/lib/swt.jar" />
+		<zip destfile="${basedir}/artifacts/tewnta_${release.version}${platform.name}_bin.zip">
+			<fileset dir="${tewnta.components.dest}">
 				<include name="**/*.*" />
 			</fileset>
 		</zip>
 	</target>
 
+	<property name="linux.jni.src" value="${basedir}/platform/linux-jni" />
+    <property name="linux.jni.dest" value="${tewnta.components.dest}/jni" />
+	
+	<target name="package.win.x86">
+		<delete dir="${linux.jni.dest}"/>
+        <antcall target="package">
+			<param name="platform.name" value="-win-x86" />
+		</antcall>
+	</target>
+
+	<target name="package.win.x64">
+        <delete dir="${linux.jni.dest}"/>
+        <antcall target="package">
+			<param name="platform.name" value="-win-x64" />
+		</antcall>
+	</target>
+
+	<target name="package.linux.x86">
+        <delete dir="${linux.jni.dest}"/>
+		<copydir dest="${linux.jni.dest}" src="${linux.jni.src}"/>
+		<antcall target="package">
+			<param name="platform.name" value="-linux-gtk-x86" />
+		</antcall>
+	</target>
+
+	<target name="package.linux.x64">
+        <delete dir="${linux.jni.dest}"/>
+        <copydir dest="${linux.jni.dest}" src="${linux.jni.src}"/>
+        <antcall target="package">
+			<param name="platform.name" value="-linux-gtk-x64" />
+		</antcall>
+	</target>
 </project>
