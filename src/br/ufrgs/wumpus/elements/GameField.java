@@ -252,7 +252,7 @@ public class GameField implements VisualElement {
 	}
 
 	private void drawWarrior(int i, int j, GC gc) {
-		String resourceName = "br/ufrgs/wumpus/elements/warrior";
+		String resourceName = "br/ufrgs/wumpus/elements/warriorIcon";
 		switch (warriorAngle) {
 		case FRONT:
 			resourceName += "F";

@@ -1,0 +1,1 @@
+java -cp simulator.jar br.ufrgs.wumpus.demo.DemoPlayer

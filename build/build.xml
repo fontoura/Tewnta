@@ -50,7 +50,10 @@
 		<copy todir="${basedir}/dist">
 			<fileset dir="${basedir}/src">
 				<include name="*.properties" />
-				<include name="*.bmp" />
+				<include name="**/*.bmp" />
+				<include name="**/*.gif" />
+				<include name="**/*.GIF" />
+				<include name="**/*.png" />
 			</fileset>
 		</copy>
 	</target>
@@ -62,11 +65,13 @@
 				<include name="**/*.*" />
 			</fileset>
 		</jar>
-		<copy file="${basedir}/Readme.txt" todir="${tewnta.components.dest}" />
-		<copy file="${basedir}/simulator-win.cmd" todir="${tewnta.components.dest}" />
-		<copy file="${basedir}/demo-win.cmd" todir="${tewnta.components.dest}" />
-        <copy file="${basedir}/simulator-linux.sh" todir="${tewnta.components.dest}" />
-        <copy file="${basedir}/demo-linux.sh" todir="${tewnta.components.dest}" />
+		<copy todir="${tewnta.components.dest}">
+			<fileset dir="${basedir}">
+				<include name="Readme.txt"/>
+				<include name="*.cmd"/>
+				<include name="*.sh"/>
+			</fileset>
+		</copy>
 		<delete dir="${basedir}/dist" />
 	</target>
 
